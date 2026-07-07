@@ -1,0 +1,473 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Échiquier — Ta partie d'échecs transformée en œuvre d'art</title>
+<meta name="description" content="Transforme ta plus belle partie d'échecs (PGN) en œuvre d'art murale : heatmap des cases jouées, courbe d'évaluation, ouverture, moment clé. Version digitale ou tirage premium fabriqué en France.">
+<meta property="og:title" content="Échiquier — Ta partie d'échecs transformée en œuvre d'art">
+<meta property="og:description" content="Heatmap des cases jouées, courbe d'évaluation Stockfish, nom de l'ouverture. Ta victoire mémorable, au mur.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230e0c09'/%3E%3Ctext x='50' y='68' font-size='60' text-anchor='middle'%3E%E2%99%9A%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#f4ede1;
+    --cream-2:#eae1d1;
+    --ink:#161310;
+    --ink-2:#3a332c;
+    --gold:#a9812f;
+    --gold-2:#8a6a24;
+    --line:#d8cdb8;
+    --white:#fffdf9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  a{color:inherit;text-decoration:none}
+  img,svg{max-width:100%;display:block}
+
+  /* nav */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(244,237,225,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;max-width:1120px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:600;font-size:1.25rem;letter-spacing:-0.01em}
+  .brand .mark{width:28px;height:28px;flex:none}
+  .nav-cta{
+    font-family:'Inter',sans-serif;font-weight:600;font-size:0.85rem;
+    padding:10px 20px;border:1px solid var(--ink);border-radius:2px;
+    transition:background .18s, color .18s;
+  }
+  .nav-cta:hover{background:var(--ink);color:var(--cream)}
+
+  /* hero */
+  .hero{
+    padding:88px 0 64px;
+    background:
+      radial-gradient(ellipse at top right, rgba(169,129,47,0.10), transparent 55%),
+      var(--cream);
+    border-bottom:1px solid var(--line);
+  }
+  .hero-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:56px;align-items:center}
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--ink);color:var(--cream);
+    font-size:0.75rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;
+    padding:7px 14px;border-radius:2px;margin-bottom:26px;
+  }
+  .badge .dot{width:6px;height:6px;border-radius:50%;background:#c9a24a}
+  h1{font-size:clamp(2.3rem, 4.2vw, 3.6rem);line-height:1.06;margin-bottom:22px}
+  h1 em{font-style:italic;color:var(--gold-2)}
+  .hero p.lead{font-size:1.15rem;color:var(--ink-2);max-width:46ch;margin-bottom:34px}
+  .cta-row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+  .btn{
+    display:inline-block;font-weight:600;font-size:0.98rem;
+    padding:16px 30px;border-radius:2px;border:1px solid var(--ink);
+    transition:transform .15s, background .15s, color .15s;
+  }
+  .btn-primary{background:var(--ink);color:var(--cream)}
+  .btn-primary:hover{transform:translateY(-2px);background:#000}
+  .btn-ghost{background:transparent;color:var(--ink)}
+  .btn-ghost:hover{background:var(--ink);color:var(--cream)}
+  .microcopy{font-size:0.82rem;color:#7a7267;margin-top:14px}
+
+  .hero-art{
+    aspect-ratio:1/1.12;
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:4px;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 30px 60px -30px rgba(20,15,5,0.35);
+  }
+  .board-heat{
+    position:absolute;inset:8%;
+    display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);
+    border:1px solid var(--ink);
+  }
+  .board-heat div{border:0.5px solid rgba(22,19,16,0.08)}
+  .hero-caption{
+    position:absolute;left:0;right:0;bottom:0;
+    padding:18px 22px;background:var(--white);
+    border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:baseline;
+  }
+  .hero-caption .op{font-family:'Fraunces',serif;font-style:italic;font-size:1rem}
+  .hero-caption .move{font-size:0.78rem;color:#7a7267}
+
+  section{padding:88px 0}
+  .section-label{
+    font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--gold-2);margin-bottom:14px;
+  }
+  h2{font-size:clamp(1.7rem,3vw,2.4rem);margin-bottom:20px;max-width:22ch}
+
+  /* problem */
+  .problem{background:var(--ink);color:var(--cream)}
+  .problem .section-label{color:#c9a24a}
+  .problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:48px}
+  .problem-item{border-top:1px solid rgba(244,237,225,0.25);padding-top:22px}
+  .problem-item .num{font-family:'Fraunces',serif;font-style:italic;font-size:1.6rem;color:#c9a24a;display:block;margin-bottom:14px}
+  .problem-item p{color:#cfc6b8;font-size:0.98rem}
+
+  /* features */
+  .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:48px}
+  .feature{background:var(--cream);padding:36px 30px}
+  .feature h3{font-size:1.15rem;margin-bottom:10px}
+  .feature p{color:var(--ink-2);font-size:0.94rem}
+  .feature .tag{
+    display:inline-block;font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--gold-2);border:1px solid var(--gold-2);padding:3px 8px;border-radius:2px;margin-bottom:16px;
+  }
+
+  /* how it works */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;margin-top:56px;counter-reset:step}
+  .step{position:relative;padding-left:0}
+  .step .step-num{
+    font-family:'Fraunces',serif;font-size:3rem;color:var(--gold);opacity:0.5;line-height:1;margin-bottom:16px;
+  }
+  .step h3{font-size:1.1rem;margin-bottom:10px}
+  .step p{color:var(--ink-2);font-size:0.94rem}
+
+  /* pricing */
+  .pricing{background:var(--cream-2)}
+  .plans{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:48px}
+  .plan{
+    background:var(--white);border:1px solid var(--line);padding:40px 34px;border-radius:4px;
+    display:flex;flex-direction:column;
+  }
+  .plan.featured{border:1px solid var(--ink);position:relative}
+  .plan.featured::before{
+    content:"Le plus choisi";
+    position:absolute;top:-13px;left:34px;
+    background:var(--ink);color:var(--cream);font-size:0.7rem;font-weight:700;
+    letter-spacing:0.06em;text-transform:uppercase;padding:5px 12px;border-radius:2px;
+  }
+  .plan h3{font-size:1.3rem;margin-bottom:6px}
+  .plan .desc{color:var(--ink-2);font-size:0.9rem;margin-bottom:24px}
+  .price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+  .price-old{font-size:1.1rem;color:#9a9184;text-decoration:line-through}
+  .price-new{font-family:'Fraunces',serif;font-size:2.4rem;font-weight:600}
+  .price-note{font-size:0.8rem;color:var(--gold-2);font-weight:600;margin-bottom:26px}
+  .plan ul{list-style:none;margin-bottom:30px;flex:1}
+  .plan li{font-size:0.92rem;padding:8px 0;border-top:1px solid var(--line);color:var(--ink-2)}
+  .plan li:first-child{border-top:none}
+  .plan li::before{content:"— ";color:var(--gold-2)}
+  .plan .btn{width:100%;text-align:center}
+
+  /* faq */
+  .faq-list{margin-top:44px;max-width:760px}
+  .faq-item{border-top:1px solid var(--line);padding:26px 0}
+  .faq-item:last-child{border-bottom:1px solid var(--line)}
+  .faq-item h3{font-size:1.05rem;font-weight:600;font-family:'Inter',sans-serif;margin-bottom:10px}
+  .faq-item p{color:var(--ink-2);font-size:0.95rem}
+
+  /* final cta */
+  .final-cta{background:var(--ink);color:var(--cream);text-align:center}
+  .final-cta h2{margin:0 auto 18px;color:var(--cream)}
+  .final-cta p{color:#cfc6b8;max-width:44ch;margin:0 auto 34px}
+
+  footer{padding:44px 0;border-top:1px solid var(--line)}
+  .footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+  footer .brand{font-size:1.05rem}
+  footer .fnote{font-size:0.82rem;color:#7a7267}
+
+  /* modal */
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(15,12,8,0.55);
+    display:none;align-items:center;justify-content:center;z-index:100;padding:20px;
+  }
+  .modal-backdrop.open{display:flex}
+  .modal{
+    background:var(--white);max-width:420px;width:100%;padding:38px 34px;
+    border-radius:4px;text-align:center;box-shadow:0 40px 80px -20px rgba(0,0,0,0.4);
+  }
+  .modal .icon{font-size:2.2rem;margin-bottom:14px}
+  .modal h3{font-family:'Fraunces',serif;font-size:1.35rem;margin-bottom:12px}
+  .modal p{color:var(--ink-2);font-size:0.95rem;margin-bottom:26px}
+  .modal button{
+    background:var(--ink);color:var(--cream);border:none;padding:13px 26px;
+    font-weight:600;font-size:0.92rem;border-radius:2px;cursor:pointer;font-family:'Inter',sans-serif;
+  }
+
+  @media (max-width:860px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero-art{max-width:420px;margin:0 auto}
+    .problem-grid,.features-grid,.steps,.plans{grid-template-columns:1fr}
+    .features-grid{border:none;background:none;gap:20px}
+    .feature{border:1px solid var(--line)}
+    section{padding:64px 0}
+    .footer-inner{flex-direction:column;align-items:flex-start}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 28 28"><rect width="28" height="28" fill="#161310"/><text x="14" y="21" font-size="18" text-anchor="middle" fill="#f4ede1">♚</text></svg>
+      Échiquier
+    </div>
+    <a href="#pricing" class="nav-cta">Réserver mon tirage</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="badge"><span class="dot"></span>Early-bird — 50% de réduction</span>
+      <h1>Ta plus belle partie,<br><em>encadrée</em> pour toujours.</h1>
+      <p class="lead">Colle ton PGN. Échiquier en fait une œuvre d'art : heatmap des cases jouées, courbe d'évaluation Stockfish, ouverture identifiée, moment clé isolé. En digital ou en tirage premium fabriqué en France.</p>
+      <div class="cta-row">
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="digital">Créer mon œuvre — dès 7,50€</a>
+        <a href="#comment-ca-marche" class="btn btn-ghost">Voir comment ça marche</a>
+      </div>
+      <p class="microcopy">Places early-bird limitées · aucun paiement débité aujourd'hui</p>
+    </div>
+    <div class="hero-art">
+      <div class="board-heat" id="heatBoard"></div>
+      <div class="hero-caption">
+        <span class="op">Défense sicilienne, variante Najdorf</span>
+        <span class="move">32 coups · victoire aux échecs</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="problem">
+  <div class="wrap">
+    <span class="section-label">Le problème</span>
+    <h2>Ta plus grande victoire dort dans un fichier .pgn que personne ne lira jamais.</h2>
+    <div class="problem-grid">
+      <div class="problem-item">
+        <span class="num">01</span>
+        <p>Tu as battu un 2000 Elo, sorti une combinaison à trois coups, ou juste gagné la partie de ta vie un dimanche soir — et il ne reste qu'une notation illisible pour qui ne joue pas.</p>
+      </div>
+      <div class="problem-item">
+        <span class="num">02</span>
+        <p>Les captures d'écran chess.com ou Lichess sont faites pour Twitter, pas pour un mur. Zéro esthétique, zéro mémoire durable.</p>
+      </div>
+      <div class="problem-item">
+        <span class="num">03</span>
+        <p>Trouver un cadeau pour un joueur d'échecs, c'est toujours la même chose : un jeu en bois de plus. Rien qui raconte SA partie à lui.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="fonctionnalites">
+  <div class="wrap">
+    <span class="section-label">La solution</span>
+    <h2>Un PGN devient une pièce que tu as envie d'accrocher.</h2>
+    <div class="features-grid">
+      <div class="feature">
+        <span class="tag">MVP</span>
+        <h3>Heatmap des cases jouées</h3>
+        <p>Chaque case s'illumine selon le nombre de fois où une pièce y est passée. Ta stratégie, visualisée en un coup d'œil.</p>
+      </div>
+      <div class="feature">
+        <span class="tag">MVP</span>
+        <h3>Courbe d'évaluation Stockfish</h3>
+        <p>L'avantage qui bascule, coup après coup — le graphe qui raconte le suspense de la partie mieux qu'un long récit.</p>
+      </div>
+      <div class="feature">
+        <span class="tag">MVP</span>
+        <h3>Ouverture identifiée</h3>
+        <p>Najdorf, Gambit Dame refusé, Défense Caro-Kann... le nom exact de ton système, tiré de la base ECO.</p>
+      </div>
+      <div class="feature">
+        <span class="tag">MVP</span>
+        <h3>Moment clé isolé</h3>
+        <p>Le coup qui a fait basculer la partie, mis en évidence sur l'échiquier final — ton instant de gloire, figé.</p>
+      </div>
+      <div class="feature">
+        <span class="tag">Vision</span>
+        <h3>Palette personnalisable</h3>
+        <p>Noir & ivoire éditorial, ou tes propres couleurs de club — pour matcher ton intérieur ou tes couleurs fétiches.</p>
+      </div>
+      <div class="feature">
+        <span class="tag">Vision</span>
+        <h3>Tirage encadré fabriqué en France</h3>
+        <p>Impression fine-art, cadre bois massif, atelier français. Livré prêt à accrocher.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="comment-ca-marche" class="pricing">
+  <div class="wrap">
+    <span class="section-label">Comment ça marche</span>
+    <h2>Trois étapes, un coup d'échecs immortalisé.</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">01</span>
+        <h3>Colle ton PGN</h3>
+        <p>Exporté depuis chess.com, Lichess, ou ton club — n'importe quelle partie, la tienne.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">02</span>
+        <h3>Choisis ta composition</h3>
+        <p>Heatmap, courbe d'évaluation, moment clé — assemble la mise en page qui raconte ta partie.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">03</span>
+        <h3>Reçois ton œuvre</h3>
+        <p>Fichier digital haute définition en quelques minutes, ou tirage encadré livré chez toi sous 10 jours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <span class="section-label">Tarifs early-bird</span>
+    <h2>Le prix baisse de moitié tant que les places durent.</h2>
+    <div class="plans">
+      <div class="plan">
+        <h3>Digital</h3>
+        <p class="desc">Ton œuvre en haute définition, prête à imprimer ou à afficher à l'écran.</p>
+        <div class="price-row">
+          <span class="price-old">15€</span>
+          <span class="price-new">7,50€</span>
+        </div>
+        <p class="price-note">-50% early-bird · paiement unique</p>
+        <ul>
+          <li>Fichier PNG/PDF haute résolution</li>
+          <li>Heatmap + courbe d'évaluation + ouverture</li>
+          <li>Moment clé mis en évidence</li>
+          <li>Livraison immédiate par e-mail</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="digital">Réserver le digital</a>
+      </div>
+      <div class="plan featured">
+        <h3>Tirage premium</h3>
+        <p class="desc">Impression fine-art encadrée, fabriquée en France, livrée chez toi.</p>
+        <div class="price-row">
+          <span class="price-old">89€</span>
+          <span class="price-new">44,50€</span>
+        </div>
+        <p class="price-note">-50% early-bird · dès 49€ selon format</p>
+        <ul>
+          <li>Tout le plan Digital inclus</li>
+          <li>Impression fine-art, papier musée</li>
+          <li>Cadre bois massif, atelier français</li>
+          <li>Formats 30×30 à 50×50 cm</li>
+          <li>Livré prêt à accrocher</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="print-premium">Réserver le tirage</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <span class="section-label">Questions fréquentes</span>
+    <h2>Tout ce qu'il faut savoir avant de réserver.</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>C'est disponible quand ?</h3>
+        <p>L'ouverture des paiements est imminente. Les personnes qui réservent leur place early-bird maintenant seront servies en priorité dès le lancement, et paient moitié prix, à vie sur cette commande.</p>
+      </div>
+      <div class="faq-item">
+        <h3>D'où vient le PGN de ma partie ?</h3>
+        <p>Chess.com et Lichess permettent d'exporter le PGN de n'importe quelle partie en deux clics, depuis l'historique de tes parties. Un club ou un logiciel comme ChessBase fonctionne aussi.</p>
+      </div>
+      <div class="faq-item">
+        <h3>L'évaluation Stockfish, c'est fiable ?</h3>
+        <p>Oui — chaque position est analysée par le moteur Stockfish en profondeur, exactement comme les outils d'analyse post-partie que tu utilises déjà.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Le tirage, ça vient vraiment de France ?</h3>
+        <p>Oui. Impression et encadrement sont confiés à un atelier fine-art français — pas de sous-traitance à l'étranger, pas de délais à rallonge.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Je peux choisir une partie perdue ou nulle ?</h3>
+        <p>Bien sûr. Une belle combinaison, une défense héroïque ou une nulle arrachée valent souvent plus qu'une victoire écrasante.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Et si le rendu ne me plaît pas ?</h3>
+        <p>Avant tout tirage physique, tu valides un aperçu digital de ton œuvre. Rien ne part à l'impression sans ton accord.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="wrap">
+    <h2>Ta partie mérite mieux qu'un fichier .pgn oublié.</h2>
+    <p>Réserve ta place early-bird maintenant et paie deux fois moins cher au lancement.</p>
+    <a href="#" class="cta-checkout btn btn-primary" data-plan="digital">Créer mon œuvre</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div class="brand">Échiquier</div>
+    <p class="fnote">© 2026 Échiquier. Fait avec passion pour les 64 cases.</p>
+  </div>
+</footer>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="icon">🎉</div>
+    <h3>Ouverture des paiements imminente</h3>
+    <p>Ton offre early-bird est réservée. Reviens très bientôt pour finaliser ta commande — on t'annonce le lancement en priorité.</p>
+    <button id="modalClose">Compris</button>
+  </div>
+</div>
+
+<script>
+  // heatmap decorative board
+  (function(){
+    var board = document.getElementById('heatBoard');
+    var weights = [2,0,5,1,0,3,0,1, 0,4,1,6,2,0,3,0, 1,0,7,3,5,1,0,2, 3,6,2,9,8,4,1,0, 0,2,5,7,6,3,0,1, 4,1,0,3,2,5,2,0, 0,3,1,0,4,1,3,2, 1,0,2,1,0,2,0,1];
+    var max = Math.max.apply(null, weights);
+    for(var i=0;i<64;i++){
+      var cell=document.createElement('div');
+      var w = weights[i]/max;
+      var base = (Math.floor(i/8)+i)%2===0 ? [255,253,249] : [234,225,209];
+      var gold = [169,129,47];
+      var r = Math.round(base[0] + (gold[0]-base[0])*w);
+      var g = Math.round(base[1] + (gold[1]-base[1])*w);
+      var b = Math.round(base[2] + (gold[2]-base[2])*w);
+      cell.style.background = 'rgb('+r+','+g+','+b+')';
+      board.appendChild(cell);
+    }
+  })();
+
+  // modal
+  var backdrop = document.getElementById('modalBackdrop');
+  document.querySelectorAll('.cta-checkout').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      backdrop.classList.add('open');
+    });
+  });
+  document.getElementById('modalClose').addEventListener('click', function(){
+    backdrop.classList.remove('open');
+  });
+  backdrop.addEventListener('click', function(e){
+    if(e.target === backdrop) backdrop.classList.remove('open');
+  });
+</script>
+
+</body>
+</html>

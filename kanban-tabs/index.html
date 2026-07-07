@@ -1,0 +1,548 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kanbly — Range tes onglets comme un kanban</title>
+<meta name="description" content="Kanbly transforme tes onglets de navigateur en kanban par tâche : à faire, en cours, terminé. Sessions sauvegardées, retrouve n'importe quel onglet en 2 touches.">
+<meta property="og:title" content="Kanbly — Range tes onglets comme un kanban">
+<meta property="og:description" content="Tes 60 onglets ouverts sont une to-do list qui te nargue. Range-les comme tu ranges ton board.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233730A3'/%3E%3Crect x='15' y='22' width='22' height='56' rx='4' fill='%23A5B4FC'/%3E%3Crect x='41' y='22' width='22' height='34' rx='4' fill='%23E0E7FF'/%3E%3Crect x='67' y='22' width='22' height='20' rx='4' fill='%23818CF8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --indigo-900:#1e1b4b;
+    --indigo-700:#3730a3;
+    --indigo-600:#4338ca;
+    --indigo-500:#4f46e5;
+    --indigo-100:#e0e7ff;
+    --indigo-50:#f5f6ff;
+    --ink:#14142b;
+    --ink-soft:#4a4a68;
+    --paper:#fbfbfe;
+    --line:#e3e3f3;
+    --accent:#22c55e;
+    --radius:12px;
+    --font-display:"Space Grotesk", sans-serif;
+    --font-body:"Inter", sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:var(--font-body);
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.5;
+  }
+  h1,h2,h3,.brand{font-family:var(--font-display);}
+  a{color:inherit;}
+  img,svg{display:block;max-width:100%;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+  .section{padding:88px 0;}
+  .section-tight{padding:64px 0;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--indigo-600);
+    background:var(--indigo-50);
+    border:1px solid var(--indigo-100);
+    padding:6px 14px;border-radius:999px;
+    margin-bottom:20px;
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);}
+
+  /* NAV */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(251,251,254,.9);
+    backdrop-filter:saturate(180%) blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;max-width:1120px;margin:0 auto;
+  }
+  .brand{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);}
+  .brand .mark{width:26px;height:26px;border-radius:7px;background:var(--indigo-600);display:flex;align-items:end;padding:4px;gap:2px;}
+  .brand .mark span{display:block;width:5px;background:var(--indigo-100);border-radius:1px;}
+  .brand .mark span:nth-child(1){height:10px;}
+  .brand .mark span:nth-child(2){height:16px;}
+  .brand .mark span:nth-child(3){height:6px;}
+  .nav-cta{
+    font-weight:600;font-size:14px;text-decoration:none;
+    background:var(--indigo-600);color:#fff;padding:10px 18px;border-radius:8px;
+    transition:background .15s ease;
+  }
+  .nav-cta:hover{background:var(--indigo-700);}
+
+  /* BUTTONS */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    font-family:var(--font-body);font-weight:600;font-size:15px;
+    padding:14px 26px;border-radius:9px;text-decoration:none;cursor:pointer;
+    border:1px solid transparent;transition:transform .12s ease, box-shadow .12s ease, background .15s ease;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--indigo-600);color:#fff;box-shadow:0 6px 18px -8px rgba(67,56,202,.55);}
+  .btn-primary:hover{background:var(--indigo-700);}
+  .btn-ghost{background:#fff;color:var(--ink);border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--indigo-300, #a5b4fc);}
+  .btn-block{width:100%;}
+
+  /* HERO */
+  .hero{padding:96px 0 64px;position:relative;overflow:hidden;}
+  .hero-inner{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;}
+  .hero h1{font-size:clamp(34px,4.6vw,56px);line-height:1.06;letter-spacing:-.02em;margin:0 0 20px;}
+  .hero h1 em{font-style:normal;color:var(--indigo-600);}
+  .hero p.lead{font-size:18px;color:var(--ink-soft);max-width:46ch;margin:0 0 32px;}
+  .hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-bottom:18px;}
+  .hero-sub{font-size:13px;color:var(--ink-soft);}
+  .hero-sub b{color:var(--indigo-600);}
+
+  /* Kanban visual */
+  .board{
+    background:#fff;border:1px solid var(--line);border-radius:16px;
+    padding:18px;box-shadow:0 24px 60px -30px rgba(30,27,75,.35);
+  }
+  .board-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:0 4px;}
+  .board-head .dot{width:10px;height:10px;border-radius:50%;}
+  .board-head .dot:nth-child(1){background:#f87171;}
+  .board-head .dot:nth-child(2){background:#fbbf24;}
+  .board-head .dot:nth-child(3){background:#34d399;}
+  .board-head .name{margin-left:8px;font-size:13px;color:var(--ink-soft);font-weight:600;}
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .col{background:var(--indigo-50);border-radius:10px;padding:10px;min-height:230px;}
+  .col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--indigo-600);margin-bottom:10px;padding:0 2px;display:flex;justify-content:space-between;}
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 10px;
+    margin-bottom:8px;font-size:12.5px;font-weight:500;color:var(--ink);
+    box-shadow:0 1px 2px rgba(20,20,43,.04);
+    display:flex;align-items:center;gap:7px;
+  }
+  .card .favicon{width:14px;height:14px;border-radius:3px;flex:none;}
+  .card.dragging{transform:rotate(-2deg);box-shadow:0 10px 20px -6px rgba(20,20,43,.25);border-color:var(--indigo-500);}
+
+  /* PROBLEM */
+  .problem{background:var(--indigo-900);color:#fff;}
+  .problem h2{font-size:clamp(26px,3.4vw,38px);color:#fff;max-width:20ch;margin:0 0 14px;letter-spacing:-.01em;}
+  .problem .lead{color:#c7c7f2;max-width:56ch;font-size:17px;margin:0 0 44px;}
+  .pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .pain-card{
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+    border-radius:12px;padding:22px;
+  }
+  .pain-card .num{font-family:var(--font-display);font-size:26px;color:var(--indigo-100);opacity:.5;margin-bottom:10px;}
+  .pain-card p{margin:0;font-size:15px;color:#e4e4fa;}
+
+  /* FEATURES */
+  .section-head{max-width:640px;margin:0 0 48px;}
+  .section-head h2{font-size:clamp(26px,3.4vw,36px);letter-spacing:-.01em;margin:0 0 12px;}
+  .section-head p{color:var(--ink-soft);font-size:17px;margin:0;}
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .feature{
+    border:1px solid var(--line);border-radius:14px;padding:26px;background:#fff;
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .feature:hover{border-color:var(--indigo-500);transform:translateY(-2px);}
+  .feature .icon{
+    width:38px;height:38px;border-radius:9px;background:var(--indigo-50);
+    display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:var(--indigo-600);
+  }
+  .feature h3{font-size:17px;margin:0 0 8px;}
+  .feature p{margin:0;color:var(--ink-soft);font-size:14.5px;}
+  .feature.vision{background:var(--indigo-50);border-style:dashed;border-color:#c7cbfa;}
+  .tag-vision{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--indigo-600);background:#fff;border:1px solid var(--indigo-100);padding:3px 8px;border-radius:999px;margin-bottom:10px;display:inline-block;}
+
+  /* HOW */
+  .how{background:var(--indigo-50);}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;counter-reset:step;}
+  .step{position:relative;padding-top:8px;}
+  .step .stepnum{
+    font-family:var(--font-display);font-weight:700;font-size:15px;
+    width:36px;height:36px;border-radius:50%;background:var(--indigo-600);color:#fff;
+    display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+  }
+  .step h3{font-size:17px;margin:0 0 8px;}
+  .step p{color:var(--ink-soft);font-size:14.5px;margin:0;}
+
+  /* PRICING */
+  .plans{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;align-items:stretch;}
+  .plan{
+    border:1px solid var(--line);border-radius:16px;padding:32px;background:#fff;
+    display:flex;flex-direction:column;
+  }
+  .plan.featured{
+    border-color:var(--indigo-600);box-shadow:0 20px 50px -28px rgba(67,56,202,.5);position:relative;
+  }
+  .plan.featured::before{
+    content:"Le plus choisi";position:absolute;top:-13px;left:28px;
+    background:var(--indigo-600);color:#fff;font-size:11px;font-weight:700;
+    padding:4px 12px;border-radius:999px;letter-spacing:.03em;text-transform:uppercase;
+  }
+  .plan h3{font-size:19px;margin:0 0 4px;}
+  .plan .desc{color:var(--ink-soft);font-size:14px;margin:0 0 20px;}
+  .price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:4px;}
+  .price-old{font-size:18px;color:#9a9ab8;text-decoration:line-through;}
+  .price-new{font-family:var(--font-display);font-size:38px;font-weight:700;color:var(--ink);}
+  .price-unit{font-size:14px;color:var(--ink-soft);}
+  .price-badge{font-size:12px;font-weight:700;color:#15803d;background:#dcfce7;padding:3px 9px;border-radius:6px;display:inline-block;margin-bottom:22px;}
+  .plan ul{list-style:none;padding:0;margin:0 0 28px;flex:1;}
+  .plan li{display:flex;gap:10px;font-size:14.5px;padding:7px 0;color:var(--ink);}
+  .plan li svg{flex:none;margin-top:2px;color:var(--indigo-600);}
+
+  /* FAQ */
+  .faq{max-width:760px;margin:0 auto;}
+  details{
+    border:1px solid var(--line);border-radius:10px;padding:0;margin-bottom:12px;background:#fff;overflow:hidden;
+  }
+  summary{
+    cursor:pointer;list-style:none;padding:18px 22px;font-weight:600;font-size:15.5px;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+  }
+  summary::-webkit-details-marker{display:none;}
+  summary .chevron{transition:transform .18s ease;flex:none;color:var(--indigo-600);}
+  details[open] summary .chevron{transform:rotate(180deg);}
+  details p{margin:0;padding:0 22px 20px;color:var(--ink-soft);font-size:14.5px;}
+
+  /* FINAL CTA */
+  .final-cta{
+    background:var(--indigo-600);color:#fff;border-radius:20px;padding:64px 40px;text-align:center;
+    background-image:radial-gradient(circle at 20% 20%, rgba(255,255,255,.12), transparent 55%);
+  }
+  .final-cta h2{color:#fff;font-size:clamp(24px,3.2vw,34px);margin:0 0 12px;}
+  .final-cta p{color:var(--indigo-100);margin:0 0 28px;font-size:16px;}
+  .final-cta .btn-ghost{background:#fff;}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--line);padding:32px 0;}
+  .foot-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--ink-soft);}
+
+  /* MODAL */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(20,20,43,.55);
+    display:flex;align-items:center;justify-content:center;padding:20px;z-index:100;
+    opacity:0;pointer-events:none;transition:opacity .18s ease;
+  }
+  .modal-overlay.open{opacity:1;pointer-events:auto;}
+  .modal{
+    background:#fff;border-radius:16px;padding:36px;max-width:420px;width:100%;text-align:center;
+    transform:translateY(12px);transition:transform .18s ease;
+  }
+  .modal-overlay.open .modal{transform:translateY(0);}
+  .modal .icon{font-size:38px;margin-bottom:14px;}
+  .modal h3{font-size:20px;margin:0 0 10px;}
+  .modal p{color:var(--ink-soft);font-size:14.5px;margin:0 0 24px;}
+
+  @media (max-width:860px){
+    .hero-inner{grid-template-columns:1fr;}
+    .pain-grid, .features, .steps, .plans{grid-template-columns:1fr;}
+    .cols{grid-template-columns:1fr;}
+    .col{min-height:0;}
+    .section{padding:64px 0;}
+    .nav-cta{padding:8px 14px;font-size:13px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="brand"><span class="mark"><span></span><span></span><span></span></span>Kanbly</a>
+    <a href="#pricing" class="nav-cta cta-checkout" data-plan="nav">Réserver mon early-bird</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <div>
+        <span class="eyebrow"><span class="dot"></span>Places early-bird limitées — lancement imminent</span>
+        <h1>Tes 60 onglets ne sont pas un bazar. C'est une <em>to-do list</em> qui te nargue.</h1>
+        <p class="lead">Kanbly transforme ta fenêtre de navigateur en kanban par tâche : à faire, en cours, terminé. Range tes onglets comme tu ranges ton board — et retrouve n'importe lequel en 2 touches.</p>
+        <div class="hero-actions">
+          <a href="#" class="btn btn-primary cta-checkout" data-plan="hero-early-bird">Réserver -50% early-bird</a>
+          <a href="#comment-ca-marche" class="btn btn-ghost">Voir comment ça marche</a>
+        </div>
+        <p class="hero-sub">Extension Chrome / Edge / Brave · <b>19€</b> au lieu de 39€ pour les premiers inscrits</p>
+      </div>
+      <div class="board" aria-hidden="true">
+        <div class="board-head">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="name">Refonte API paiement</span>
+        </div>
+        <div class="cols">
+          <div class="col">
+            <div class="col-title">À faire<span>4</span></div>
+            <div class="card"><span class="favicon" style="background:#f59e0b"></span>Doc Stripe Webhooks</div>
+            <div class="card"><span class="favicon" style="background:#ef4444"></span>Ticket Linear #482</div>
+            <div class="card"><span class="favicon" style="background:#0ea5e9"></span>PR review — Amine</div>
+            <div class="card"><span class="favicon" style="background:#8b5cf6"></span>RFC architecture</div>
+          </div>
+          <div class="col">
+            <div class="col-title">En cours<span>2</span></div>
+            <div class="card dragging"><span class="favicon" style="background:#22c55e"></span>Dashboard Grafana</div>
+            <div class="card"><span class="favicon" style="background:#3730a3"></span>Terminal — logs prod</div>
+          </div>
+          <div class="col">
+            <div class="col-title">Terminé<span>3</span></div>
+            <div class="card" style="opacity:.55;text-decoration:line-through;"><span class="favicon" style="background:#64748b"></span>Specs onboarding</div>
+            <div class="card" style="opacity:.55;text-decoration:line-through;"><span class="favicon" style="background:#64748b"></span>Migration DB staging</div>
+            <div class="card" style="opacity:.55;text-decoration:line-through;"><span class="favicon" style="background:#64748b"></span>Slack thread résolu</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section class="section problem">
+    <div class="wrap">
+      <h2>27 onglets ouverts. Aucune idée de pourquoi la moitié y sont encore.</h2>
+      <p class="lead">Tu ouvres un onglet pour "vite vérifier un truc", et trois jours plus tard il est toujours là, planqué dans la barre, jamais fermé parce que "ça sert peut-être encore". Résultat :</p>
+      <div class="pain-grid">
+        <div class="pain-card">
+          <div class="num">01</div>
+          <p>Ctrl+Tab devient un jeu de devinette. Tu cliques trois fois avant de retrouver le bon onglet.</p>
+        </div>
+        <div class="pain-card">
+          <div class="num">02</div>
+          <p>Tu changes de tâche, mais pas de contexte navigateur — tout se mélange en une seule bouillie d'onglets.</p>
+        </div>
+        <div class="pain-card">
+          <div class="num">03</div>
+          <p>Tu fermes toute la fenêtre par lassitude et tu perds une session de recherche entière.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLUTION / FEATURES -->
+  <section class="section" id="fonctionnalites">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Un kanban, pas une liste. Tes onglets méritent mieux qu'une barre horizontale.</h2>
+        <p>Kanbly ajoute une colonne "à faire / en cours / terminé" à chaque groupe d'onglets, directement dans ton navigateur.</p>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="6" height="16" rx="1"/><rect x="11" y="4" width="6" height="10" rx="1"/><rect x="19" y="4" width="2" height="6" rx="1"/></svg>
+          </div>
+          <h3>Board par tâche</h3>
+          <p>Chaque projet a son propre kanban. Glisse-dépose tes onglets entre "à faire", "en cours" et "terminé" comme des cartes.</p>
+        </div>
+        <div class="feature">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
+          </div>
+          <h3>Recherche en 2 touches</h3>
+          <p>Raccourci clavier global, tape 3 lettres, retrouve l'onglet perdu — même s'il est fermé depuis la semaine dernière.</p>
+        </div>
+        <div class="feature">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 5h14v14H5z"/><path d="M5 9h14M9 9v10"/></svg>
+          </div>
+          <h3>Sessions sauvegardées</h3>
+          <p>Ferme toute la fenêtre l'esprit tranquille. Restaure ta session complète, board inclus, en un clic quand tu reviens.</p>
+        </div>
+        <div class="feature">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <h3>Mise à jour auto</h3>
+          <p>Un onglet Notion que tu ouvres pour la 3e fois cette semaine ? Kanbly le propose direct dans la bonne colonne.</p>
+        </div>
+        <div class="feature">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          </div>
+          <h3>Focus mode</h3>
+          <p>N'affiche que la colonne "en cours". Le reste attend sagement dans "à faire", hors de ta vue, hors de ton anxiété.</p>
+        </div>
+        <div class="feature vision">
+          <span class="tag-vision">Sur la feuille de route</span>
+          <h3>Boards partagés en équipe</h3>
+          <p>Un kanban d'onglets commun pour ton équipe de dev — visible par tous, synchronisé en temps réel. Pas encore livré, mais en construction.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section class="section how" id="comment-ca-marche">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Opérationnel en moins de 2 minutes</h2>
+        <p>Pas de compte à créer pour commencer, pas de config compliquée.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="stepnum">1</div>
+          <h3>Installe l'extension</h3>
+          <p>Un clic depuis le store. Kanbly détecte tes onglets ouverts et crée ton premier board automatiquement.</p>
+        </div>
+        <div class="step">
+          <div class="stepnum">2</div>
+          <h3>Range en glisser-déposer</h3>
+          <p>Fais glisser chaque onglet dans "à faire", "en cours" ou "terminé". Crée autant de boards que de projets.</p>
+        </div>
+        <div class="step">
+          <div class="stepnum">3</div>
+          <h3>Retrouve tout, toujours</h3>
+          <p>Raccourci clavier pour chercher, sessions sauvegardées pour fermer sans stress. Ton navigateur redevient sain.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="section" id="pricing">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Tarif early-bird, à moitié prix</h2>
+        <p>Paiement unique, pas d'abonnement. Le prix double au lancement public — les premiers inscrits gardent leur tarif à vie.</p>
+      </div>
+      <div class="plans">
+        <div class="plan">
+          <h3>Solo</h3>
+          <p class="desc">Pour dompter tes propres onglets, une bonne fois pour toutes.</p>
+          <div class="price-row">
+            <span class="price-old">39€</span>
+            <span class="price-new">19€</span>
+          </div>
+          <span class="price-unit">paiement unique · licence à vie</span><br>
+          <span class="price-badge">-50% early-bird</span>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Boards illimités</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Sessions sauvegardées illimitées</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Recherche clavier globale</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Mises à jour incluses</li>
+          </ul>
+          <a href="#" class="btn btn-ghost btn-block cta-checkout" data-plan="solo">Réserver Solo — 19€</a>
+        </div>
+        <div class="plan featured">
+          <h3>Pro</h3>
+          <p class="desc">Pour les devs qui jonglent entre plusieurs projets en parallèle.</p>
+          <div class="price-row">
+            <span class="price-old">79€</span>
+            <span class="price-new">29€</span>
+          </div>
+          <span class="price-unit">paiement unique · licence à vie</span><br>
+          <span class="price-badge">-63% early-bird</span>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Tout Solo, sans limite</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Synchronisation multi-appareils</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Focus mode + statistiques d'onglets</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Accès prioritaire aux futures features</li>
+          </ul>
+          <a href="#" class="btn btn-primary btn-block cta-checkout" data-plan="pro">Réserver Pro — 29€</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section-tight" id="faq">
+    <div class="wrap">
+      <div class="section-head" style="margin-left:auto;margin-right:auto;text-align:center;">
+        <h2>Questions fréquentes</h2>
+      </div>
+      <div class="faq">
+        <details open>
+          <summary>C'est disponible quand ?<svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <p>Le lancement est imminent — Kanbly est en toute dernière ligne droite. Les paiements ne sont pas encore ouverts sur cette page, mais les personnes qui réservent leur place maintenant seront servies en premier et paieront moitié prix, garanti à vie sur leur licence.</p>
+        </details>
+        <details>
+          <summary>Ça marche sur quel navigateur ?<svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <p>Chrome, Edge, Brave et tout navigateur basé sur Chromium. Une version Firefox est envisagée selon la demande.</p>
+        </details>
+        <details>
+          <summary>Est-ce que Kanbly lit le contenu de mes onglets ?<svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <p>Non. Kanbly stocke uniquement le titre, l'URL et le favicon de tes onglets pour construire le board — rien de plus, tout reste local sur ta machine.</p>
+        </details>
+        <details>
+          <summary>Abonnement ou paiement unique ?<svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <p>Paiement unique. Tu payes une fois, la licence est à toi à vie, mises à jour incluses. Pas de facturation récurrente.</p>
+        </details>
+        <details>
+          <summary>Et si je change d'avis ?<svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <p>Remboursement intégral sous 14 jours après le lancement, sans justification à donner.</p>
+        </details>
+        <details>
+          <summary>Combien de places early-bird restantes ?<svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <p>Le nombre de places à tarif réduit est volontairement limité pour garder le lancement gérable. Réserve la tienne avant qu'elles ne partent.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="section-tight">
+    <div class="wrap">
+      <div class="final-cta">
+        <h2>Ton prochain onglet perdu, c'est le dernier.</h2>
+        <p>Réserve ta place early-bird — moitié prix, à vie.</p>
+        <a href="#" class="btn btn-ghost cta-checkout" data-plan="final-cta" style="color:var(--indigo-700);">Réserver mon early-bird</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <a href="#top" class="brand" style="font-size:16px;"><span class="mark"><span></span><span></span><span></span></span>Kanbly</a>
+    <span>© 2026 Kanbly. Tous droits réservés.</span>
+    <span>contact@kanbly.app</span>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="icon">🎉</div>
+    <h3>Ouverture des paiements imminente</h3>
+    <p>Ton offre early-bird est réservée. Reviens très bientôt pour finaliser ta place — on t'a gardé le tarif à moitié prix.</p>
+    <button class="btn btn-primary btn-block" id="modalClose">Compris, à très vite</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var overlay = document.getElementById('modalOverlay');
+  var closeBtn = document.getElementById('modalClose');
+
+  function openModal(){
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(){
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.cta-checkout').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      openModal();
+    });
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay) closeModal();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeModal();
+  });
+})();
+</script>
+
+</body>
+</html>

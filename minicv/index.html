@@ -1,0 +1,543 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<meta charset="UTF-8">
+<title>Kasket — le lien unique pour tes casquettes</title>
+<meta name="description" content="Kasket est le link-in-bio des multi-casquettes : un avatar qui change de casquette selon la facette (dev, céramiste, vidéaste, parent…), un mini-profil par casquette, un seul lien à partager.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:title" content="Kasket — le lien unique pour tes casquettes">
+<meta property="og:description" content="Tu n'es pas une seule chose. Ton lien non plus. Un avatar qui change de casquette, un mini-profil par facette, un seul lien à partager partout.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧢%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#191423;
+    --paper:#fdf8f0;
+    --paper-2:#f4ecdd;
+    --dev:#2f6df6;
+    --ceramiste:#e0623a;
+    --video:#7c3aed;
+    --parent:#0f9d67;
+    --line:#191423;
+    --shadow: 6px 6px 0 var(--ink);
+    --shadow-sm: 3px 3px 0 var(--ink);
+    --radius: 18px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.brand,.pill,.step-num,.price{
+    font-family:'Fredoka', sans-serif;
+  }
+  a{color:inherit;}
+  img{max-width:100%;display:block;}
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+  section{padding:88px 0;}
+  @media (max-width:640px){ section{padding:56px 0;} }
+
+  /* NAV */
+  header.nav{
+    position:sticky; top:0; z-index:50;
+    background:var(--paper);
+    border-bottom:3px solid var(--ink);
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 24px; max-width:1080px; margin:0 auto;
+  }
+  .brand{
+    font-size:1.4rem; font-weight:700; display:flex; align-items:center; gap:8px;
+  }
+  .brand .cap{ font-size:1.6rem; display:inline-block; transform:rotate(-8deg); }
+  .nav-cta{
+    background:var(--dev); color:#fff; border:3px solid var(--ink);
+    padding:9px 18px; border-radius:999px; font-weight:600; font-size:.92rem;
+    box-shadow:var(--shadow-sm); text-decoration:none; cursor:pointer;
+    transition:transform .12s ease;
+  }
+  .nav-cta:hover{ transform:translate(-2px,-2px); }
+
+  /* HERO */
+  .hero{
+    padding-top:64px;
+    text-align:center;
+    position:relative;
+  }
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    background:#fff08a; border:3px solid var(--ink); border-radius:999px;
+    padding:7px 16px; font-weight:600; font-size:.85rem;
+    box-shadow:var(--shadow-sm);
+    margin-bottom:28px;
+    transform:rotate(-2deg);
+  }
+  .avatar-stage{
+    width:150px; height:150px; margin:0 auto 30px;
+    position:relative;
+  }
+  .avatar-face{
+    width:150px; height:150px; border-radius:50%;
+    background:var(--paper-2); border:4px solid var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    font-size:64px;
+    box-shadow:var(--shadow);
+  }
+  .avatar-cap{
+    position:absolute; top:-28px; left:50%;
+    font-size:56px;
+    animation:swap 6s infinite;
+    transform-origin:center;
+  }
+  @keyframes swap{
+    0%,20%{ content:''; transform:translateX(-50%) rotate(-6deg); }
+    25%{ transform:translateX(-50%) rotate(0deg) scale(0.6); opacity:0;}
+    30%{ transform:translateX(-50%) rotate(6deg) scale(1); opacity:1;}
+  }
+  h1{
+    font-size:clamp(2.1rem, 5.4vw, 3.6rem);
+    font-weight:700;
+    line-height:1.08;
+    margin:0 0 20px;
+    letter-spacing:-.5px;
+  }
+  h1 .hl{
+    background:linear-gradient(180deg, transparent 62%, #ffe066 62%);
+  }
+  .sub{
+    font-size:clamp(1.05rem,2vw,1.25rem);
+    max-width:600px; margin:0 auto 34px;
+    color:#3c3548;
+  }
+  .hero-ctas{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:16px; }
+  .btn{
+    display:inline-block; border:3px solid var(--ink); border-radius:999px;
+    padding:15px 30px; font-weight:600; font-size:1.02rem; text-decoration:none;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .12s ease, box-shadow .12s ease;
+    background:var(--ink); color:var(--paper);
+  }
+  .btn:hover{ transform:translate(-3px,-3px); box-shadow:9px 9px 0 var(--ink); }
+  .btn.alt{ background:#fff; color:var(--ink); }
+  .fine{ font-size:.85rem; color:#6b6478; margin-top:6px;}
+
+  .facettes-row{
+    display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:56px;
+  }
+  .fac-tag{
+    border:3px solid var(--ink); border-radius:14px; padding:10px 16px;
+    font-weight:600; font-size:.9rem; background:#fff;
+    box-shadow:var(--shadow-sm);
+  }
+  .fac-tag.dev{ background:#dce8ff; }
+  .fac-tag.ceramiste{ background:#ffe1d2; }
+  .fac-tag.video{ background:#e8dcff; }
+  .fac-tag.parent{ background:#d7f5e6; }
+
+  /* PROBLEM */
+  .problem{ background:var(--ink); color:var(--paper); }
+  .problem h2{ color:var(--paper); }
+  .problem-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:44px;
+  }
+  @media (max-width:800px){ .problem-grid{ grid-template-columns:1fr; } }
+  .problem-card{
+    background:#2a2337; border:3px solid #4a4159; border-radius:var(--radius);
+    padding:24px;
+  }
+  .problem-card .num{ font-family:'Fredoka'; font-size:1.6rem; color:#ffd166; }
+  .problem-card p{ margin:10px 0 0; color:#d9d3e6; }
+
+  /* section heading */
+  .kicker{
+    text-transform:uppercase; letter-spacing:.14em; font-size:.78rem;
+    font-weight:700; color:var(--dev);
+    margin:0 0 10px;
+  }
+  h2{
+    font-size:clamp(1.7rem,3.6vw,2.4rem);
+    margin:0 0 14px;
+    font-weight:700;
+    letter-spacing:-.3px;
+  }
+  .section-sub{ max-width:560px; color:#3c3548; font-size:1.05rem; }
+
+  /* FEATURES */
+  .features{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:44px;
+  }
+  @media (max-width:860px){ .features{ grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .features{ grid-template-columns:1fr;} }
+  .feat-card{
+    background:#fff; border:3px solid var(--ink); border-radius:var(--radius);
+    padding:26px; box-shadow:var(--shadow-sm);
+    transition:transform .12s ease;
+  }
+  .feat-card:hover{ transform:translateY(-4px); }
+  .feat-icon{
+    width:46px; height:46px; border-radius:12px; border:3px solid var(--ink);
+    display:flex; align-items:center; justify-content:center; font-size:22px;
+    margin-bottom:14px;
+  }
+  .feat-card:nth-child(1) .feat-icon{ background:#dce8ff; }
+  .feat-card:nth-child(2) .feat-icon{ background:#ffe1d2; }
+  .feat-card:nth-child(3) .feat-icon{ background:#e8dcff; }
+  .feat-card:nth-child(4) .feat-icon{ background:#d7f5e6; }
+  .feat-card:nth-child(5) .feat-icon{ background:#fff3b0; }
+  .feat-card:nth-child(6) .feat-icon{ background:#ffd6e0; }
+  .feat-card h3{ margin:0 0 8px; font-size:1.08rem; }
+  .feat-card p{ margin:0; color:#4a4457; font-size:.95rem; }
+  .feat-card .soon{
+    display:inline-block; margin-top:10px; font-size:.72rem; font-weight:700;
+    background:var(--ink); color:var(--paper); padding:2px 9px; border-radius:999px;
+  }
+
+  /* HOW */
+  .how{ background:var(--paper-2); }
+  .steps{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:26px; margin-top:44px;
+  }
+  @media (max-width:800px){ .steps{ grid-template-columns:1fr; } }
+  .step{
+    background:#fff; border:3px solid var(--ink); border-radius:var(--radius);
+    padding:26px; box-shadow:var(--shadow-sm);
+  }
+  .step-num{
+    width:38px; height:38px; border-radius:50%; background:#ffe066; border:3px solid var(--ink);
+    display:flex; align-items:center; justify-content:center; font-weight:700; margin-bottom:14px;
+  }
+  .step h3{ margin:0 0 6px; font-size:1.05rem; }
+  .step p{ margin:0; color:#4a4457; font-size:.94rem; }
+
+  /* PRICING */
+  .pricing-grid{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:24px; margin-top:48px;
+    max-width:760px; margin-left:auto; margin-right:auto;
+  }
+  @media (max-width:700px){ .pricing-grid{ grid-template-columns:1fr; } }
+  .plan{
+    border:3px solid var(--ink); border-radius:var(--radius); background:#fff;
+    padding:30px; box-shadow:var(--shadow); display:flex; flex-direction:column;
+  }
+  .plan.featured{
+    background:#fff08a; position:relative;
+  }
+  .plan.featured::before{
+    content:'⭐ Le plus choisi'; position:absolute; top:-16px; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:var(--paper); font-size:.75rem; font-weight:700;
+    padding:5px 14px; border-radius:999px; white-space:nowrap;
+  }
+  .plan h3{ margin:0 0 4px; font-size:1.2rem; font-family:'Fredoka'; }
+  .plan .plan-desc{ color:#4a4457; font-size:.9rem; margin-bottom:18px; }
+  .price-row{ display:flex; align-items:baseline; gap:10px; margin-bottom:4px; }
+  .price-old{ text-decoration:line-through; color:#8a8394; font-size:1.1rem; }
+  .price{ font-size:2.1rem; font-weight:700; }
+  .price-period{ color:#6b6478; font-size:.9rem; }
+  .plan ul{ list-style:none; padding:0; margin:18px 0 24px; flex-grow:1; }
+  .plan li{ padding:6px 0; font-size:.92rem; display:flex; gap:8px; }
+  .plan li::before{ content:'✓'; font-weight:700; color:var(--parent); }
+  .plan .btn{ text-align:center; width:100%; }
+  .plan.featured .btn{ background:var(--ink); }
+
+  /* FAQ */
+  .faq{ max-width:720px; margin:44px auto 0; }
+  details{
+    border:3px solid var(--ink); border-radius:14px; padding:18px 20px;
+    margin-bottom:14px; background:#fff; box-shadow:var(--shadow-sm);
+  }
+  summary{
+    font-weight:600; cursor:pointer; font-size:1.02rem;
+    list-style:none; display:flex; justify-content:space-between; align-items:center;
+  }
+  summary::-webkit-details-marker{ display:none; }
+  summary::after{ content:'+'; font-size:1.4rem; font-weight:400; }
+  details[open] summary::after{ content:'–'; }
+  details p{ margin:12px 0 0; color:#4a4457; }
+
+  /* FINAL CTA */
+  .final-cta{ text-align:center; }
+  .final-cta h2{ margin-bottom:10px; }
+
+  footer{
+    border-top:3px solid var(--ink); padding:36px 0; text-align:center;
+    font-size:.85rem; color:#6b6478;
+  }
+  footer .brand{ justify-content:center; margin-bottom:10px; font-size:1.1rem; }
+
+  /* MODAL */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(25,20,35,.6);
+    display:none; align-items:center; justify-content:center; z-index:200; padding:20px;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal{
+    background:var(--paper); border:3px solid var(--ink); border-radius:var(--radius);
+    max-width:400px; width:100%; padding:32px; text-align:center;
+    box-shadow:var(--shadow);
+    animation:pop .18s ease;
+  }
+  @keyframes pop{ from{ transform:scale(.92); opacity:0;} to{ transform:scale(1); opacity:1;} }
+  .modal .emoji{ font-size:2.6rem; margin-bottom:10px; }
+  .modal h3{ margin:0 0 10px; font-family:'Fredoka'; font-size:1.25rem; }
+  .modal p{ color:#4a4457; margin:0 0 22px; font-size:.95rem; }
+  .modal .btn{ width:100%; }
+</style>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand"><span class="cap">🧢</span>Kasket</div>
+    <a href="#pricing" class="nav-cta cta-checkout" data-plan="nav">Réserver mon early-bird</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <span class="badge">🐣 Early-bird : -50% à vie, places limitées</span>
+
+      <div class="avatar-stage">
+        <div class="avatar-face">🙂</div>
+        <div class="avatar-cap">🧢</div>
+      </div>
+
+      <h1>Un lien. <span class="hl">Toutes tes casquettes.</span></h1>
+      <p class="sub">Dev le jour, céramiste le soir, vidéaste le week-end, parent H24. Kasket adapte ton profil — avatar, bio, liens — à la facette que tu montres. Un seul lien à mettre en bio, partout.</p>
+
+      <div class="hero-ctas">
+        <a href="#pricing" class="btn cta-checkout" data-plan="hero-early-bird">Réserver ma place early-bird</a>
+        <a href="#comment" class="btn alt">Voir comment ça marche</a>
+      </div>
+      <p class="fine">Gratuit pour commencer · sans engagement</p>
+
+      <div class="facettes-row">
+        <span class="fac-tag dev">💻 dev</span>
+        <span class="fac-tag ceramiste">🏺 céramiste</span>
+        <span class="fac-tag video">🎬 vidéaste</span>
+        <span class="fac-tag parent">🧸 parent</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="problem">
+    <div class="wrap">
+      <p class="kicker">Le vrai problème</p>
+      <h2>Bento.me a fermé. Tes casquettes, elles, sont toujours là.</h2>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="num">01</div>
+          <p>Racheté par xAI, Bento.me a plié boutique. Tous les profils multi-facettes se retrouvent sans maison — et sans lien à mettre en bio demain matin.</p>
+        </div>
+        <div class="problem-card">
+          <div class="num">02</div>
+          <p>Linktree, c'est une liste de liens plate. Aucune place pour dire "ça, c'est mon taf" vs "ça, c'est ma passion" vs "ça, c'est mes enfants".</p>
+        </div>
+        <div class="problem-card">
+          <div class="num">03</div>
+          <p>Résultat : tu jongles entre 3 comptes Instagram, un portfolio, un CV, et personne ne voit jamais la personne entière derrière.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="solution">
+    <div class="wrap">
+      <p class="kicker">La solution</p>
+      <h2>Un profil, plusieurs casquettes, zéro compromis</h2>
+      <p class="section-sub">Kasket construit ton lien-en-bio autour de tes facettes — pas l'inverse. Chaque visiteur voit la version de toi qui l'intéresse.</p>
+
+      <div class="features">
+        <div class="feat-card">
+          <div class="feat-icon">🧢</div>
+          <h3>Avatar à casquettes</h3>
+          <p>Un avatar qui change littéralement de couvre-chef selon la facette affichée — dev, artisan, créateur, parent. Visuel, immédiat, mémorable.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🗂️</div>
+          <h3>Mini-profil par facette</h3>
+          <p>Bio, liens, couleurs et call-to-action propres à chaque casquette. Ton profil dev n'a pas à ressembler à ton profil céramiste.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🔗</div>
+          <h3>Un seul lien à partager</h3>
+          <p>kasket.co/toi. En bio Instagram, sur ta carte de visite, dans ta signature mail. Il redirige vers la bonne facette selon le contexte.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🎨</div>
+          <h3>Thèmes par casquette</h3>
+          <p>Chaque facette a sa propre identité visuelle : palette, police d'accent, icônes. Pas un template unique qui aplatit tout.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📊</div>
+          <h3>Stats simples</h3>
+          <p>Qui clique sur quoi, sur quelle facette. De quoi savoir si c'est ton portfolio dev ou tes bols en grès qui cartonnent.</p>
+          <span class="soon">Bientôt</span>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🧩</div>
+          <h3>Import Bento.me</h3>
+          <p>Un import en un clic pour les orphelins de Bento : on récupère tes blocs et on les range par casquette.</p>
+          <span class="soon">Bientôt</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="comment" class="how">
+    <div class="wrap">
+      <p class="kicker">Comment ça marche</p>
+      <h2>3 étapes, 10 minutes, un lien pour la vie</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Tu déclares tes casquettes</h3>
+          <p>Dev, céramiste, vidéaste, parent, freelance… autant que tu veux. Chacune a son emoji, sa couleur, son ton.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Tu remplis chaque mini-profil</h3>
+          <p>Bio courte, 3-5 liens, un CTA. Deux minutes par casquette, pas plus.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Tu partages ton lien Kasket</h3>
+          <p>kasket.co/toi part en bio partout. Chaque visiteur atterrit sur la vue d'ensemble, puis choisit sa casquette.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="wrap">
+      <p class="kicker">Tarifs</p>
+      <h2>Early-bird = moitié prix, à vie</h2>
+      <p class="section-sub">Les tarifs early-bird sont figés pour toujours pour les premiers inscrits. Après le lancement, ils remontent au prix plein.</p>
+
+      <div class="pricing-grid">
+        <div class="plan">
+          <h3>Gratuit</h3>
+          <p class="plan-desc">Pour tester avec 2 casquettes</p>
+          <div class="price-row">
+            <span class="price">0€</span>
+            <span class="price-period">/ toujours</span>
+          </div>
+          <ul>
+            <li>2 casquettes max</li>
+            <li>Mini-profils illimités par casquette</li>
+            <li>Lien kasket.co/toi</li>
+            <li>Thèmes de base</li>
+          </ul>
+          <a href="#" class="btn alt cta-checkout" data-plan="gratuit">Commencer gratuitement</a>
+        </div>
+        <div class="plan featured">
+          <h3>Premium</h3>
+          <p class="plan-desc">Pour les vrais multi-casquettes</p>
+          <div class="price-row">
+            <span class="price-old">58€</span>
+            <span class="price">29€</span>
+            <span class="price-period">/ an</span>
+          </div>
+          <ul>
+            <li>Casquettes illimitées</li>
+            <li>Thèmes personnalisés par facette</li>
+            <li>Statistiques par casquette</li>
+            <li>Import Bento.me en un clic</li>
+            <li>Domaine perso (toi.com)</li>
+          </ul>
+          <a href="#" class="btn cta-checkout" data-plan="premium-early-bird">Réserver mon -50% à vie</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="kicker">FAQ</p>
+      <h2>Les questions qu'on nous pose</h2>
+      <div class="faq">
+        <details>
+          <summary>C'est disponible quand ?</summary>
+          <p>Le lancement est imminent — on peaufine les derniers réglages. Les inscrits early-bird sont servis en premier, dans l'ordre d'arrivée, et gardent leur tarif à moitié prix pour toujours. Réserve ta place maintenant, on te prévient dès l'ouverture.</p>
+        </details>
+        <details>
+          <summary>C'est quoi le lien avec Bento.me ?</summary>
+          <p>Bento.me a fermé après son rachat par xAI. Beaucoup de multi-casquettes s'y étaient construit un profil et se retrouvent sans solution. Kasket reprend l'idée du lien-en-bio, en l'organisant vraiment par facette plutôt qu'en liste plate.</p>
+        </details>
+        <details>
+          <summary>Combien de casquettes je peux avoir ?</summary>
+          <p>2 en gratuit, illimité en Premium. Dev, céramiste, vidéaste, parent, musicien, freelance en tout genre — tu ranges chaque activité dans sa propre facette.</p>
+        </details>
+        <details>
+          <summary>Est-ce que je peux migrer mon compte Bento.me ?</summary>
+          <p>L'import Bento.me en un clic arrive juste après le lancement, inclus dans l'offre Premium. En attendant, la création manuelle prend quelques minutes par casquette.</p>
+        </details>
+        <details>
+          <summary>Le tarif early-bird, c'est vraiment à vie ?</summary>
+          <p>Oui. Les premiers inscrits gardent 29€/an pour toujours, même quand le tarif public montera. C'est notre façon de remercier ceux qui nous font confiance avant le lancement.</p>
+        </details>
+        <details>
+          <summary>Je n'ai qu'une seule casquette, c'est fait pour moi ?</summary>
+          <p>Tu peux commencer avec une seule facette et en ajouter au fil du temps. Mais honnêtement, Kasket prend tout son sens à partir de deux casquettes ou plus.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="wrap">
+      <h2>Ton profil n'est pas une seule chose.<br>Ton lien non plus.</h2>
+      <p class="section-sub" style="margin:0 auto 30px;">Réserve ta place early-bird avant le lancement — moitié prix, à vie.</p>
+      <a href="#" class="btn cta-checkout" data-plan="final-early-bird">Réserver mon early-bird à -50%</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="brand">🧢 Kasket</div>
+    <p>Kasket — le link-in-bio des multi-casquettes. © 2026.</p>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="emoji">🎉</div>
+    <h3>Ouverture des paiements imminente</h3>
+    <p>Ton offre early-bird est réservée. On t'écrit dès que les inscriptions ouvrent — reviens vite, les places sont limitées !</p>
+    <button class="btn" id="modalClose" type="button">Compris</button>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var overlay = document.getElementById('modalOverlay');
+    var closeBtn = document.getElementById('modalClose');
+
+    document.querySelectorAll('.cta-checkout').forEach(function(el){
+      el.addEventListener('click', function(e){
+        e.preventDefault();
+        overlay.classList.add('open');
+      });
+    });
+
+    function closeModal(){ overlay.classList.remove('open'); }
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', function(e){
+      if(e.target === overlay) closeModal();
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeModal();
+    });
+  })();
+</script>

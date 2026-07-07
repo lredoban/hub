@@ -1,0 +1,497 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRACÉ — Ton marathon en poster, pas en ligne Strava</title>
+<meta name="description" content="Upload ton GPX Garmin ou Strava, TRACÉ transforme ta course en poster : parcours, profil d'altitude, splits, météo du jour. Tirage HD, bois ou alu fabriqué en France.">
+<meta property="og:title" content="TRACÉ — Ton marathon en poster">
+<meta property="og:description" content="Upload ton GPX, on fait le poster. Parcours, dénivelé, splits, météo du jour. Fabriqué en France.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23FF4D00'/%3E%3Cpath d='M20 75 L35 40 L50 60 L65 25 L82 75' stroke='white' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --orange:#FF4D00;
+    --orange-dark:#D93E00;
+    --ink:#12130F;
+    --paper:#FBF7EF;
+    --cream:#F4EEDD;
+    --line:#12130F;
+    --green:#1E5E3C;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Barlow',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Anton',sans-serif;
+    font-weight:400;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    line-height:1.05;
+  }
+  a{color:inherit}
+  img,svg{max-width:100%;display:block}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    font-family:'Barlow',sans-serif;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    font-size:17px;
+    padding:16px 30px;
+    border-radius:6px;
+    border:3px solid var(--ink);
+    cursor:pointer;
+    text-decoration:none;
+    transition:transform .12s ease, box-shadow .12s ease;
+    box-shadow:5px 5px 0 var(--ink);
+  }
+  .btn:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
+  .btn-primary{background:var(--orange);color:var(--ink)}
+  .btn-primary:hover{background:#ff6a26}
+  .btn-dark{background:var(--ink);color:var(--paper)}
+  .btn-dark:hover{background:#26271f}
+  .btn-outline{background:transparent;color:var(--ink)}
+
+  /* NAV */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    background:var(--paper);
+    border-bottom:3px solid var(--ink);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:1140px;margin:0 auto}
+  .logo{font-family:'Anton',sans-serif;font-size:24px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+  .logo .dot{width:12px;height:12px;background:var(--orange);border-radius:50%;display:inline-block}
+  .nav-cta{font-size:14px;padding:10px 18px;box-shadow:3px 3px 0 var(--ink)}
+
+  /* HERO */
+  .hero{
+    border-bottom:3px solid var(--ink);
+    background:
+      radial-gradient(circle at 85% 20%, rgba(255,77,0,.18), transparent 45%),
+      var(--paper);
+    padding:64px 0 56px;
+  }
+  .hero-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:48px;align-items:center}
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--ink);color:var(--paper);
+    font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1px;
+    padding:8px 14px;border-radius:100px;margin-bottom:20px;
+  }
+  .badge b{color:var(--orange)}
+  .hero h1{font-size:clamp(38px,6vw,64px);margin-bottom:18px}
+  .hero h1 .hl{color:var(--orange)}
+  .hero p.sub{font-size:19px;max-width:520px;margin-bottom:30px;color:#33342b}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+  .hero-note{font-size:14px;font-weight:600;color:#5a5b4f;margin-top:14px}
+
+  .poster-mock{
+    background:var(--ink);
+    border:3px solid var(--ink);
+    border-radius:10px;
+    padding:22px;
+    box-shadow:10px 10px 0 var(--orange);
+    color:var(--paper);
+  }
+  .poster-mock .pm-top{display:flex;justify-content:space-between;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#a9a9a0;margin-bottom:14px}
+  .poster-mock svg{width:100%;height:auto}
+  .poster-mock .pm-title{font-family:'Anton',sans-serif;font-size:28px;margin-top:14px;text-transform:uppercase}
+  .poster-mock .pm-stats{display:flex;justify-content:space-between;margin-top:16px;font-size:12px;color:#c9c9bf;border-top:1px solid #33342b;padding-top:14px}
+  .poster-mock .pm-stats b{display:block;color:var(--paper);font-size:16px;font-family:'Anton',sans-serif}
+
+  /* SECTIONS generic */
+  section{padding:72px 0;border-bottom:3px solid var(--ink)}
+  section:last-of-type{border-bottom:none}
+  .eyebrow{font-weight:800;text-transform:uppercase;letter-spacing:2px;font-size:13px;color:var(--orange-dark);margin-bottom:10px}
+  .section-title{font-size:clamp(28px,4vw,42px);margin-bottom:16px}
+  .section-lead{font-size:18px;max-width:640px;color:#33342b;margin-bottom:20px}
+
+  /* PROBLEM */
+  .problem{background:var(--ink);color:var(--paper)}
+  .problem .eyebrow{color:var(--orange)}
+  .problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:36px}
+  .problem-card{background:#1c1d16;border:2px solid #33342b;border-radius:8px;padding:24px}
+  .problem-card .num{font-family:'Anton',sans-serif;color:var(--orange);font-size:32px;margin-bottom:10px}
+  .problem-card p{color:#cfcfc5;font-size:15.5px}
+  .problem-card h3{font-family:'Barlow',sans-serif;font-weight:800;text-transform:none;font-size:18px;margin-bottom:8px}
+
+  /* FEATURES */
+  .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+  .feature{
+    background:var(--cream);
+    border:3px solid var(--ink);
+    border-radius:10px;
+    padding:26px;
+    box-shadow:6px 6px 0 var(--ink);
+  }
+  .feature .ico{
+    width:48px;height:48px;border-radius:8px;background:var(--orange);
+    display:flex;align-items:center;justify-content:center;margin-bottom:16px;
+    border:2px solid var(--ink);
+  }
+  .feature h3{font-size:19px;text-transform:none;font-family:'Barlow',sans-serif;font-weight:800;margin-bottom:8px}
+  .feature p{font-size:15px;color:#33342b}
+
+  /* HOW */
+  .how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:44px;counter-reset:step}
+  .how-step{position:relative;padding-left:8px}
+  .how-step .stepnum{
+    font-family:'Anton',sans-serif;font-size:56px;color:transparent;
+    -webkit-text-stroke:2px var(--ink);
+    line-height:1;margin-bottom:10px;
+  }
+  .how-step h3{font-size:18px;text-transform:none;font-family:'Barlow',sans-serif;font-weight:800;margin-bottom:8px}
+  .how-step p{font-size:15px;color:#33342b}
+
+  /* PRICING */
+  .pricing{background:var(--cream)}
+  .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:44px;align-items:stretch}
+  .plan{
+    background:var(--paper);
+    border:3px solid var(--ink);
+    border-radius:12px;
+    padding:30px 26px;
+    display:flex;flex-direction:column;
+    box-shadow:6px 6px 0 var(--ink);
+  }
+  .plan.featured{background:var(--ink);color:var(--paper);transform:translateY(-10px);box-shadow:6px 6px 0 var(--orange)}
+  .plan.featured .plan-tag{background:var(--orange);color:var(--ink)}
+  .plan-tag{
+    align-self:flex-start;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+    background:var(--ink);color:var(--paper);padding:5px 10px;border-radius:100px;margin-bottom:16px;
+  }
+  .plan.featured .plan-tag{background:var(--orange)}
+  .plan h3{font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:1px;font-family:'Barlow',sans-serif;color:var(--orange-dark);margin-bottom:6px}
+  .plan.featured h3{color:var(--orange)}
+  .price-row{display:flex;align-items:baseline;gap:10px;margin:8px 0 4px}
+  .price-old{font-size:18px;text-decoration:line-through;opacity:.55}
+  .price-new{font-family:'Anton',sans-serif;font-size:40px}
+  .price-period{font-size:13px;opacity:.7;margin-bottom:18px}
+  .plan ul{list-style:none;margin:18px 0 24px;flex:1}
+  .plan li{font-size:14.5px;padding:7px 0;border-top:1px solid rgba(0,0,0,.1);display:flex;gap:8px;align-items:flex-start}
+  .plan.featured li{border-top:1px solid rgba(255,255,255,.15)}
+  .plan li::before{content:"✓";font-weight:800;color:var(--orange)}
+  .plan .btn{width:100%}
+
+  /* FAQ */
+  .faq-list{margin-top:36px;max-width:760px}
+  details{
+    border-bottom:2px solid var(--ink);
+    padding:18px 0;
+  }
+  details summary{
+    cursor:pointer;font-weight:700;font-size:17px;
+    display:flex;justify-content:space-between;align-items:center;
+    list-style:none;
+  }
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"+";font-family:'Anton',sans-serif;font-size:22px;color:var(--orange);margin-left:12px}
+  details[open] summary::after{content:"–"}
+  details p{margin-top:12px;font-size:15.5px;color:#33342b;max-width:640px}
+
+  /* FINAL CTA */
+  .final-cta{
+    background:var(--orange);
+    text-align:center;
+    border-bottom:3px solid var(--ink);
+  }
+  .final-cta h2{font-size:clamp(28px,5vw,46px);margin-bottom:16px}
+  .final-cta p{font-size:17px;margin-bottom:28px;max-width:520px;margin-left:auto;margin-right:auto}
+  .final-cta .btn-dark{box-shadow:5px 5px 0 rgba(0,0,0,.5)}
+
+  footer{padding:36px 0;text-align:center;font-size:14px;color:#5a5b4f}
+  footer .logo{justify-content:center;margin-bottom:10px}
+
+  /* MODAL */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(18,19,15,.7);
+    display:none;align-items:center;justify-content:center;z-index:100;padding:20px;
+  }
+  .modal-overlay.open{display:flex}
+  .modal{
+    background:var(--paper);border:3px solid var(--ink);border-radius:12px;
+    max-width:420px;width:100%;padding:32px;box-shadow:8px 8px 0 var(--orange);
+    text-align:center;
+  }
+  .modal h3{font-size:24px;margin-bottom:12px}
+  .modal p{font-size:15.5px;color:#33342b;margin-bottom:24px}
+  .modal .btn{width:100%}
+
+  @media(max-width:860px){
+    .hero-grid{grid-template-columns:1fr}
+    .problem-grid,.features-grid,.how-grid,.pricing-grid{grid-template-columns:1fr}
+    .plan.featured{transform:none}
+    .nav-cta{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="logo"><span class="dot"></span>TRACÉ</div>
+    <a href="#pricing" class="btn btn-primary nav-cta cta-checkout" data-plan="nav">Réserver mon poster</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="badge">🔥 Early-bird <b>-50%</b> — places limitées</span>
+      <h1>Ton marathon mérite mieux <span class="hl">qu'une ligne dans Strava.</span></h1>
+      <p class="sub">Upload ton fichier GPX (Garmin, Strava, Suunto...) et TRACÉ en fait un poster : ton parcours, ton profil d'altitude, tes splits, la météo du jour. Tirage HD, bois ou alu, fabriqué en France.</p>
+      <div class="hero-actions">
+        <a href="#pricing" class="btn btn-primary cta-checkout" data-plan="hero">Créer mon poster — dès 9,50€</a>
+        <a href="#comment-ca-marche" class="btn btn-outline">Voir comment ça marche</a>
+      </div>
+      <p class="hero-note">Compatible tous fichiers .gpx · Aucune app à installer · Livraison France & Europe</p>
+    </div>
+    <div class="poster-mock">
+      <div class="pm-top"><span>TRACÉ #04127</span><span>42,195 KM</span></div>
+      <svg viewBox="0 0 300 160" fill="none">
+        <polyline points="10,140 40,60 70,100 100,30 140,90 170,50 200,110 230,40 260,80 290,20" stroke="#FF4D00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="10" cy="140" r="5" fill="#FBF7EF"/>
+        <circle cx="290" cy="20" r="5" fill="#FF4D00"/>
+      </svg>
+      <div class="pm-title">Marathon de Paris</div>
+      <div class="pm-stats">
+        <div>TEMPS<b>3:42:18</b></div>
+        <div>ALLURE<b>5:16/km</b></div>
+        <div>D+<b>312m</b></div>
+        <div>MÉTÉO<b>14°C</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="problem">
+  <div class="wrap">
+    <p class="eyebrow">Le problème</p>
+    <h2 class="section-title">Des mois d'entraînement... pour un post Instagram qui disparaît en 24h.</h2>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="num">01</div>
+        <h3>Ta performance est noyée</h3>
+        <p>Ton chrono, tes splits, ton dénivelé : tout ça finit enterré dans l'appli Strava, entre deux photos de brunch de tes contacts.</p>
+      </div>
+      <div class="problem-card">
+        <div class="num">02</div>
+        <h3>Rien à accrocher au mur</h3>
+        <p>Un screenshot flou de l'appli, ce n'est pas un souvenir. Tu as couru 42km, tu mérites autre chose qu'un PDF de confirmation d'inscription.</p>
+      </div>
+      <div class="problem-card">
+        <div class="num">03</div>
+        <h3>Trouver un cadeau de coureur = galère</h3>
+        <p>Chaussettes, gel énergétique, gourde... Pour féliciter un proche après sa course, les options sérieuses sont rares.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="solution">
+  <div class="wrap">
+    <p class="eyebrow">La solution</p>
+    <h2 class="section-title">Un poster généré à partir de tes vraies données de course.</h2>
+    <p class="section-lead">Pas de template générique : chaque poster est unique, calculé à partir de ton fichier GPX. Ton parcours, ton effort, ta météo du jour.</p>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="ico">🗺️</div>
+        <h3>Tracé exact du parcours</h3>
+        <p>La forme précise de ton itinéraire, extraite de tes coordonnées GPS, en grand format.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">📈</div>
+        <h3>Profil d'altitude</h3>
+        <p>Chaque bosse, chaque descente. La côte du 30ème km que tu n'oublieras jamais, imprimée pour de bon.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">⏱️</div>
+        <h3>Splits kilomètre par kilomètre</h3>
+        <p>Ton allure détaillée sur toute la distance, pour visualiser ta course comme jamais.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">☀️</div>
+        <h3>Météo du jour</h3>
+        <p>Température, vent, conditions : le contexte exact dans lequel tu as couru, capturé automatiquement.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">🪵</div>
+        <h3>Bois, alu ou tirage HD</h3>
+        <p>Fabriqué en France par des artisans partenaires. Tu choisis le support qui va avec ta déco.</p>
+      </div>
+      <div class="feature">
+        <div class="ico">🎁</div>
+        <h3>Le cadeau qui a du sens</h3>
+        <p>Bientôt : offre un poster pour la course d'un proche, en 2 clics, sans qu'il ait à uploader quoi que ce soit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="comment-ca-marche">
+  <div class="wrap">
+    <p class="eyebrow">Comment ça marche</p>
+    <h2 class="section-title">Trois étapes. Zéro logiciel à apprendre.</h2>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="stepnum">01</div>
+        <h3>Exporte ton GPX</h3>
+        <p>Depuis Strava, Garmin Connect ou Suunto App : quelques secondes, un simple export de fichier.</p>
+      </div>
+      <div class="how-step">
+        <div class="stepnum">02</div>
+        <h3>Upload &amp; personnalise</h3>
+        <p>Dépose ton fichier sur TRACÉ. On génère automatiquement ton tracé, ton dénivelé et tes stats. Tu ajustes titre, date, couleurs.</p>
+      </div>
+      <div class="how-step">
+        <div class="stepnum">03</div>
+        <h3>Reçois ton poster</h3>
+        <p>Version digitale HD immédiate, ou tirage papier / bois / alu fabriqué en France et livré chez toi.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <p class="eyebrow">Tarifs</p>
+    <h2 class="section-title">Prix early-bird, moitié prix, places limitées.</h2>
+    <p class="section-lead">Réserve maintenant : les premiers inscrits paient deux fois moins cher, à vie sur leur première commande.</p>
+    <div class="pricing-grid">
+      <div class="plan">
+        <span class="plan-tag">Digital</span>
+        <h3>Fichier HD</h3>
+        <div class="price-row"><span class="price-old">19€</span><span class="price-new">9,50€</span></div>
+        <p class="price-period">paiement unique</p>
+        <ul>
+          <li>Poster HD au format PDF/PNG</li>
+          <li>Tracé + profil d'altitude + splits</li>
+          <li>Météo du jour intégrée</li>
+          <li>Prêt à imprimer chez toi ou en labo photo</li>
+        </ul>
+        <a href="#" class="btn btn-outline cta-checkout" data-plan="digital">Réserver à 9,50€</a>
+      </div>
+      <div class="plan featured">
+        <span class="plan-tag">Le plus choisi</span>
+        <h3>Tirage papier premium</h3>
+        <div class="price-row"><span class="price-old">49€</span><span class="price-new">24,50€</span></div>
+        <p class="price-period">poster livré chez toi</p>
+        <ul>
+          <li>Tout le pack Digital</li>
+          <li>Tirage HD papier mat 250g</li>
+          <li>Format A3, fabriqué en France</li>
+          <li>Livraison offerte en France métro</li>
+        </ul>
+        <a href="#" class="btn btn-primary cta-checkout" data-plan="print">Réserver à 24,50€</a>
+      </div>
+      <div class="plan">
+        <span class="plan-tag">Bois / Alu</span>
+        <h3>Édition premium</h3>
+        <div class="price-row"><span class="price-old">89€</span><span class="price-new">44,50€</span></div>
+        <p class="price-period">poster livré chez toi</p>
+        <ul>
+          <li>Tout le pack Tirage papier</li>
+          <li>Impression sur bois ou aluminium brossé</li>
+          <li>Fixation murale incluse</li>
+          <li>Pièce unique, fabriquée en France</li>
+        </ul>
+        <a href="#" class="btn btn-outline cta-checkout" data-plan="premium">Réserver à 44,50€</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <p class="eyebrow">FAQ</p>
+    <h2 class="section-title">Les questions qu'on nous pose le plus</h2>
+    <div class="faq-list">
+      <details>
+        <summary>C'est disponible quand ?</summary>
+        <p>Le lancement est imminent. On finalise le générateur de posters. Les early-birds inscrits maintenant seront servis en priorité, dès l'ouverture, et paient moitié prix à vie sur leur commande.</p>
+      </details>
+      <details>
+        <summary>Quels fichiers GPX sont compatibles ?</summary>
+        <p>Tous les exports GPX standards : Strava, Garmin Connect, Suunto App, Coros, Polar, Apple Watch (via export tiers). Si ta montre exporte un .gpx, ça fonctionne.</p>
+      </details>
+      <details>
+        <summary>Ça marche pour un 10k ou juste un marathon ?</summary>
+        <p>10k, semi, marathon, trail, ultra : toute distance avec un tracé GPS fonctionne. Plus la course est longue, plus le profil d'altitude est spectaculaire.</p>
+      </details>
+      <details>
+        <summary>D'où viennent les tirages bois et alu ?</summary>
+        <p>Impression et façonnage par des ateliers partenaires en France. Pas de sous-traitance à l'étranger, délais maîtrisés.</p>
+      </details>
+      <details>
+        <summary>Je peux offrir un poster pour la course d'un ami ?</summary>
+        <p>Oui, c'est l'un des usages principaux. Il te suffit d'avoir son fichier GPX (ou le lien de son activité Strava/Garmin) pour générer le poster à sa place.</p>
+      </details>
+      <details>
+        <summary>Le prix early-bird, c'est garanti ?</summary>
+        <p>Oui. Les places early-bird sont limitées et le tarif est bloqué dès la réservation de ton intention d'achat — tu ne seras jamais facturé sans confirmation de ta part.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="wrap">
+    <h2>Ton parcours mérite un mur, pas un scroll.</h2>
+    <p>Réserve ton offre early-bird maintenant. Places limitées, tarif moitié prix garanti au lancement.</p>
+    <a href="#pricing" class="btn btn-dark cta-checkout" data-plan="final-cta">Réserver mon poster</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo"><span class="dot"></span>TRACÉ</div>
+    <p>© 2026 TRACÉ — Posters de course fabriqués en France. Fait par des coureurs, pour des coureurs.</p>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>🎉 Ouverture des paiements imminente</h3>
+    <p>Ton offre early-bird est réservée. On t'écrit dès que TRACÉ ouvre les commandes pour que tu sois parmi les premiers servis — et que tu profites bien du tarif à -50%.</p>
+    <button class="btn btn-primary" id="modalClose">Compris, à très vite</button>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var overlay = document.getElementById('modalOverlay');
+    var closeBtn = document.getElementById('modalClose');
+    document.querySelectorAll('.cta-checkout').forEach(function(el){
+      el.addEventListener('click', function(e){
+        e.preventDefault();
+        overlay.classList.add('open');
+      });
+    });
+    function closeModal(){ overlay.classList.remove('open'); }
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', function(e){
+      if(e.target === overlay) closeModal();
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeModal();
+    });
+  })();
+</script>
+
+</body>
+</html>

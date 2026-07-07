@@ -1,0 +1,850 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veillance — Monitoring RGAA continu pour agences web</title>
+<meta name="description" content="Veillance surveille en continu l'accessibilité RGAA de tous vos sites clients : scans automatiques, alertes de régression, déclarations d'accessibilité générées. Pré-audit + veille, pas une promesse de conformité magique.">
+<meta property="og:title" content="Veillance — Monitoring RGAA continu pour agences web">
+<meta property="og:description" content="Scannez tous vos sites clients en continu, détectez les régressions RGAA avant vos clients, générez vos déclarations d'accessibilité. Offre early-bird -50%.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230B2545'/%3E%3Cpath d='M50 20 L78 33 V52 C78 68 66 80 50 86 C34 80 22 68 22 52 V33 Z' fill='none' stroke='%23F2C14E' stroke-width='6'/%3E%3Cpath d='M38 51 L47 60 L64 41' fill='none' stroke='%23F2C14E' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-950:#08172E;
+    --navy-900:#0B2545;
+    --navy-800:#123163;
+    --navy-700:#1B4079;
+    --blue-500:#2E6FDB;
+    --gold-400:#F2C14E;
+    --gold-500:#DDA625;
+    --paper:#FBFAF7;
+    --ink:#0B1526;
+    --ink-soft:#33415C;
+    --line:#D8DCE3;
+    --green-700:#1E6B3E;
+    --focus:#DDA625;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Source Sans 3', system-ui, sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.6;
+    font-size:1.05rem;
+  }
+  h1,h2,h3,.brand{
+    font-family:'Fraunces', Georgia, serif;
+    line-height:1.15;
+    color:var(--navy-950);
+  }
+  img,svg{max-width:100%;}
+  a{color:inherit;}
+  .container{
+    max-width:1120px;
+    margin:0 auto;
+    padding:0 1.5rem;
+  }
+  /* Focus visibility - AAA */
+  a:focus-visible, button:focus-visible, summary:focus-visible{
+    outline:3px solid var(--focus);
+    outline-offset:3px;
+    border-radius:4px;
+  }
+  .skip-link{
+    position:absolute;
+    left:-9999px;
+    top:0;
+    background:var(--navy-950);
+    color:#fff;
+    padding:0.75rem 1.25rem;
+    z-index:100;
+    border-radius:0 0 8px 0;
+  }
+  .skip-link:focus{ left:0; }
+
+  /* Header */
+  header.site{
+    background:var(--navy-950);
+    color:#fff;
+    padding:1rem 0;
+    position:sticky;
+    top:0;
+    z-index:50;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .nav-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+  }
+  .brand{
+    color:#fff;
+    font-size:1.4rem;
+    font-weight:700;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    gap:0.5rem;
+  }
+  .brand-mark{
+    width:32px;height:32px;flex:none;
+  }
+  nav.primary a{
+    color:#E7ECF5;
+    text-decoration:none;
+    margin-left:1.75rem;
+    font-weight:600;
+    font-size:0.95rem;
+  }
+  nav.primary a:hover{ color:var(--gold-400); text-decoration:underline; }
+  nav.primary{display:none;}
+  @media(min-width:800px){ nav.primary{display:block;} }
+
+  /* Buttons */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:0.5rem;
+    padding:0.9rem 1.6rem;
+    border-radius:10px;
+    font-weight:700;
+    font-size:1rem;
+    text-decoration:none;
+    border:2px solid transparent;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .btn-primary{
+    background:var(--gold-400);
+    color:var(--navy-950);
+  }
+  .btn-primary:hover{ background:var(--gold-500); }
+  .btn-outline{
+    background:transparent;
+    border-color:#fff;
+    color:#fff;
+  }
+  .btn-outline:hover{ background:rgba(255,255,255,0.1); }
+  .btn-dark{
+    background:var(--navy-900);
+    color:#fff;
+  }
+  .btn-dark:hover{ background:var(--navy-800); }
+  .btn-block{ width:100%; }
+
+  /* Hero */
+  .hero{
+    background:linear-gradient(180deg, var(--navy-950) 0%, var(--navy-900) 100%);
+    color:#fff;
+    padding:4.5rem 0 5rem;
+  }
+  .hero-grid{
+    display:grid;
+    gap:2.5rem;
+    align-items:center;
+  }
+  @media(min-width:900px){
+    .hero-grid{ grid-template-columns:1.1fr 0.9fr; }
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:0.5rem;
+    background:rgba(242,193,78,0.15);
+    border:1px solid rgba(242,193,78,0.5);
+    color:var(--gold-400);
+    padding:0.4rem 0.9rem;
+    border-radius:999px;
+    font-weight:700;
+    font-size:0.85rem;
+    letter-spacing:0.02em;
+    margin-bottom:1.25rem;
+  }
+  .hero h1{
+    font-size:clamp(2.1rem, 4.2vw, 3.1rem);
+    margin:0 0 1.1rem;
+    color:#fff;
+  }
+  .hero h1 em{
+    font-style:normal;
+    color:var(--gold-400);
+  }
+  .hero p.lead{
+    font-size:1.2rem;
+    color:#D7DEEA;
+    max-width:42ch;
+    margin:0 0 2rem;
+  }
+  .hero-ctas{
+    display:flex;
+    flex-wrap:wrap;
+    gap:1rem;
+  }
+  .hero-note{
+    margin-top:1rem;
+    font-size:0.9rem;
+    color:#AEB9CC;
+  }
+  .hero-panel{
+    background:#fff;
+    color:var(--ink);
+    border-radius:var(--radius);
+    padding:1.75rem;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.5);
+  }
+  .hero-panel h2{
+    font-size:1.05rem;
+    margin:0 0 1rem;
+    color:var(--navy-900);
+  }
+  .scan-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0.7rem 0;
+    border-bottom:1px solid var(--line);
+    font-size:0.95rem;
+  }
+  .scan-row:last-child{ border-bottom:none; }
+  .status-dot{
+    display:inline-flex;
+    align-items:center;
+    gap:0.4rem;
+    font-weight:700;
+    font-size:0.82rem;
+    padding:0.2rem 0.6rem;
+    border-radius:999px;
+  }
+  .status-ok{ background:#E3F3E9; color:var(--green-700); }
+  .status-warn{ background:#FDECC8; color:#8A5A00; }
+  .status-bad{ background:#FBE3E1; color:#A32C1E; }
+
+  section{ padding:4.5rem 0; }
+  section.alt{ background:#F1F0EA; }
+  .eyebrow{
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    font-weight:700;
+    font-size:0.82rem;
+    color:var(--blue-500);
+    margin:0 0 0.6rem;
+  }
+  h2.section-title{
+    font-size:clamp(1.7rem, 3vw, 2.3rem);
+    margin:0 0 1rem;
+    max-width:32ch;
+  }
+  .section-intro{
+    max-width:62ch;
+    color:var(--ink-soft);
+    font-size:1.08rem;
+    margin-bottom:2.5rem;
+  }
+
+  /* Problem */
+  .pain-grid{
+    display:grid;
+    gap:1.5rem;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  }
+  .pain-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-left:5px solid #B23A2E;
+    border-radius:10px;
+    padding:1.5rem;
+  }
+  .pain-card h3{
+    font-size:1.05rem;
+    margin:0 0 0.5rem;
+  }
+  .pain-card p{ margin:0; color:var(--ink-soft); }
+
+  /* Features */
+  .feature-grid{
+    display:grid;
+    gap:1.75rem;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  }
+  .feature-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1.75rem;
+  }
+  .feature-num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:2.4rem;height:2.4rem;
+    border-radius:8px;
+    background:var(--navy-900);
+    color:var(--gold-400);
+    font-weight:700;
+    font-family:'Fraunces',serif;
+    margin-bottom:1rem;
+  }
+  .feature-card h3{ font-size:1.15rem; margin:0 0 0.5rem; }
+  .feature-card p{ margin:0; color:var(--ink-soft); }
+  .tag-mvp{
+    display:inline-block;
+    margin-top:0.85rem;
+    font-size:0.75rem;
+    font-weight:700;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    color:var(--green-700);
+    background:#E3F3E9;
+    padding:0.2rem 0.55rem;
+    border-radius:999px;
+  }
+  .tag-soon{
+    display:inline-block;
+    margin-top:0.85rem;
+    font-size:0.75rem;
+    font-weight:700;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    color:#8A5A00;
+    background:#FDECC8;
+    padding:0.2rem 0.55rem;
+    border-radius:999px;
+  }
+
+  /* How it works */
+  .steps{
+    display:grid;
+    gap:2rem;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    counter-reset:step;
+  }
+  .step{ position:relative; padding-left:0; }
+  .step-num{
+    font-family:'Fraunces',serif;
+    font-size:2.6rem;
+    color:var(--gold-500);
+    font-weight:700;
+    line-height:1;
+    margin-bottom:0.75rem;
+    display:block;
+  }
+  .step h3{ margin:0 0 0.5rem; font-size:1.15rem; }
+  .step p{ margin:0; color:var(--ink-soft); }
+
+  /* Pricing */
+  .pricing-grid{
+    display:grid;
+    gap:1.75rem;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    align-items:stretch;
+  }
+  .plan{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:2rem 1.75rem;
+    display:flex;
+    flex-direction:column;
+  }
+  .plan.featured{
+    border:2px solid var(--navy-900);
+    box-shadow:0 20px 40px -20px rgba(11,37,69,0.35);
+    position:relative;
+  }
+  .plan.featured::before{
+    content:"Le plus choisi";
+    position:absolute;
+    top:-14px;
+    left:1.75rem;
+    background:var(--gold-400);
+    color:var(--navy-950);
+    font-size:0.75rem;
+    font-weight:700;
+    padding:0.3rem 0.7rem;
+    border-radius:999px;
+  }
+  .plan h3{ font-size:1.2rem; margin:0 0 0.35rem; }
+  .plan .plan-desc{ color:var(--ink-soft); font-size:0.92rem; margin:0 0 1.25rem; }
+  .price-row{ margin-bottom:0.4rem; display:flex; align-items:baseline; gap:0.6rem; flex-wrap:wrap; }
+  .price-old{
+    text-decoration:line-through;
+    color:#8A93A6;
+    font-size:1.1rem;
+  }
+  .price-new{
+    font-family:'Fraunces',serif;
+    font-size:2.2rem;
+    font-weight:700;
+    color:var(--navy-950);
+  }
+  .price-period{ color:var(--ink-soft); font-size:0.95rem; }
+  .plan ul{
+    list-style:none;
+    padding:0;
+    margin:1.25rem 0 1.5rem;
+    flex:1;
+  }
+  .plan li{
+    padding:0.4rem 0;
+    padding-left:1.6rem;
+    position:relative;
+    color:var(--ink-soft);
+    font-size:0.95rem;
+  }
+  .plan li::before{
+    content:"✓";
+    position:absolute;
+    left:0;
+    color:var(--green-700);
+    font-weight:700;
+  }
+
+  /* FAQ */
+  .faq-list{ max-width:760px; }
+  details.faq-item{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:1.1rem 1.4rem;
+    margin-bottom:1rem;
+  }
+  details.faq-item summary{
+    font-weight:700;
+    cursor:pointer;
+    font-size:1.05rem;
+    color:var(--navy-950);
+    list-style:none;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:1rem;
+  }
+  details.faq-item summary::-webkit-details-marker{ display:none; }
+  details.faq-item summary::after{
+    content:"+";
+    font-size:1.4rem;
+    color:var(--blue-500);
+    flex:none;
+  }
+  details.faq-item[open] summary::after{ content:"−"; }
+  details.faq-item p{ margin:0.85rem 0 0; color:var(--ink-soft); }
+
+  /* honest banner */
+  .honesty{
+    background:#EAF1FF;
+    border:1px solid #C4D6F5;
+    border-radius:var(--radius);
+    padding:1.5rem 1.75rem;
+    margin-top:2.5rem;
+  }
+  .honesty h3{ margin:0 0 0.5rem; font-size:1.05rem; color:var(--navy-900); }
+  .honesty p{ margin:0; color:var(--ink-soft); }
+
+  /* Final CTA */
+  .cta-final{
+    background:var(--navy-950);
+    color:#fff;
+    text-align:center;
+    padding:4.5rem 0;
+  }
+  .cta-final h2{ color:#fff; margin:0 0 1rem; }
+  .cta-final p{ color:#D7DEEA; max-width:52ch; margin:0 auto 2rem; font-size:1.1rem; }
+
+  footer.site{
+    background:#08172E;
+    color:#AEB9CC;
+    padding:2.5rem 0;
+    font-size:0.9rem;
+  }
+  footer.site .container{
+    display:flex;
+    flex-wrap:wrap;
+    gap:1rem;
+    justify-content:space-between;
+    align-items:center;
+  }
+  footer.site a{ color:#D7DEEA; text-decoration:underline; }
+
+  /* Modal */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(8,23,46,0.6);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:1.25rem;
+    z-index:200;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal-box{
+    background:#fff;
+    border-radius:var(--radius);
+    max-width:440px;
+    width:100%;
+    padding:2rem;
+    text-align:center;
+    box-shadow:0 30px 60px rgba(0,0,0,0.4);
+  }
+  .modal-box .modal-icon{ font-size:2.5rem; margin-bottom:0.75rem; display:block; }
+  .modal-box h2{ font-size:1.3rem; margin:0 0 0.75rem; }
+  .modal-box p{ color:var(--ink-soft); margin:0 0 1.5rem; }
+
+  .visually-hidden{
+    position:absolute;
+    width:1px;height:1px;
+    overflow:hidden;
+    clip:rect(0 0 0 0);
+    white-space:nowrap;
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Aller au contenu principal</a>
+
+<header class="site">
+  <div class="container nav-row">
+    <a href="#top" class="brand">
+      <svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <rect width="100" height="100" rx="20" fill="#123163"/>
+        <path d="M50 20 L78 33 V52 C78 68 66 80 50 86 C34 80 22 68 22 52 V33 Z" fill="none" stroke="#F2C14E" stroke-width="6"/>
+        <path d="M38 51 L47 60 L64 41" fill="none" stroke="#F2C14E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Veillance
+    </a>
+    <nav class="primary" aria-label="Navigation principale">
+      <a href="#probleme">Le problème</a>
+      <a href="#solution">La solution</a>
+      <a href="#tarifs">Tarifs</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a href="#tarifs" class="btn btn-outline">Voir les tarifs</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="container hero-grid">
+      <div>
+        <span class="badge">🎯 Early-bird — 50% à vie, places limitées</span>
+        <h1>Surveillez le RGAA de <em>tous vos sites clients</em>, sans y passer vos vendredis</h1>
+        <p class="lead">Veillance scanne en continu chaque site que votre agence gère, vous alerte dès qu'une régression d'accessibilité apparaît, et prépare la déclaration d'accessibilité de chaque client. L'European Accessibility Act sanctionne dès 2026 — mieux vaut le savoir avant vos clients.</p>
+        <div class="hero-ctas">
+          <a href="#" class="cta-checkout btn btn-primary" data-plan="agence-standard">Réserver mon early-bird -50%</a>
+          <a href="#solution" class="btn btn-outline">Voir comment ça marche</a>
+        </div>
+        <p class="hero-note">Sans engagement à la réservation · Facturation multi-sites · Fait pour les agences, pas pour un site isolé</p>
+      </div>
+      <div class="hero-panel" aria-label="Aperçu du tableau de bord de scan">
+        <h2>Tableau de bord — 24 sites suivis</h2>
+        <div class="scan-row">
+          <span>agence-dupont.fr</span>
+          <span class="status-dot status-ok">Conforme au dernier scan</span>
+        </div>
+        <div class="scan-row">
+          <span>boutique-lumina.com</span>
+          <span class="status-dot status-bad">Régression détectée</span>
+        </div>
+        <div class="scan-row">
+          <span>cabinet-avocats-roy.fr</span>
+          <span class="status-dot status-warn">3 points à vérifier</span>
+        </div>
+        <div class="scan-row">
+          <span>ecoshop-fr.com</span>
+          <span class="status-dot status-ok">Conforme au dernier scan</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEME -->
+  <section id="probleme">
+    <div class="container">
+      <p class="eyebrow">Le problème</p>
+      <h2 class="section-title">Un audit RGAA, c'est une photo. Vos sites, eux, bougent chaque semaine.</h2>
+      <p class="section-intro">Un audit ponctuel coûte cher et devient obsolète dès la première mise à jour de contenu, de thème ou de plugin. Sur un portefeuille de dizaines de clients, personne ne peut suivre ça manuellement.</p>
+      <div class="pain-grid">
+        <div class="pain-card">
+          <h3>La mise à jour qui casse tout</h3>
+          <p>Un client change une image, une agence installe un plugin, un thème est mis à jour — et un contraste ou un attribut alt disparaît sans que personne ne le remarque.</p>
+        </div>
+        <div class="pain-card">
+          <h3>L'échéance qui approche</h3>
+          <p>L'European Accessibility Act est en vigueur depuis juin 2025. Les sanctions démarrent en 2026. Vos clients e-commerce &gt;2M€ de CA sont concernés, et beaucoup l'ignorent encore.</p>
+        </div>
+        <div class="pain-card">
+          <h3>Le reporting client impossible</h3>
+          <p>Sans preuve régulière, difficile de rassurer un client inquiet ou de justifier une prestation de veille facturée chaque mois.</p>
+        </div>
+        <div class="pain-card">
+          <h3>La déclaration qu'on repousse</h3>
+          <p>La déclaration d'accessibilité obligatoire prend des heures à rédiger à la main pour chaque site, alors qu'elle devrait être un sous-produit du suivi.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLUTION -->
+  <section class="alt" id="solution">
+    <div class="container">
+      <p class="eyebrow">La solution</p>
+      <h2 class="section-title">Une veille RGAA automatisée, pensée pour un portefeuille de sites</h2>
+      <p class="section-intro">Veillance ne remplace pas l'audit humain — il le complète en continu. Les scans automatiques couvrent 30 à 40% des critères RGAA (contrastes, structure HTML, attributs, focus, formulaires) et vous alertent avant vos clients.</p>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <span class="feature-num">1</span>
+          <h3>Scan multi-sites automatique</h3>
+          <p>Tous les sites de votre portefeuille scannés selon une fréquence programmable, sans intervention manuelle.</p>
+          <span class="tag-mvp">Disponible au lancement</span>
+        </div>
+        <div class="feature-card">
+          <span class="feature-num">2</span>
+          <h3>Alertes de régression</h3>
+          <p>Dès qu'un critère qui était conforme casse, vous recevez une alerte ciblée — pas un rapport de 40 pages à relire.</p>
+          <span class="tag-mvp">Disponible au lancement</span>
+        </div>
+        <div class="feature-card">
+          <span class="feature-num">3</span>
+          <h3>Déclaration d'accessibilité pré-remplie</h3>
+          <p>Génération automatique du squelette de déclaration légale à partir des résultats de scan, à valider et compléter par vos soins.</p>
+          <span class="tag-mvp">Disponible au lancement</span>
+        </div>
+        <div class="feature-card">
+          <span class="feature-num">4</span>
+          <h3>Vue portefeuille agence</h3>
+          <p>Un tableau de bord unique pour tous vos clients, triable par urgence, avec historique de conformité par site.</p>
+          <span class="tag-mvp">Disponible au lancement</span>
+        </div>
+        <div class="feature-card">
+          <span class="feature-num">5</span>
+          <h3>Export client en marque blanche</h3>
+          <p>Un rapport PDF présentable directement à votre client, à votre en-tête, sans jargon technique.</p>
+          <span class="tag-soon">Sur la roadmap</span>
+        </div>
+        <div class="feature-card">
+          <span class="feature-num">6</span>
+          <h3>Priorisation par impact</h3>
+          <p>Les critères cassés classés par gravité réelle, pour savoir quoi corriger en premier quand le temps manque.</p>
+          <span class="tag-soon">Sur la roadmap</span>
+        </div>
+      </div>
+      <div class="honesty">
+        <h3>Notre positionnement, sans détour</h3>
+        <p>Veillance fait de la <strong>pré-audit automatisé et de la veille continue</strong>. Aucun outil automatique ne peut couvrir la totalité des critères RGAA (contenu, contexte d'usage, pertinence des alternatives) — seul un audit humain le peut. Nous ne vendons jamais de "conformité garantie". Nous vous donnons les moyens de repérer les régressions entre deux audits, et de documenter votre démarche.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMENT CA MARCHE -->
+  <section id="comment">
+    <div class="container">
+      <p class="eyebrow">Comment ça marche</p>
+      <h2 class="section-title">Opérationnel en moins d'une heure sur tout votre portefeuille</h2>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num" aria-hidden="true">01</span>
+          <h3>Importez vos sites</h3>
+          <p>Ajoutez les URLs de vos clients en masse (CSV ou saisie manuelle). Aucune installation côté client requise.</p>
+        </div>
+        <div class="step">
+          <span class="step-num" aria-hidden="true">02</span>
+          <h3>Le scan tourne en continu</h3>
+          <p>Veillance analyse chaque site selon la fréquence choisie et compare avec le dernier état conforme connu.</p>
+        </div>
+        <div class="step">
+          <span class="step-num" aria-hidden="true">03</span>
+          <h3>Vous agissez, on documente</h3>
+          <p>Vous recevez l'alerte, corrigez avec votre équipe, et la déclaration d'accessibilité se met à jour automatiquement.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="alt" id="tarifs">
+    <div class="container">
+      <p class="eyebrow">Tarifs</p>
+      <h2 class="section-title">Un abonnement pensé pour un portefeuille, pas pour un site</h2>
+      <p class="section-intro">Prix early-bird verrouillés à vie pour les premières agences inscrites. Places limitées.</p>
+      <div class="pricing-grid">
+
+        <div class="plan">
+          <h3>Studio</h3>
+          <p class="plan-desc">Pour les petites agences qui démarrent leur offre accessibilité.</p>
+          <div class="price-row">
+            <span class="price-old">198€</span>
+            <span class="price-new">99€</span>
+            <span class="price-period">/mois</span>
+          </div>
+          <ul>
+            <li>Jusqu'à 20 sites suivis</li>
+            <li>Scan hebdomadaire</li>
+            <li>Alertes de régression par e-mail</li>
+            <li>Déclarations d'accessibilité auto-générées</li>
+          </ul>
+          <a href="#" class="cta-checkout btn btn-dark btn-block" data-plan="agence-studio">Réserver early-bird</a>
+        </div>
+
+        <div class="plan featured">
+          <h3>Agence</h3>
+          <p class="plan-desc">Le plan pensé pour un portefeuille clients actif.</p>
+          <div class="price-row">
+            <span class="price-old">398€</span>
+            <span class="price-new">199€</span>
+            <span class="price-period">/mois</span>
+          </div>
+          <ul>
+            <li>Jusqu'à 50 sites suivis</li>
+            <li>Scan quotidien</li>
+            <li>Alertes en temps réel (e-mail + webhook)</li>
+            <li>Déclarations d'accessibilité auto-générées</li>
+            <li>Tableau de bord multi-clients</li>
+          </ul>
+          <a href="#" class="cta-checkout btn btn-primary btn-block" data-plan="agence-standard">Réserver early-bird</a>
+        </div>
+
+        <div class="plan">
+          <h3>Groupe</h3>
+          <p class="plan-desc">Pour les agences avec un large portefeuille ou plusieurs marques.</p>
+          <div class="price-row">
+            <span class="price-old">598€</span>
+            <span class="price-new">299€</span>
+            <span class="price-period">/mois</span>
+          </div>
+          <ul>
+            <li>Sites illimités</li>
+            <li>Scan quotidien prioritaire</li>
+            <li>Alertes en temps réel (e-mail + webhook)</li>
+            <li>Déclarations d'accessibilité auto-générées</li>
+            <li>Accès multi-utilisateurs par équipe</li>
+          </ul>
+          <a href="#" class="cta-checkout btn btn-dark btn-block" data-plan="agence-groupe">Réserver early-bird</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container">
+      <p class="eyebrow">Questions fréquentes</p>
+      <h2 class="section-title">FAQ</h2>
+      <div class="faq-list">
+
+        <details class="faq-item">
+          <summary>C'est disponible quand ?</summary>
+          <p>Le lancement est imminent. Nous finalisons les derniers scans et le moteur d'alertes. Les early-birds inscrits maintenant seront servis en priorité à l'ouverture, et paieront leur abonnement moitié prix, à vie.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Est-ce que Veillance garantit la conformité RGAA de mes sites ?</summary>
+          <p>Non, et nous préférons être clairs là-dessus : aucun outil automatique ne peut garantir une conformité RGAA complète. Les scans couvrent 30 à 40% des critères (contrastes, structure, attributs techniques). Le reste — pertinence des alternatives textuelles, cohérence du contenu — nécessite un audit humain. Veillance est un pré-audit et un outil de veille continue, pas un tampon de conformité.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Quelle est la différence avec un audit RGAA classique ?</summary>
+          <p>Un audit classique est un instantané réalisé par un expert, généralement une à deux fois par an. Veillance tourne en continu entre deux audits pour détecter les régressions dès qu'elles apparaissent, et prépare le terrain administratif (déclaration) pour vos experts.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Combien de sites puis-je suivre ?</summary>
+          <p>Selon le plan choisi : de 20 sites (Studio) à un nombre illimité (Groupe). Les abonnements sont pensés pour un portefeuille d'agence, pas pour un site isolé — la plupart de nos utilisateurs suivent entre 20 et 50 sites.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Mes clients auront-ils accès aux résultats ?</summary>
+          <p>C'est vous qui décidez de ce que vous partagez. Un export client en marque blanche est prévu sur la roadmap pour vous permettre de transmettre un rapport lisible directement à vos clients.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Le prix early-bird est-il vraiment verrouillé à vie ?</summary>
+          <p>Oui. Les premières agences inscrites gardent leur tarif -50% tant qu'elles restent abonnées, même quand le prix public augmentera après le lancement. Les places early-bird sont limitées.</p>
+        </details>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="cta-final">
+    <div class="container">
+      <h2>Ne laissez pas une régression RGAA découverte par un client, un juriste, ou une amende</h2>
+      <p>Réservez votre place early-bird maintenant : moitié prix à vie, accès prioritaire au lancement.</p>
+      <a href="#" class="cta-checkout btn btn-primary" data-plan="agence-standard">Réserver mon early-bird -50%</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="container">
+    <p>© 2026 Veillance — Monitoring d'accessibilité RGAA pour agences web.</p>
+    <p><a href="mailto:contact@veillance.fr">contact@veillance.fr</a></p>
+  </div>
+</footer>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+  <div class="modal-box">
+    <span class="modal-icon" aria-hidden="true">🎉</span>
+    <h2 id="modal-title">Ouverture des paiements imminente</h2>
+    <p>Ton offre early-bird à -50% est réservée. On t'écrit dès que les paiements ouvrent — reviens régulièrement, les places sont limitées.</p>
+    <button type="button" class="btn btn-dark" id="modal-close">Fermer</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var overlay = document.getElementById('modal-overlay');
+  var closeBtn = document.getElementById('modal-close');
+  var lastFocused = null;
+
+  function openModal(){
+    lastFocused = document.activeElement;
+    overlay.hidden = false;
+    overlay.classList.add('open');
+    closeBtn.focus();
+    document.addEventListener('keydown', onKeydown);
+  }
+  function closeModal(){
+    overlay.classList.remove('open');
+    overlay.hidden = true;
+    document.removeEventListener('keydown', onKeydown);
+    if(lastFocused){ lastFocused.focus(); }
+  }
+  function onKeydown(e){
+    if(e.key === 'Escape'){ closeModal(); }
+  }
+
+  document.querySelectorAll('.cta-checkout').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      openModal();
+    });
+  });
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay){ closeModal(); }
+  });
+})();
+</script>
+
+</body>
+</html>

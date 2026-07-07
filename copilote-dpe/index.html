@@ -1,0 +1,604 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<title>Loyable — sais-tu si ton logement sera louable en 2028 ?</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Simulateur gratuit DPE : sais-tu si ton logement sera encore louable en 2028 ? G interdits depuis 2025, F en 2028, E en 2034. Loyable te dit où tu en es, lot par lot, et t'alerte à chaque échéance.">
+<meta property="og:title" content="Loyable — sais-tu si ton logement sera louable en 2028 ?">
+<meta property="og:description" content="Simulateur gratuit basé sur l'open data ADEME. Suivi par lot, alertes réglementaires, plan d'action. Le copilote des bailleurs face au calendrier DPE.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23122019'/%3E%3Ctext x='50' y='68' font-size='58' font-family='Georgia,serif' font-weight='bold' fill='%233CB371' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#122019;
+    --ink-soft:#3a4a42;
+    --paper:#f7f4ec;
+    --paper-alt:#efeadd;
+    --line:#ddd6c2;
+    --white:#ffffff;
+    --accent:#1c6b4a;
+    --accent-dark:#0f4a32;
+    --gold:#c8912a;
+
+    --dpe-a:#0f8a4f;
+    --dpe-b:#4caf3d;
+    --dpe-c:#a4c639;
+    --dpe-d:#f0c419;
+    --dpe-e:#f0932b;
+    --dpe-f:#e0562f;
+    --dpe-g:#c0392b;
+
+    --radius:14px;
+    --shadow: 0 8px 24px rgba(18,32,25,.08);
+    --maxw:1120px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',Georgia,serif;
+    font-weight:600;
+    line-height:1.12;
+    margin:0 0 .5em;
+    letter-spacing:-0.01em;
+  }
+  p{margin:0 0 1em;}
+  a{color:inherit;}
+  img,svg{max-width:100%;display:block;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:.5em;
+    font-size:.78rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent-dark);
+    background:rgba(28,107,74,.09);
+    padding:.4em .9em; border-radius:999px;
+  }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:.5em;
+    font-family:'Inter',sans-serif; font-weight:700; font-size:1rem;
+    padding:.95em 1.7em; border-radius:10px; border:2px solid transparent;
+    cursor:pointer; text-decoration:none; transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+    line-height:1;
+  }
+  .btn-primary{background:var(--accent); color:#fff; box-shadow:0 4px 0 var(--accent-dark);}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 6px 0 var(--accent-dark);}
+  .btn-primary:active{transform:translateY(2px); box-shadow:0 2px 0 var(--accent-dark);}
+  .btn-ghost{background:transparent; border-color:var(--ink); color:var(--ink);}
+  .btn-ghost:hover{background:var(--ink); color:var(--paper);}
+  .btn-block{width:100%;}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(247,244,236,.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px;}
+  .logo{
+    display:flex; align-items:center; gap:.55em;
+    font-family:'Fraunces',serif; font-weight:700; font-size:1.3rem; text-decoration:none; color:var(--ink);
+  }
+  .logo-mark{
+    width:34px;height:34px;border-radius:8px;background:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--dpe-b); font-family:'Fraunces',serif; font-weight:700; font-size:1.15rem;
+  }
+  .nav-cta{display:none;}
+  @media(min-width:720px){ .nav-cta{display:inline-flex;} }
+
+  /* ---------- HERO ---------- */
+  .hero{padding:64px 0 40px; position:relative; overflow:hidden;}
+  .hero-grid{display:grid; grid-template-columns:1fr; gap:44px; align-items:center;}
+  @media(min-width:940px){ .hero-grid{grid-template-columns:1.15fr .85fr;} }
+  .hero h1{font-size:clamp(2.1rem, 4.6vw, 3.35rem); margin-top:.5em;}
+  .hero .lede{font-size:1.15rem; color:var(--ink-soft); max-width:46ch;}
+  .hero-cta-row{display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin-top:1.6em;}
+  .badge-early{
+    display:inline-flex; align-items:center; gap:.5em;
+    background:var(--gold); color:#1a1204; font-weight:800; font-size:.85rem;
+    padding:.5em 1em; border-radius:999px;
+  }
+  .hero-note{font-size:.85rem; color:var(--ink-soft); margin-top:.9em;}
+
+  .dpe-card{
+    background:var(--white); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:26px;
+  }
+  .dpe-card h3{font-size:1rem; margin-bottom:.2em;}
+  .dpe-sub{font-size:.85rem; color:var(--ink-soft); margin-bottom:1.2em;}
+  .dpe-scale{display:flex; flex-direction:column; gap:6px;}
+  .dpe-row{
+    display:grid; grid-template-columns:34px 1fr auto; align-items:center; gap:10px;
+    padding:8px 10px; border-radius:8px; font-size:.9rem;
+  }
+  .dpe-letter{
+    width:34px;height:34px;border-radius:7px; color:#fff; font-weight:800;
+    display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif;
+  }
+  .dpe-a .dpe-letter{background:var(--dpe-a);} .dpe-b .dpe-letter{background:var(--dpe-b);}
+  .dpe-c .dpe-letter{background:var(--dpe-c); color:#20330f;} .dpe-d .dpe-letter{background:var(--dpe-d); color:#3a2c00;}
+  .dpe-e .dpe-letter{background:var(--dpe-e);} .dpe-f .dpe-letter{background:var(--dpe-f);}
+  .dpe-g .dpe-letter{background:var(--dpe-g);}
+  .dpe-status{font-weight:700; font-size:.78rem; padding:.3em .7em; border-radius:999px; white-space:nowrap;}
+  .status-ok{background:rgba(15,138,79,.12); color:#0f5c34;}
+  .status-warn{background:rgba(240,147,43,.14); color:#8a4a0a;}
+  .status-bad{background:rgba(192,57,43,.14); color:#8a271d;}
+  .dpe-f, .dpe-g{background:rgba(224,86,47,.05); border-radius:8px;}
+
+  /* ---------- SECTION SHELL ---------- */
+  section{padding:76px 0;}
+  .section-head{max-width:640px; margin:0 auto 3rem;}
+  .section-head.left{margin:0 0 3rem;}
+  .section-head .eyebrow{margin-bottom:1em;}
+  .section-head h2{font-size:clamp(1.7rem,3.2vw,2.3rem);}
+  .section-head p{color:var(--ink-soft); font-size:1.05rem;}
+
+  /* ---------- AGITATION ---------- */
+  .agitation{background:var(--ink); color:var(--paper);}
+  .agitation .section-head p{color:#c7d2cb;}
+  .pain-grid{display:grid; grid-template-columns:1fr; gap:20px;}
+  @media(min-width:760px){ .pain-grid{grid-template-columns:repeat(3,1fr);} }
+  .pain-card{
+    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12);
+    border-radius:var(--radius); padding:24px;
+  }
+  .pain-year{
+    font-family:'Fraunces',serif; font-size:2.2rem; font-weight:700; color:var(--dpe-f);
+    margin-bottom:.2em;
+  }
+  .pain-card h3{color:#fff; font-size:1.05rem; margin-bottom:.4em;}
+  .pain-card p{color:#b9c4bd; font-size:.94rem; margin-bottom:0;}
+  .reform-note{
+    margin-top:28px; padding:20px 22px; border-radius:var(--radius);
+    background:rgba(200,145,42,.14); border:1px solid rgba(200,145,42,.35);
+    font-size:.95rem; color:#f1e2c3;
+  }
+  .reform-note strong{color:var(--gold);}
+
+  /* ---------- FEATURES ---------- */
+  .feat-grid{display:grid; grid-template-columns:1fr; gap:20px;}
+  @media(min-width:760px){ .feat-grid{grid-template-columns:repeat(2,1fr);} }
+  @media(min-width:1040px){ .feat-grid{grid-template-columns:repeat(3,1fr);} }
+  .feat-card{
+    background:var(--white); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px; box-shadow:var(--shadow);
+  }
+  .feat-icon{
+    width:42px;height:42px;border-radius:9px; background:var(--paper-alt);
+    display:flex;align-items:center;justify-content:center; margin-bottom:16px;
+  }
+  .feat-card h3{font-size:1.08rem; margin-bottom:.4em;}
+  .feat-card p{color:var(--ink-soft); font-size:.95rem; margin-bottom:0;}
+  .feat-tag{
+    display:inline-block; margin-top:.9em; font-size:.72rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:.06em; color:var(--accent-dark);
+    background:rgba(28,107,74,.09); padding:.3em .7em; border-radius:999px;
+  }
+  .feat-tag.soon{color:#8a4a0a; background:rgba(240,147,43,.14);}
+
+  /* ---------- HOW ---------- */
+  .how{background:var(--paper-alt);}
+  .steps{display:grid; grid-template-columns:1fr; gap:28px; counter-reset:step;}
+  @media(min-width:760px){ .steps{grid-template-columns:repeat(3,1fr);} }
+  .step{position:relative; padding-left:0;}
+  .step-num{
+    font-family:'Fraunces',serif; font-weight:700; font-size:1.1rem;
+    width:44px;height:44px; border-radius:50%; background:var(--ink); color:var(--paper);
+    display:flex; align-items:center; justify-content:center; margin-bottom:16px;
+  }
+  .step h3{font-size:1.1rem;}
+  .step p{color:var(--ink-soft); font-size:.95rem;}
+
+  /* ---------- PRICING ---------- */
+  .pricing-grid{display:grid; grid-template-columns:1fr; gap:22px;}
+  @media(min-width:820px){ .pricing-grid{grid-template-columns:repeat(3,1fr);} }
+  .plan{
+    background:var(--white); border:1px solid var(--line); border-radius:var(--radius);
+    padding:30px; display:flex; flex-direction:column; box-shadow:var(--shadow);
+    position:relative;
+  }
+  .plan.featured{
+    border:2px solid var(--accent); transform:translateY(-8px);
+    box-shadow:0 14px 32px rgba(18,32,25,.14);
+  }
+  .plan-badge{
+    position:absolute; top:-13px; left:50%; transform:translateX(-50%);
+    background:var(--accent); color:#fff; font-size:.72rem; font-weight:800;
+    padding:.35em 1em; border-radius:999px; letter-spacing:.04em; text-transform:uppercase;
+  }
+  .plan h3{font-size:1.15rem; margin-bottom:.3em;}
+  .plan .plan-desc{color:var(--ink-soft); font-size:.9rem; margin-bottom:1.3em;}
+  .plan-price{display:flex; align-items:baseline; gap:.5em; margin-bottom:.2em;}
+  .price-old{font-size:1.15rem; color:#a39a80; text-decoration:line-through;}
+  .price-new{font-family:'Fraunces',serif; font-size:2.1rem; font-weight:700;}
+  .price-unit{font-size:.85rem; color:var(--ink-soft);}
+  .plan-list{list-style:none; padding:0; margin:1.4em 0; display:flex; flex-direction:column; gap:.7em;}
+  .plan-list li{display:flex; gap:.6em; font-size:.92rem; align-items:flex-start;}
+  .plan-list li svg{flex:none; margin-top:.15em;}
+  .plan .btn{margin-top:auto;}
+
+  /* ---------- FAQ ---------- */
+  .faq{background:var(--paper-alt);}
+  .faq-list{display:flex; flex-direction:column; gap:12px; max-width:760px; margin:0 auto;}
+  .faq-item{
+    background:var(--white); border:1px solid var(--line); border-radius:12px;
+    overflow:hidden;
+  }
+  .faq-q{
+    width:100%; text-align:left; background:none; border:none; cursor:pointer;
+    padding:20px 22px; font-family:'Inter',sans-serif; font-weight:700; font-size:1rem;
+    display:flex; justify-content:space-between; align-items:center; gap:1em; color:var(--ink);
+  }
+  .faq-q .plus{font-size:1.4rem; font-weight:400; color:var(--accent); transition:transform .2s; flex:none;}
+  .faq-item.open .plus{transform:rotate(45deg);}
+  .faq-a{max-height:0; overflow:hidden; transition:max-height .25s ease;}
+  .faq-a-inner{padding:0 22px 20px; color:var(--ink-soft); font-size:.95rem;}
+
+  /* ---------- FINAL CTA ---------- */
+  .final-cta{
+    background:var(--ink); color:var(--paper); text-align:center; border-radius:20px;
+    padding:56px 32px; margin:0 24px;
+  }
+  .final-cta h2{color:#fff; font-size:clamp(1.6rem,3.5vw,2.3rem);}
+  .final-cta p{color:#c7d2cb; max-width:52ch; margin:0 auto 1.8em;}
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:40px 0; border-top:1px solid var(--line);}
+  .footer-inner{
+    display:flex; flex-wrap:wrap; gap:16px; justify-content:space-between; align-items:center;
+    font-size:.85rem; color:var(--ink-soft);
+  }
+  .footer-links{display:flex; gap:1.4em; flex-wrap:wrap;}
+  .footer-links a{text-decoration:none; color:var(--ink-soft);}
+  .footer-links a:hover{color:var(--ink);}
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(18,32,25,.55);
+    display:none; align-items:center; justify-content:center; z-index:200; padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:var(--white); border-radius:16px; padding:36px 32px; max-width:420px; width:100%;
+    text-align:center; box-shadow:0 20px 50px rgba(0,0,0,.25);
+    animation:pop .25s ease;
+  }
+  @keyframes pop{from{transform:scale(.92); opacity:0;} to{transform:scale(1); opacity:1;}}
+  .modal-emoji{font-size:2.6rem; margin-bottom:.3em;}
+  .modal h3{font-size:1.25rem; margin-bottom:.5em;}
+  .modal p{color:var(--ink-soft); font-size:.95rem;}
+  .modal .btn{margin-top:1.2em;}
+
+  ::selection{background:var(--dpe-c); color:var(--ink);}
+</style>
+
+<header>
+  <div class="nav wrap">
+    <a href="#" class="logo"><span class="logo-mark">D</span>Loyable</a>
+    <a href="#pricing" class="btn btn-primary nav-cta">Faire ma simulation</a>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Copilote réglementaire des bailleurs</span>
+        <h1>Sais-tu si ton logement sera encore louable&nbsp;en&nbsp;2028&nbsp;?</h1>
+        <p class="lede">Les G sont déjà interdits à la location. Les F suivent en 2028 — 1,2 million de logements concernés. Les E en 2034. Et la réforme du calcul 2026 va reclasser 850&nbsp;000 logements, sans qu'aucuns travaux n'aient été faits. Loyable te dit exactement où tu en es, lot par lot.</p>
+        <div class="hero-cta-row">
+          <a href="#" class="cta-checkout btn btn-primary" data-plan="simulateur">Faire ma simulation gratuite</a>
+          <span class="badge-early">⚡ -50% pour les 200 premiers bailleurs</span>
+        </div>
+        <p class="hero-note">Basé sur l'open data DPE de l'ADEME · Sans engagement · 2 minutes chrono</p>
+      </div>
+
+      <div class="dpe-card">
+        <h3>Calendrier d'interdiction à la location</h3>
+        <p class="dpe-sub">Loi Climat et Résilience — logements loués vides ou meublés</p>
+        <div class="dpe-scale">
+          <div class="dpe-row dpe-a"><span class="dpe-letter">A</span><span>Excellent</span><span class="dpe-status status-ok">Louable</span></div>
+          <div class="dpe-row dpe-b"><span class="dpe-letter">B</span><span>Très performant</span><span class="dpe-status status-ok">Louable</span></div>
+          <div class="dpe-row dpe-c"><span class="dpe-letter">C</span><span>Performant</span><span class="dpe-status status-ok">Louable</span></div>
+          <div class="dpe-row dpe-d"><span class="dpe-letter">D</span><span>Assez performant</span><span class="dpe-status status-ok">Louable</span></div>
+          <div class="dpe-row dpe-e"><span class="dpe-letter">E</span><span>Peu performant</span><span class="dpe-status status-warn">Interdit en 2034</span></div>
+          <div class="dpe-row dpe-f"><span class="dpe-letter">F</span><span>Très peu performant</span><span class="dpe-status status-warn">Interdit en 2028</span></div>
+          <div class="dpe-row dpe-g"><span class="dpe-letter">G</span><span>Passoire thermique</span><span class="dpe-status status-bad">Interdit depuis 2025</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AGITATION -->
+  <section class="agitation">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" style="background:rgba(200,145,42,.16); color:var(--gold);">Le mur réglementaire</span>
+        <h2>Le calendrier n'attend pas, et il ne prévient pas non plus</h2>
+        <p>Entre les échéances légales et une réforme du DTG qui change les règles du jeu en silence, la plupart des bailleurs découvrent le problème... au moment de relouer.</p>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-card">
+          <div class="pain-year">2025</div>
+          <h3>Les G sont déjà hors-jeu</h3>
+          <p>Interdiction de location depuis le 1er janvier 2025. Un logement classé G ne peut plus être proposé à la location, ni en reconduction de bail.</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-year">2028</div>
+          <h3>1,2 million de F menacés</h3>
+          <p>Les logements classés F rejoignent l'interdiction. Un F loué aujourd'hui doit être requalifié avant cette date, sous peine de ne plus pouvoir être reloué.</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-year">2034</div>
+          <h3>Les E dans la ligne de mire</h3>
+          <p>Dernière marche du calendrier Climat et Résilience. Ce qui semble loin aujourd'hui conditionne déjà les décisions de travaux et d'arbitrage patrimonial.</p>
+        </div>
+      </div>
+      <div class="reform-note">
+        <strong>Nouveau en 2026 :</strong> la réforme de la méthode de calcul du DPE reclasse jusqu'à 850&nbsp;000 logements — à la hausse ou à la baisse — sans qu'aucun mètre carré n'ait changé. Un logement D peut basculer E du jour au lendemain. Sans alerte, tu l'apprends en annonçant ta location.
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">La solution</span>
+        <h2>Un copilote, pas un énième audit énergétique</h2>
+        <p>Loyable connecte l'open data ADEME à ton parc locatif pour transformer une échéance légale abstraite en plan d'action concret, lot par lot.</p>
+      </div>
+      <div class="feat-grid">
+        <div class="feat-card">
+          <div class="feat-icon">🔍</div>
+          <h3>Simulateur DPE gratuit</h3>
+          <p>Renseigne une adresse, retrouve le DPE existant via l'open data ADEME et vérifie en 2 minutes le statut réglementaire du bien.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🗂️</div>
+          <h3>Suivi de parc, lot par lot</h3>
+          <p>Centralise tous tes logements loués : classe actuelle, échéance applicable, statut de conformité — en un seul tableau de bord.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🔔</div>
+          <h3>Alertes réglementaires</h3>
+          <p>Chaque évolution de la loi ou de la méthode de calcul qui touche tes biens t'est signalée avant qu'elle ne devienne un problème.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🧭</div>
+          <h3>Plan d'action priorisé</h3>
+          <p>Pour chaque lot en zone à risque : les postes de travaux qui font gagner une classe, classés par rapport coût / gain de lettre.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📉</div>
+          <h3>Simulation reclassement 2026</h3>
+          <p>Anticipe l'effet de la réforme du calcul sur ton étiquette actuelle avant qu'elle ne s'applique à ton prochain DPE.</p>
+          <span class="feat-tag soon">Bientôt</span>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🧾</div>
+          <h3>Dossier justificatif</h3>
+          <p>Historique et documents centralisés pour prouver ta conformité en cas de litige locataire ou de contrôle.</p>
+          <span class="feat-tag soon">Bientôt</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section class="how">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Comment ça marche</span>
+        <h2>Trois étapes, deux minutes pour la première</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Renseigne ton bien</h3>
+          <p>Adresse ou numéro de DPE : on récupère automatiquement l'étiquette officielle depuis l'open data ADEME.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Découvre ton échéance</h3>
+          <p>Loyable croise ta classe énergétique avec le calendrier légal et t'indique la date au-delà de laquelle le bien devient inlouable.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Passe en suivi actif</h3>
+          <p>Ajoute tes autres lots, active les alertes et reçois ton plan d'action pour rester conforme sans mauvaise surprise.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Tarifs</span>
+        <h2>Le simulateur est gratuit. Le suivi, presque rien.</h2>
+        <p>Places early-bird limitées : moitié prix, à vie, pour les 200 premiers bailleurs inscrits.</p>
+      </div>
+      <div class="pricing-grid">
+
+        <div class="plan">
+          <h3>Simulateur</h3>
+          <p class="plan-desc">Pour vérifier le statut réglementaire d'un bien, une fois.</p>
+          <div class="plan-price">
+            <span class="price-new">0€</span>
+          </div>
+          <p class="price-unit">Sans carte bancaire</p>
+          <ul class="plan-list">
+            <li>✅ Récupération DPE via l'ADEME</li>
+            <li>✅ Échéance légale applicable</li>
+            <li>✅ Alerte reclassement 2026</li>
+          </ul>
+          <a href="#" class="cta-checkout btn btn-ghost btn-block" data-plan="gratuit">Lancer la simulation</a>
+        </div>
+
+        <div class="plan featured">
+          <span class="plan-badge">Le plus choisi</span>
+          <h3>Suivi par lot</h3>
+          <p class="plan-desc">Pour les bailleurs avec un ou plusieurs biens loués.</p>
+          <div class="plan-price">
+            <span class="price-old">14€</span>
+            <span class="price-new">7€</span>
+            <span class="price-unit">/mois/lot</span>
+          </div>
+          <p class="price-unit">Prix early-bird garanti à vie</p>
+          <ul class="plan-list">
+            <li>✅ Tout le simulateur</li>
+            <li>✅ Tableau de bord multi-lots</li>
+            <li>✅ Alertes réglementaires en continu</li>
+            <li>✅ Plan d'action priorisé</li>
+          </ul>
+          <a href="#" class="cta-checkout btn btn-primary btn-block" data-plan="suivi-mensuel">Réserver mon prix early-bird</a>
+        </div>
+
+        <div class="plan">
+          <h3>Bilan one-shot</h3>
+          <p class="plan-desc">Un audit ponctuel avant vente, achat ou renouvellement de bail.</p>
+          <div class="plan-price">
+            <span class="price-old">30€</span>
+            <span class="price-new">15€</span>
+            <span class="price-unit">/lot</span>
+          </div>
+          <p class="price-unit">Paiement unique</p>
+          <ul class="plan-list">
+            <li>✅ Diagnostic réglementaire complet</li>
+            <li>✅ Plan d'action priorisé</li>
+            <li>✅ Dossier PDF exportable</li>
+          </ul>
+          <a href="#" class="cta-checkout btn btn-ghost btn-block" data-plan="one-shot">Réserver mon prix early-bird</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Questions fréquentes</span>
+        <h2>Tout ce qu'on te demande le plus souvent</h2>
+      </div>
+      <div class="faq-list">
+
+        <div class="faq-item">
+          <button class="faq-q">C'est disponible quand ?<span class="plus">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Le lancement est imminent. Le simulateur et le suivi par lot sont en finalisation. Les bailleurs inscrits en early-bird seront servis en premier, dans l'ordre d'inscription, et paient leur abonnement moitié prix à vie.</div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">D'où viennent les données DPE ?<span class="plus">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Directement de la base open data DPE de l'ADEME, la source officielle utilisée par les diagnostiqueurs et l'administration. Loyable ne réalise pas de diagnostic, il exploite les diagnostics existants et leur donne du sens dans le temps.</div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">Mon logement n'a pas de DPE récent, ça marche quand même ?<span class="plus">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Oui, tu peux saisir manuellement l'étiquette actuelle si aucun DPE n'est référencé, ou si ton diagnostic date d'avant l'ouverture de la base. Le suivi et les alertes fonctionnent de la même façon.</div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">C'est quoi cette histoire de réforme 2026 ?<span class="plus">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">La méthode de calcul du DPE évolue en 2026, notamment pour les petites surfaces et certains modes de chauffage. Résultat : jusqu'à 850&nbsp;000 logements changeront de lettre lors de leur prochain DPE, sans aucuns travaux. Loyable te prévient si ton bien est concerné.</div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">Je suis en résidence secondaire ou local commercial, ça me concerne ?<span class="plus">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Le calendrier d'interdiction concerne les logements loués en résidence principale du locataire. Loyable est pensé pour ce cas d'usage ; les résidences secondaires et locaux commerciaux ne sont pas dans le périmètre du calendrier légal.</div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">Faut-il un compte pour faire la simulation ?<span class="plus">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">Non. La simulation gratuite ne demande ni carte bancaire ni création de compte. Un compte n'est utile que pour activer le suivi multi-lots et les alertes.</div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section>
+    <div class="wrap">
+      <div class="final-cta">
+        <h2>Ne découvre pas l'interdiction en annonçant ta location</h2>
+        <p>Fais ta simulation gratuite maintenant et réserve ton tarif early-bird avant l'ouverture officielle.</p>
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="cta-final">Faire ma simulation gratuite</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>© 2026 Loyable — Le copilote DPE des bailleurs</span>
+    <div class="footer-links">
+      <a href="#faq">FAQ</a>
+      <a href="#pricing">Tarifs</a>
+      <a href="mailto:contact@loyable.fr">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-emoji">🎉</div>
+    <h3>Ouverture des paiements imminente</h3>
+    <p>Ton offre early-bird est réservée. Reviens très bientôt pour finaliser ton inscription — on t'attend.</p>
+    <button class="btn btn-primary" id="modalClose">Compris</button>
+  </div>
+</div>
+
+<script>
+  // Modal
+  var overlay = document.getElementById('modalOverlay');
+  document.querySelectorAll('.cta-checkout').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      overlay.classList.add('open');
+    });
+  });
+  document.getElementById('modalClose').addEventListener('click', function(){
+    overlay.classList.remove('open');
+  });
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay) overlay.classList.remove('open');
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') overlay.classList.remove('open');
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(function(q){
+    q.addEventListener('click', function(){
+      var item = q.closest('.faq-item');
+      var a = item.querySelector('.faq-a');
+      var wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(function(el){
+        el.classList.remove('open');
+        el.querySelector('.faq-a').style.maxHeight = null;
+      });
+      if(!wasOpen){
+        item.classList.add('open');
+        a.style.maxHeight = a.scrollHeight + 'px';
+      }
+    });
+  });
+</script>

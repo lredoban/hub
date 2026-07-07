@@ -1,0 +1,585 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ancre — Le carnet de liaison numérique pour un parent âgé à domicile</title>
+<meta name="description" content="Ancre remplace le cahier posé sur le frigo : un carnet de liaison numérique partagé entre la famille et les auxiliaires de vie, sans compte, accessible par QR code. Médication, rendez-vous, fiche urgence.">
+<meta property="og:title" content="Ancre — Le carnet de liaison numérique pour un parent âgé à domicile">
+<meta property="og:description" content="Toute la famille sait ce qui se passe chez vos parents, même à 500 km. Sans compte pour les intervenants, juste un QR code sur le frigo.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%93%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1f2d2b;
+    --paper:#faf7f1;
+    --blue:#2b5f7a;
+    --blue-deep:#1c4358;
+    --blue-soft:#e4eef2;
+    --sun:#e8a33d;
+    --line:#d9d2c4;
+    --green-ok:#4c7a5a;
+    --radius:18px;
+    font-size:18px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Karla', sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    line-height:1.1;
+    margin:0 0 .5em;
+    letter-spacing:-.01em;
+  }
+  p{margin:0 0 1em;}
+  a{color:inherit;}
+  img,svg{display:block;max-width:100%;}
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+  section{padding:88px 0;}
+  @media (max-width:640px){ section{padding:56px 0;} :root{font-size:16.5px;} }
+
+  /* NAV */
+  .nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(250,247,241,.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 24px;
+  }
+  .brand{
+    font-family:'Fraunces', serif;
+    font-weight:600; font-size:1.4rem;
+    display:flex; align-items:center; gap:8px;
+    text-decoration:none;
+  }
+  .brand .mark{
+    width:34px;height:34px;border-radius:9px;
+    background:var(--blue); color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.1rem;
+  }
+  .nav-cta{
+    background:var(--blue); color:#fff;
+    padding:10px 20px; border-radius:999px;
+    font-weight:600; font-size:.92rem;
+    text-decoration:none;
+    white-space:nowrap;
+  }
+
+  /* HERO */
+  .hero{padding-top:64px;}
+  .hero .wrap{
+    display:grid;
+    grid-template-columns:1.15fr .85fr;
+    gap:56px;
+    align-items:center;
+  }
+  @media (max-width:860px){ .hero .wrap{grid-template-columns:1fr;} }
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--sun); color:#3a2a08;
+    padding:8px 16px; border-radius:999px;
+    font-weight:700; font-size:.85rem;
+    margin-bottom:22px;
+  }
+  .hero h1{
+    font-size:clamp(2.3rem, 4.6vw, 3.4rem);
+    color:var(--blue-deep);
+  }
+  .hero .sub{
+    font-size:1.18rem;
+    color:#3f4d4a;
+    max-width:46ch;
+    margin-bottom:32px;
+  }
+  .cta-row{display:flex; gap:14px; flex-wrap:wrap; align-items:center;}
+  .btn{
+    display:inline-block;
+    padding:16px 30px;
+    border-radius:999px;
+    font-weight:700;
+    font-size:1.02rem;
+    text-decoration:none;
+    border:2px solid transparent;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn-primary{
+    background:var(--blue); color:#fff;
+    box-shadow:0 6px 0 var(--blue-deep);
+  }
+  .btn-primary:hover{box-shadow:0 8px 0 var(--blue-deep);}
+  .btn-ghost{
+    background:transparent; border-color:var(--blue);
+    color:var(--blue-deep);
+  }
+  .microcopy{
+    font-size:.88rem; color:#6b756f; margin-top:10px;
+  }
+
+  .hero-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:28px;
+    box-shadow:0 16px 40px rgba(28,67,88,.08);
+  }
+  .hero-card .fridge-label{
+    font-size:.8rem; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--blue); font-weight:700; margin-bottom:14px;
+  }
+  .qr-block{
+    display:flex; gap:18px; align-items:center;
+    background:var(--blue-soft); border-radius:16px; padding:18px;
+    margin-bottom:18px;
+  }
+  .qr-block svg{width:76px;height:76px;flex-shrink:0;}
+  .qr-block .t{font-weight:700; margin-bottom:2px;}
+  .qr-block .d{font-size:.88rem; color:#4a5a58;}
+  .entry{
+    display:flex; gap:12px; padding:12px 0;
+    border-top:1px solid var(--line);
+    font-size:.94rem;
+  }
+  .entry:first-of-type{border-top:none;}
+  .entry .who{
+    width:34px;height:34px;border-radius:50%;
+    background:var(--blue-soft); color:var(--blue-deep);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700; font-size:.85rem; flex-shrink:0;
+  }
+  .entry .who.aux{background:#fbe9d3;color:#8a5a10;}
+  .entry .txt b{display:block;}
+  .entry .time{color:#8a938f; font-size:.8rem;}
+
+  /* PROBLEM */
+  .problem{background:var(--blue-deep); color:#eef4f2;}
+  .problem h2{color:#fff; font-size:clamp(1.8rem,3.4vw,2.4rem); max-width:22ch;}
+  .problem .lede{color:#bcd2da; max-width:60ch; font-size:1.08rem; margin-bottom:44px;}
+  .pain-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+  }
+  @media (max-width:800px){ .pain-grid{grid-template-columns:1fr;} }
+  .pain{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:16px; padding:26px;
+  }
+  .pain .n{
+    font-family:'Fraunces',serif; font-size:1.6rem; color:var(--sun);
+    margin-bottom:10px;
+  }
+  .pain p{color:#dbe7e4; margin:0; font-size:.98rem;}
+
+  /* SOLUTION */
+  .solution h2{color:var(--blue-deep); text-align:center; font-size:clamp(1.9rem,3.6vw,2.5rem);}
+  .solution .lede{
+    text-align:center; max-width:56ch; margin:0 auto 52px; color:#4a5a58; font-size:1.08rem;
+  }
+  .feat-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:22px;
+  }
+  @media (max-width:860px){ .feat-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .feat-grid{grid-template-columns:1fr;} }
+  .feat{
+    border:1px solid var(--line); border-radius:18px; padding:26px;
+    background:#fff;
+  }
+  .feat .ic{
+    width:46px;height:46px;border-radius:12px;
+    background:var(--blue-soft); color:var(--blue-deep);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:16px;
+  }
+  .feat h3{font-size:1.12rem; margin-bottom:6px; color:var(--blue-deep);}
+  .feat p{font-size:.95rem; color:#4a5a58; margin:0;}
+  .feat.soon{border-style:dashed;}
+  .feat.soon .tag{
+    display:inline-block; font-size:.72rem; font-weight:700;
+    color:var(--blue); background:var(--blue-soft);
+    padding:3px 9px; border-radius:999px; margin-bottom:10px;
+  }
+
+  /* HOW */
+  .how{background:#f2ede2;}
+  .how h2{color:var(--blue-deep); text-align:center; font-size:clamp(1.9rem,3.6vw,2.5rem); margin-bottom:52px;}
+  .steps{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:32px;
+    position:relative;
+  }
+  @media (max-width:800px){ .steps{grid-template-columns:1fr;} }
+  .step{text-align:left;}
+  .step .num{
+    font-family:'Fraunces',serif; font-size:2.4rem; color:var(--sun);
+    margin-bottom:8px;
+  }
+  .step h3{color:var(--blue-deep); font-size:1.15rem;}
+  .step p{color:#4a5a58; font-size:.96rem;}
+
+  /* PRICING */
+  .pricing h2{text-align:center; color:var(--blue-deep); font-size:clamp(1.9rem,3.6vw,2.5rem);}
+  .pricing .lede{text-align:center; max-width:52ch; margin:0 auto 48px; color:#4a5a58;}
+  .plans{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px; align-items:stretch;
+  }
+  @media (max-width:900px){ .plans{grid-template-columns:1fr; max-width:420px; margin:0 auto;} }
+  .plan{
+    border:1px solid var(--line); border-radius:20px; padding:32px 28px;
+    background:#fff; display:flex; flex-direction:column;
+  }
+  .plan.feat-plan{
+    border:2px solid var(--blue); box-shadow:0 14px 34px rgba(43,95,122,.12);
+    position:relative;
+  }
+  .plan.feat-plan::before{
+    content:"Le plus choisi";
+    position:absolute; top:-13px; left:50%; transform:translateX(-50%);
+    background:var(--blue); color:#fff; font-size:.75rem; font-weight:700;
+    padding:5px 14px; border-radius:999px;
+  }
+  .plan h3{color:var(--blue-deep); font-size:1.25rem;}
+  .plan .price-row{margin:14px 0 6px; display:flex; align-items:baseline; gap:10px;}
+  .plan .old{text-decoration:line-through; color:#a3a89e; font-size:1.1rem;}
+  .plan .new{font-family:'Fraunces',serif; font-size:2.3rem; color:var(--blue-deep);}
+  .plan .per{color:#7a847f; font-size:.9rem;}
+  .plan .early{color:var(--green-ok); font-weight:700; font-size:.85rem; margin-bottom:20px;}
+  .plan ul{list-style:none; margin:0 0 26px; padding:0; flex:1;}
+  .plan li{
+    padding:8px 0 8px 26px; position:relative; font-size:.95rem; color:#3f4d4a;
+    border-top:1px solid #efece3;
+  }
+  .plan li:first-child{border-top:none;}
+  .plan li::before{
+    content:"✓"; position:absolute; left:0; color:var(--blue); font-weight:700;
+  }
+  .plan .btn{width:100%; text-align:center;}
+
+  /* FAQ */
+  .faq{background:#f2ede2;}
+  .faq h2{text-align:center; color:var(--blue-deep); font-size:clamp(1.9rem,3.6vw,2.5rem); margin-bottom:44px;}
+  .faq-list{max-width:760px; margin:0 auto;}
+  details{
+    background:#fff; border:1px solid var(--line); border-radius:14px;
+    padding:6px 22px; margin-bottom:14px;
+  }
+  summary{
+    cursor:pointer; font-weight:700; padding:16px 0; color:var(--blue-deep);
+    list-style:none; display:flex; justify-content:space-between; align-items:center; gap:16px;
+  }
+  summary::-webkit-details-marker{display:none;}
+  summary::after{content:"+"; font-size:1.4rem; color:var(--blue); flex-shrink:0;}
+  details[open] summary::after{content:"–";}
+  details p{padding-bottom:18px; margin:0; color:#4a5a58; font-size:.97rem;}
+
+  /* FINAL CTA */
+  .final{
+    background:var(--blue); color:#fff; text-align:center;
+  }
+  .final h2{color:#fff; font-size:clamp(1.8rem,3.6vw,2.4rem); max-width:22ch; margin:0 auto 16px;}
+  .final p{color:#dbe7f0; max-width:48ch; margin:0 auto 30px;}
+  .final .btn-primary{background:var(--sun); color:#3a2a08; box-shadow:0 6px 0 #b97a1e;}
+
+  footer{
+    background:var(--blue-deep); color:#a9c1c9; padding:40px 0; font-size:.88rem;
+  }
+  footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;}
+  footer a{text-decoration:underline;}
+
+  /* MODAL */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(28,42,40,.55);
+    display:none; align-items:center; justify-content:center;
+    padding:20px; z-index:100;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:#fff; border-radius:20px; max-width:420px; width:100%;
+    padding:36px 30px; text-align:center;
+    box-shadow:0 24px 60px rgba(0,0,0,.25);
+    animation:pop .18s ease;
+  }
+  @keyframes pop{from{transform:scale(.94);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .modal .emoji{font-size:2.6rem; margin-bottom:12px;}
+  .modal h3{color:var(--blue-deep); margin-bottom:10px; font-size:1.3rem;}
+  .modal p{color:#4a5a58; margin-bottom:24px; font-size:.97rem;}
+  .modal button{
+    background:var(--blue); color:#fff; border:none; padding:13px 28px;
+    border-radius:999px; font-weight:700; cursor:pointer; font-size:.98rem;
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a href="#" class="brand"><span class="mark">⚓</span>Ancre</a>
+    <a href="#pricing" class="nav-cta">Réserver mon tarif early-bird</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <span class="badge">🐣 Early-bird : -50% à vie sur votre abonnement</span>
+      <h1>Le carnet de liaison qui suit vraiment votre parent, même quand vous n'êtes pas là.</h1>
+      <p class="sub">Un journal partagé entre frères et sœurs et auxiliaires de vie, collé au frigo par QR code. Médication, rendez-vous, fiche urgence — sans compte à créer pour les intervenants.</p>
+      <div class="cta-row">
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="early-bird-hero">Réserver ma place early-bird</a>
+        <a href="#comment" class="btn btn-ghost">Voir comment ça marche</a>
+      </div>
+      <p class="microcopy">Places limitées · aucun engagement · paiement sécurisé au lancement</p>
+    </div>
+    <div class="hero-card" aria-hidden="true">
+      <div class="fridge-label">📋 Sur le frigo de Papa — flashé ce matin</div>
+      <div class="qr-block">
+        <svg viewBox="0 0 100 100"><rect width="100" height="100" rx="10" fill="#1c4358"/><g fill="#faf7f1"><rect x="14" y="14" width="22" height="22"/><rect x="64" y="14" width="22" height="22"/><rect x="14" y="64" width="22" height="22"/><rect x="20" y="20" width="10" height="10" fill="#1c4358"/><rect x="70" y="20" width="10" height="10" fill="#1c4358"/><rect x="20" y="70" width="10" height="10" fill="#1c4358"/><rect x="44" y="14" width="8" height="8"/><rect x="44" y="30" width="8" height="8"/><rect x="44" y="46" width="8" height="8"/><rect x="58" y="46" width="8" height="8"/><rect x="72" y="46" width="8" height="8"/><rect x="44" y="62" width="8" height="8"/><rect x="44" y="78" width="8" height="8"/><rect x="60" y="70" width="8" height="8"/><rect x="76" y="78" width="8" height="8"/></g></svg>
+        <div>
+          <div class="t">Aucun compte requis</div>
+          <div class="d">L'auxiliaire flashe, écrit, repart. 15 secondes.</div>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="who aux">MK</div>
+        <div class="txt"><b>Marie K. — passage 8h</b>Traitement du matin pris. Léger étourdissement en se levant, à surveiller.<div class="time">Aujourd'hui, 08h12</div></div>
+      </div>
+      <div class="entry">
+        <div class="who">S</div>
+        <div class="txt"><b>Sophie (fille)</b>Merci Marie ! J'appelle le Dr Ferrand pour avancer le rdv de contrôle.<div class="time">Aujourd'hui, 09h40</div></div>
+      </div>
+      <div class="entry">
+        <div class="who">T</div>
+        <div class="txt"><b>Thomas (fils)</b>Fiche urgence mise à jour avec le nouveau cardiologue.<div class="time">Hier, 19h05</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="problem">
+  <div class="wrap">
+    <h2>Vous connaissez déjà ce cahier posé sur le frigo.</h2>
+    <p class="lede">Celui qui se perd, qu'on oublie de lire, où l'écriture de l'auxiliaire du soir est illisible, et qu'on découvre trois jours après un rendez-vous manqué — depuis Lyon, Lille ou Bordeaux.</p>
+    <div class="pain-grid">
+      <div class="pain">
+        <div class="n">01</div>
+        <p>Chaque intervenant note sur son propre carnet, dans son coin. Personne n'a la vue d'ensemble — surtout pas vous, à 500 km.</p>
+      </div>
+      <div class="pain">
+        <div class="n">02</div>
+        <p>Un appel manqué de l'auxiliaire, un SMS perdu dans le fil familial : l'info importante n'arrive jamais à la bonne personne au bon moment.</p>
+      </div>
+      <div class="pain">
+        <div class="n">03</div>
+        <p>Aux urgences, personne ne sait dire quels médicaments prend votre parent, ni qui appeler en premier. La fiche est restée sur le frigo, à 500 km.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="solution" id="solution">
+  <div class="wrap">
+    <h2>Un seul endroit, tout le monde à jour</h2>
+    <p class="lede">Ancre n'est pas un dossier médical. C'est le carnet de liaison, mais numérique — celui que toute la fratrie peut lire, même sans y être.</p>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="ic">📋</div>
+        <h3>Journal partagé</h3>
+        <p>Chaque passage, chaque observation, horodaté et signé par l'intervenant. Fini les carnets qui se contredisent.</p>
+      </div>
+      <div class="feat">
+        <div class="ic">📱</div>
+        <h3>QR code, zéro compte</h3>
+        <p>Les auxiliaires de vie flashent le code collé au frigo et écrivent en 15 secondes. Aucune app à installer, aucun mot de passe à retenir.</p>
+      </div>
+      <div class="feat">
+        <div class="ic">💊</div>
+        <h3>Suivi médication</h3>
+        <p>Qui a donné quoi, à quelle heure. Une case cochée, une trace claire pour toute la famille.</p>
+      </div>
+      <div class="feat">
+        <div class="ic">📅</div>
+        <h3>Rendez-vous partagés</h3>
+        <p>Consultations, kiné, labo : visibles par tous, pour que quelqu'un pense à appeler avant qu'il soit trop tard.</p>
+      </div>
+      <div class="feat">
+        <div class="ic">🆘</div>
+        <h3>Fiche urgence</h3>
+        <p>Allergies, contacts, médecin traitant, antécédents clés. Accessible en un flash, même par les pompiers.</p>
+      </div>
+      <div class="feat soon">
+        <span class="tag">Bientôt</span>
+        <div class="ic">🔔</div>
+        <h3>Alertes fratrie</h3>
+        <p>Une notification douce quand une info importante est ajoutée — sans harceler personne de rappels inutiles.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="comment">
+  <div class="wrap">
+    <h2>Trois étapes, quinze minutes</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <h3>Vous créez le carnet</h3>
+        <p>Nom, adresse, informations essentielles de votre parent. Vous invitez frères, sœurs et intervenants.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h3>Vous imprimez le QR code</h3>
+        <p>Un carré à coller sur le frigo, la porte d'entrée ou le classeur médical. Aucune inscription pour les intervenants.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h3>Toute la famille suit</h3>
+        <p>Chaque passage, chaque note, chaque rendez-vous remonte au même endroit. Vous consultez depuis votre téléphone, où que vous soyez.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <h2>Le prix d'un café par semaine</h2>
+    <p class="lede">Tarif early-bird valable à vie pour les premières familles inscrites. Places limitées.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Essentiel</h3>
+        <div class="price-row"><span class="old">9€</span><span class="new">4,50€</span><span class="per">/mois</span></div>
+        <div class="early">🐣 Tarif early-bird à vie</div>
+        <ul>
+          <li>Journal de liaison illimité</li>
+          <li>Fiche urgence</li>
+          <li>Jusqu'à 4 membres famille</li>
+          <li>QR code intervenants illimités</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="essentiel">Je réserve mon tarif</a>
+      </div>
+      <div class="plan feat-plan">
+        <h3>Famille</h3>
+        <div class="price-row"><span class="old">15€</span><span class="new">7,50€</span><span class="per">/mois</span></div>
+        <div class="early">🐣 Tarif early-bird à vie</div>
+        <ul>
+          <li>Tout l'Essentiel</li>
+          <li>Suivi médication détaillé</li>
+          <li>Calendrier de rendez-vous partagé</li>
+          <li>Membres famille illimités</li>
+          <li>Export PDF pour les urgences</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="famille">Je réserve mon tarif</a>
+      </div>
+      <div class="plan">
+        <h3>Plusieurs parents</h3>
+        <div class="price-row"><span class="old">25€</span><span class="new">12,50€</span><span class="per">/mois</span></div>
+        <div class="early">🐣 Tarif early-bird à vie</div>
+        <ul>
+          <li>Tout Famille</li>
+          <li>Jusqu'à 3 carnets (parents, beaux-parents)</li>
+          <li>Un tableau de bord unique pour tous</li>
+          <li>Support prioritaire</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="multi-parents">Je réserve mon tarif</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap">
+    <h2>Questions fréquentes</h2>
+    <div class="faq-list">
+      <details open>
+        <summary>C'est disponible quand ? <span></span></summary>
+        <p>Le lancement est imminent. Les familles inscrites en early-bird seront servies en priorité, et gardent leur tarif à moitié prix à vie. Réservez votre place maintenant, on vous prévient dès l'ouverture.</p>
+      </details>
+      <details>
+        <summary>Les auxiliaires de vie doivent-elles créer un compte ?</summary>
+        <p>Non. Elles flashent le QR code collé chez votre parent, écrivent leur note, et c'est tout. Aucune app, aucun mot de passe, aucune friction pour les intervenants.</p>
+      </details>
+      <details>
+        <summary>Ancre remplace-t-il le dossier médical ?</summary>
+        <p>Non, et ce n'est pas son rôle. Ancre reste un carnet de liaison familial : suivi du quotidien, rendez-vous, informations utiles en cas d'urgence. Pas un dossier médical partagé avec les professionnels de santé.</p>
+      </details>
+      <details>
+        <summary>Qui peut voir les informations ?</summary>
+        <p>Seuls les membres de la famille que vous invitez. Les intervenants accédant par QR code peuvent lire et ajouter des notes, sans accéder aux réglages du compte.</p>
+      </details>
+      <details>
+        <summary>Et si mon parent a plusieurs intervenants différents chaque semaine ?</summary>
+        <p>Aucun souci : le QR code reste le même. Chaque nouvel intervenant flashe et écrit, sans configuration ni invitation préalable.</p>
+      </details>
+      <details>
+        <summary>Puis-je annuler à tout moment ?</summary>
+        <p>Oui, sans engagement. Mais gardez en tête que le tarif early-bird à -50% n'est garanti que pour les premières familles inscrites.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2>Ne redécouvrez plus un rendez-vous manqué trois jours trop tard.</h2>
+    <p>Réservez votre tarif early-bird avant le lancement. Places limitées, moitié prix à vie.</p>
+    <a href="#" class="cta-checkout btn btn-primary" data-plan="final-cta">Réserver ma place early-bird</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>⚓ Ancre — le carnet de liaison numérique des aidants familiaux</div>
+    <div><a href="mailto:bonjour@ancre-app.fr">bonjour@ancre-app.fr</a></div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="emoji">🎉</div>
+    <h3>Ouverture des paiements imminente</h3>
+    <p>Ton offre early-bird est réservée. On t'écrit dès que les inscriptions ouvrent — reviens vite pour ne pas la perdre !</p>
+    <button id="modalClose">D'accord, j'attends</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var overlay = document.getElementById('modalOverlay');
+  var closeBtn = document.getElementById('modalClose');
+  document.querySelectorAll('.cta-checkout').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      overlay.classList.add('open');
+    });
+  });
+  function close(){ overlay.classList.remove('open'); }
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay) close();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') close();
+  });
+})();
+</script>
+
+</body>
+</html>

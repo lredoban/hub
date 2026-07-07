@@ -1,0 +1,593 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Argilo — Le logiciel de réservation pour ateliers de céramique</title>
+<meta name="description" content="Créneaux, stages, acomptes, bons cadeaux en marque blanche et suivi des cuissons. Argilo, 0% de commission — contrairement à Wecandoo. Tes élèves restent les tiens.">
+<meta property="og:title" content="Argilo — Le logiciel de réservation pour ateliers de céramique">
+<meta property="og:description" content="0% de commission, tes élèves restent les tiens. Réservation, acomptes, bons cadeaux, suivi des cuissons.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%BA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --clay-50:#fbf5ee;
+    --clay-100:#f3e6d6;
+    --clay-200:#e8d2b6;
+    --clay-300:#d9b78d;
+    --clay-400:#c3925e;
+    --clay-500:#a8703f;
+    --terracotta:#b5502e;
+    --terracotta-dark:#8f3d22;
+    --glaze:#4c6a5a;
+    --glaze-dark:#33473c;
+    --ink:#2a221a;
+    --ink-soft:#5a4d3f;
+    --paper:#fbf5ee;
+    --line:rgba(42,34,26,0.12);
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Karla',sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
+  h1,h2,h3{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    line-height:1.12;
+    margin:0 0 .5em;
+    letter-spacing:-0.01em;
+  }
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px;}
+  .bg-texture{
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(181,80,46,0.05), transparent 45%),
+      radial-gradient(circle at 85% 10%, rgba(76,106,90,0.06), transparent 40%),
+      repeating-linear-gradient(135deg, rgba(42,34,26,0.015) 0px, rgba(42,34,26,0.015) 2px, transparent 2px, transparent 6px);
+  }
+
+  /* NAV */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(251,245,238,0.9);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;max-width:1100px;margin:0 auto;
+  }
+  .logo{
+    display:flex;align-items:center;gap:8px;
+    font-family:'Fraunces',serif;font-weight:700;font-size:1.4rem;color:var(--terracotta-dark);
+    text-decoration:none;
+  }
+  .logo .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--terracotta);display:inline-block;
+  }
+  .nav-cta{
+    background:var(--terracotta);color:#fff;
+    padding:10px 20px;border-radius:999px;
+    font-weight:700;text-decoration:none;font-size:.92rem;
+    box-shadow:0 2px 0 var(--terracotta-dark);
+    transition:transform .15s ease;
+  }
+  .nav-cta:hover{transform:translateY(-1px);}
+
+  /* BADGE */
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--clay-100);border:1px solid var(--clay-300);
+    color:var(--terracotta-dark);
+    padding:6px 14px;border-radius:999px;
+    font-size:.85rem;font-weight:700;
+    margin-bottom:22px;
+  }
+  .badge::before{content:"●";color:var(--terracotta);font-size:.6rem;}
+
+  /* HERO */
+  .hero{padding:76px 0 60px;position:relative;overflow:hidden;}
+  .hero-inner{
+    display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;
+  }
+  .hero h1{font-size:clamp(2.1rem, 4.2vw, 3.4rem);color:var(--ink);}
+  .hero h1 em{
+    font-style:italic;color:var(--terracotta);
+  }
+  .hero p.sub{
+    font-size:1.18rem;color:var(--ink-soft);max-width:52ch;margin-bottom:30px;
+  }
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+  .btn{
+    display:inline-block;text-decoration:none;font-weight:700;
+    padding:15px 28px;border-radius:12px;font-size:1.02rem;
+    transition:transform .15s ease, box-shadow .15s ease;
+    border:none;cursor:pointer;font-family:'Karla',sans-serif;
+  }
+  .btn-primary{
+    background:var(--terracotta);color:#fff;
+    box-shadow:0 4px 0 var(--terracotta-dark);
+  }
+  .btn-primary:hover{transform:translateY(-2px);}
+  .btn-primary:active{transform:translateY(1px);box-shadow:0 2px 0 var(--terracotta-dark);}
+  .btn-ghost{
+    background:transparent;color:var(--ink);
+    border:1.5px solid var(--line);
+  }
+  .hero-note{font-size:.85rem;color:var(--ink-soft);margin-top:10px;}
+
+  .hero-visual{
+    position:relative;background:linear-gradient(160deg,var(--clay-200),var(--clay-100));
+    border-radius:24px;padding:34px;border:1px solid var(--clay-300);
+    box-shadow:0 20px 40px -20px rgba(90,60,30,0.35);
+  }
+  .hero-visual .mock-card{
+    background:var(--paper);border-radius:16px;padding:22px;
+    border:1px solid var(--line);
+  }
+  .mock-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 0;border-bottom:1px dashed var(--line);
+    font-size:.92rem;
+  }
+  .mock-row:last-child{border-bottom:none;}
+  .mock-tag{
+    background:var(--glaze);color:#fff;font-size:.72rem;font-weight:700;
+    padding:3px 9px;border-radius:6px;
+  }
+  .mock-tag.alt{background:var(--terracotta);}
+  .mock-title{font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem;margin-bottom:14px;color:var(--ink);}
+
+  /* SECTION GENERIC */
+  section{padding:70px 0;}
+  .eyebrow{
+    text-transform:uppercase;letter-spacing:.12em;font-size:.8rem;
+    font-weight:700;color:var(--glaze-dark);margin-bottom:10px;
+  }
+  .section-head{max-width:640px;margin-bottom:44px;}
+  .section-head h2{font-size:clamp(1.7rem,3vw,2.3rem);}
+  .section-head p{color:var(--ink-soft);font-size:1.08rem;}
+
+  /* PROBLEM */
+  .problem{background:var(--ink);color:var(--clay-100);}
+  .problem .eyebrow{color:var(--clay-300);}
+  .problem .section-head h2{color:#fff;}
+  .problem .section-head p{color:var(--clay-200);}
+  .pain-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:22px;
+  }
+  .pain-card{
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:var(--radius);padding:26px;
+  }
+  .pain-card .icon{font-size:1.6rem;margin-bottom:12px;display:block;}
+  .pain-card h3{color:#fff;font-size:1.08rem;margin-bottom:8px;}
+  .pain-card p{color:var(--clay-200);font-size:.95rem;margin:0;}
+
+  /* FEATURES */
+  .feature-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  }
+  .feature-card{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:28px;
+  }
+  .feature-card .num{
+    width:38px;height:38px;border-radius:10px;
+    background:var(--clay-100);color:var(--terracotta-dark);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-weight:700;margin-bottom:16px;
+  }
+  .feature-card h3{font-size:1.12rem;margin-bottom:8px;}
+  .feature-card p{color:var(--ink-soft);font-size:.96rem;margin:0;}
+  .feature-card.vision{
+    border-style:dashed;background:var(--clay-50);
+  }
+  .vision-tag{
+    display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;
+    letter-spacing:.06em;color:var(--glaze-dark);background:var(--clay-100);
+    padding:3px 8px;border-radius:6px;margin-bottom:10px;
+  }
+
+  /* HOW IT WORKS */
+  .how{background:var(--clay-100);}
+  .steps{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:30px;position:relative;
+  }
+  .step{position:relative;padding-left:0;}
+  .step .step-num{
+    font-family:'Fraunces',serif;font-size:2.6rem;font-weight:700;
+    color:var(--clay-400);line-height:1;margin-bottom:10px;
+  }
+  .step h3{font-size:1.15rem;margin-bottom:8px;}
+  .step p{color:var(--ink-soft);margin:0;}
+
+  /* PRICING */
+  .pricing-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:stretch;
+  }
+  .plan{
+    background:#fff;border:1.5px solid var(--line);border-radius:18px;
+    padding:32px 26px;display:flex;flex-direction:column;
+  }
+  .plan.featured{
+    border-color:var(--terracotta);
+    box-shadow:0 16px 32px -18px rgba(181,80,46,0.45);
+    position:relative;
+  }
+  .plan.featured::before{
+    content:"Le plus choisi";
+    position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+    background:var(--terracotta);color:#fff;font-size:.72rem;font-weight:700;
+    padding:4px 14px;border-radius:999px;
+  }
+  .plan h3{font-size:1.2rem;margin-bottom:4px;}
+  .plan .plan-desc{color:var(--ink-soft);font-size:.9rem;margin-bottom:20px;}
+  .price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:4px;}
+  .price-old{
+    text-decoration:line-through;color:var(--ink-soft);font-size:1.1rem;font-family:'Fraunces',serif;
+  }
+  .price-new{
+    font-family:'Fraunces',serif;font-weight:700;font-size:2.3rem;color:var(--ink);
+  }
+  .price-per{color:var(--ink-soft);font-size:.9rem;}
+  .early-tag{
+    display:inline-block;background:var(--glaze);color:#fff;font-size:.75rem;font-weight:700;
+    padding:3px 10px;border-radius:6px;margin-bottom:22px;width:fit-content;
+  }
+  .plan ul{list-style:none;margin:0 0 26px;padding:0;flex:1;}
+  .plan ul li{
+    padding:8px 0;border-bottom:1px solid var(--line);font-size:.94rem;
+    display:flex;gap:8px;color:var(--ink-soft);
+  }
+  .plan ul li:last-child{border-bottom:none;}
+  .plan ul li::before{content:"✓";color:var(--glaze);font-weight:700;}
+  .plan .btn{width:100%;text-align:center;}
+
+  /* FAQ */
+  .faq-list{max-width:760px;}
+  details{
+    border-bottom:1px solid var(--line);padding:20px 0;
+  }
+  details summary{
+    cursor:pointer;font-family:'Fraunces',serif;font-weight:600;font-size:1.08rem;
+    list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;
+  }
+  details summary::-webkit-details-marker{display:none;}
+  details summary::after{
+    content:"+";font-size:1.4rem;color:var(--terracotta);flex-shrink:0;
+    transition:transform .2s ease;
+  }
+  details[open] summary::after{transform:rotate(45deg);}
+  details p{color:var(--ink-soft);margin:14px 0 0;font-size:.98rem;max-width:60ch;}
+
+  /* FOOTER */
+  footer{
+    background:var(--ink);color:var(--clay-200);padding:44px 0 30px;
+  }
+  .footer-inner{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+  }
+  footer .logo{color:#fff;}
+  footer .fine{font-size:.85rem;color:var(--clay-300);}
+  .footer-links{display:flex;gap:20px;font-size:.9rem;}
+  .footer-links a{text-decoration:none;color:var(--clay-200);}
+  .footer-links a:hover{color:#fff;}
+
+  /* FINAL CTA */
+  .final-cta{
+    text-align:center;background:linear-gradient(160deg, var(--terracotta), var(--terracotta-dark));
+    color:#fff;border-radius:24px;padding:56px 30px;margin:0 24px;
+  }
+  .final-cta h2{color:#fff;font-size:clamp(1.6rem,3vw,2.2rem);}
+  .final-cta p{color:rgba(255,255,255,0.88);max-width:52ch;margin:0 auto 26px;font-size:1.05rem;}
+  .final-cta .btn-primary{
+    background:#fff;color:var(--terracotta-dark);box-shadow:0 4px 0 rgba(0,0,0,0.2);
+  }
+
+  /* MODAL */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(42,34,26,0.55);
+    display:none;align-items:center;justify-content:center;padding:20px;z-index:200;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:var(--paper);border-radius:18px;padding:36px 30px;max-width:420px;width:100%;
+    text-align:center;box-shadow:0 30px 60px -20px rgba(0,0,0,0.4);
+    border:1px solid var(--clay-200);
+  }
+  .modal .modal-emoji{font-size:2.4rem;margin-bottom:10px;}
+  .modal h3{font-size:1.25rem;margin-bottom:10px;}
+  .modal p{color:var(--ink-soft);margin:0 0 22px;font-size:.98rem;}
+  .modal .btn{width:100%;}
+
+  @media (max-width: 860px){
+    .hero-inner{grid-template-columns:1fr;}
+    .pain-grid,.feature-grid,.steps,.pricing-grid{grid-template-columns:1fr;}
+    .plan.featured{order:-1;}
+    section{padding:50px 0;}
+    .final-cta{margin:0 12px;padding:40px 22px;}
+  }
+</style>
+</head>
+<body class="bg-texture">
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo"><span class="dot"></span>Argilo</a>
+    <a href="#pricing" class="nav-cta">Réserver l'early-bird</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="badge">−50% à vie pour les 100 premiers ateliers</span>
+      <h1>Le logiciel de réservation <em>fait pour la céramique</em>, pas pour n'importe quel loisir créatif</h1>
+      <p class="sub">Créneaux et stages, acomptes en ligne, bons cadeaux en marque blanche, suivi des pièces et des cuissons. Argilo remplace Wecandoo et le carnet à souche — et tes élèves restent les tiens.</p>
+      <div class="hero-ctas">
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="Atelier">Je réserve mon tarif early-bird</a>
+        <a href="#comment-ca-marche" class="btn btn-ghost">Voir comment ça marche</a>
+      </div>
+      <p class="hero-note">0% de commission sur les ventes, contrairement aux 20% pris par Wecandoo. Sans engagement.</p>
+    </div>
+    <div class="hero-visual">
+      <div class="mock-card">
+        <div class="mock-title">Atelier de la Terre Rousse — planning</div>
+        <div class="mock-row"><span>Sam. 14h — Tournage initiation</span><span class="mock-tag">6/8 places</span></div>
+        <div class="mock-row"><span>Bon cadeau — Stage 1 jour</span><span class="mock-tag alt">Acompte reçu</span></div>
+        <div class="mock-row"><span>Cuisson four #12 — 340 °C/h</span><span class="mock-tag">En cours</span></div>
+        <div class="mock-row"><span>Abonnement Mensuel — C. Dubreuil</span><span class="mock-tag alt">Actif</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="problem">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">La galère, on la connaît</p>
+      <h2>Gérer un atelier céramique, c'est jongler avec cinq outils qui ne se parlent pas</h2>
+      <p>Entre les réservations par SMS, les bons cadeaux au format PDF perdus dans les mails, et les cuissons notées sur un post-it collé au four.</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <span class="icon">📋</span>
+        <h3>Le planning au carnet</h3>
+        <p>Un créneau double-réservé, un stage annoncé complet alors qu'il reste deux places — et toi qui recomptes à la main tous les soirs.</p>
+      </div>
+      <div class="pain-card">
+        <span class="icon">🎁</span>
+        <h3>Les bons cadeaux artisanaux</h3>
+        <p>Un fichier Canva envoyé par mail, aucun suivi de validité, et le jour J tu ne sais plus s'il a déjà été utilisé ou pas.</p>
+      </div>
+      <div class="pain-card">
+        <span class="icon">🔥</span>
+        <h3>Les plateformes qui captent tes élèves</h3>
+        <p>Wecandoo prend 20% sur chaque stage et garde le contact client. Le jour où tu pars de la plateforme, tu repars de zéro.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="solution">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">La solution</p>
+      <h2>Tout ce qu'il faut pour faire tourner l'atelier, rien de superflu</h2>
+      <p>Pensé avec des céramistes, pour la réalité d'un atelier : four, planches, terre qui sèche, et élèves qui reviennent.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="num">1</div>
+        <h3>Créneaux &amp; stages en ligne</h3>
+        <p>Cours d'initiation, stages d'un jour, ateliers enfants : ton planning se remplit tout seul, avec gestion des places restantes en temps réel.</p>
+      </div>
+      <div class="feature-card">
+        <div class="num">2</div>
+        <h3>Acomptes automatiques</h3>
+        <p>Fini les no-show. Un acompte est demandé à la réservation, encaissé directement, remboursable selon tes propres règles.</p>
+      </div>
+      <div class="feature-card">
+        <div class="num">3</div>
+        <h3>Bons cadeaux en marque blanche</h3>
+        <p>Vendus depuis ton propre site, à ton nom, avec ton logo. Un code unique, une date de validité, zéro PDF perdu.</p>
+      </div>
+      <div class="feature-card">
+        <div class="num">4</div>
+        <h3>Suivi des pièces &amp; cuissons</h3>
+        <p>Chaque pièce est associée à son élève, sa fournée, son émail. Fini les étiquettes en carton qui se décollent au séchage.</p>
+      </div>
+      <div class="feature-card">
+        <div class="num">5</div>
+        <h3>Abonnements cours réguliers</h3>
+        <p>Prélèvement mensuel automatique pour tes élèves fidèles, avec accès prioritaire aux créneaux de la semaine.</p>
+      </div>
+      <div class="feature-card vision">
+        <span class="vision-tag">Bientôt</span>
+        <h3>Fiches techniques d'émaux</h3>
+        <p>Une bibliothèque de recettes d'émaux et de courbes de cuisson partagée entre ateliers Argilo, avec calcul de coût matière.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="comment-ca-marche" class="how">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Comment ça marche</p>
+      <h2>En ligne en une soirée, pas besoin d'un mois de formation</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Tu configures ton atelier</h3>
+        <p>Tes créneaux, tes stages, tes tarifs et ta charte visuelle pour les bons cadeaux — 20 minutes suffisent.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Tu partages ton lien de résa</h3>
+        <p>Sur ton site, ta bio Instagram, tes flyers. Les élèves réservent et paient leur acompte directement.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Tu pilotes depuis un seul écran</h3>
+        <p>Planning, cuissons, bons cadeaux et abonnements au même endroit. Toi, la terre, et rien d'autre à gérer.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head" style="margin-left:auto;margin-right:auto;text-align:center;">
+      <p class="eyebrow" style="text-align:center;">Tarifs early-bird</p>
+      <h2>Moitié prix, à vie, pour les premiers ateliers</h2>
+      <p style="margin:0 auto;">Aucune commission sur tes ventes, quel que soit le plan. Places early-bird limitées.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="plan">
+        <h3>Solo</h3>
+        <p class="plan-desc">Pour l'atelier individuel qui débute la vente en ligne.</p>
+        <div class="price-row"><span class="price-old">29€</span><span class="price-new">14,50€</span><span class="price-per">/mois</span></div>
+        <span class="early-tag">Early-bird à vie</span>
+        <ul>
+          <li>Planning créneaux &amp; stages</li>
+          <li>Acomptes en ligne</li>
+          <li>50 bons cadeaux/mois</li>
+          <li>1 utilisateur</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="Solo">Réserver ce tarif</a>
+      </div>
+      <div class="plan featured">
+        <h3>Atelier</h3>
+        <p class="plan-desc">Le plus adapté pour un atelier avec cours réguliers.</p>
+        <div class="price-row"><span class="price-old">49€</span><span class="price-new">24,50€</span><span class="price-per">/mois</span></div>
+        <span class="early-tag">Early-bird à vie</span>
+        <ul>
+          <li>Tout Solo, sans limite</li>
+          <li>Bons cadeaux illimités</li>
+          <li>Suivi pièces &amp; cuissons</li>
+          <li>Abonnements élèves</li>
+          <li>3 utilisateurs</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="Atelier">Réserver ce tarif</a>
+      </div>
+      <div class="plan">
+        <h3>Collectif</h3>
+        <p class="plan-desc">Pour les ateliers à plusieurs céramistes ou plusieurs fours.</p>
+        <div class="price-row"><span class="price-old">59€</span><span class="price-new">29,50€</span><span class="price-per">/mois</span></div>
+        <span class="early-tag">Early-bird à vie</span>
+        <ul>
+          <li>Tout Atelier</li>
+          <li>Utilisateurs illimités</li>
+          <li>Multi-fours &amp; multi-sites</li>
+          <li>Support prioritaire</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="Collectif">Réserver ce tarif</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Questions fréquentes</p>
+      <h2>Tout ce que tu te demandes avant de te lancer</h2>
+    </div>
+    <div class="faq-list">
+      <details open>
+        <summary>C'est disponible quand ?</summary>
+        <p>Honnêtement : pas encore. Argilo est en construction et le lancement est imminent. Les early-birds qui réservent aujourd'hui seront prévenus et onboardés en premier, et paieront leur abonnement moitié prix à vie.</p>
+      </details>
+      <details>
+        <summary>Est-ce que je suis engagé si je réserve mon tarif early-bird maintenant ?</summary>
+        <p>Non. Réserver ta place ne te débite rien pour l'instant : ça garantit simplement ton tarif réduit et ta priorité au lancement.</p>
+      </details>
+      <details>
+        <summary>Wecandoo prend déjà mes réservations, pourquoi changer ?</summary>
+        <p>Wecandoo prélève jusqu'à 20% de commission et garde la relation client — l'élève réserve "chez Wecandoo", pas chez toi. Avec Argilo, la réservation se fait sur ton site, tu gardes 100% du prix et le contact reste le tien.</p>
+      </details>
+      <details>
+        <summary>Puis-je vendre des bons cadeaux sans changer de site internet ?</summary>
+        <p>Oui. Le module bons cadeaux s'intègre à ton site actuel (WordPress, Wix, Instagram) via un simple lien ou un bouton à coller, sans refonte.</p>
+      </details>
+      <details>
+        <summary>Est-ce adapté si je ne fais que des stages ponctuels, sans cours réguliers ?</summary>
+        <p>Tout à fait. Les créneaux et stages fonctionnent indépendamment des abonnements — tu actives uniquement ce dont tu as besoin.</p>
+      </details>
+      <details>
+        <summary>Mes données (élèves, pièces, cuissons) m'appartiennent-elles ?</summary>
+        <p>Oui, entièrement. Export possible à tout moment, aucune revente de données, aucune dépendance à une marketplace tierce.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="final-cta">
+    <h2>Ton atelier mérite mieux qu'un carnet à souche</h2>
+    <p>Réserve ta place early-bird aujourd'hui : tarif à moitié prix garanti à vie, et tu seras parmi les premiers ateliers à passer sur Argilo.</p>
+    <a href="#" class="cta-checkout btn btn-primary" data-plan="Atelier">Je réserve mon tarif early-bird</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <a href="#" class="logo"><span class="dot"></span>Argilo</a>
+    <div class="footer-links">
+      <a href="#solution">Fonctionnalités</a>
+      <a href="#pricing">Tarifs</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <p class="fine">© 2026 Argilo — Fait pour les ateliers céramique, pas pour n'importe quel loisir créatif.</p>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-emoji">🎉</div>
+    <h3>Ouverture des paiements imminente</h3>
+    <p>Ton offre early-bird est réservée. Reviens très bientôt : on t'écrira dès que les inscriptions ouvrent officiellement pour valider ton tarif à moitié prix.</p>
+    <button class="btn btn-primary" id="modalClose">Compris, à très vite</button>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var overlay = document.getElementById('modalOverlay');
+    var closeBtn = document.getElementById('modalClose');
+    document.querySelectorAll('.cta-checkout').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        overlay.classList.add('open');
+      });
+    });
+    function closeModal(){ overlay.classList.remove('open'); }
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', function(e){
+      if(e.target === overlay) closeModal();
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeModal();
+    });
+  })();
+</script>
+
+</body>
+</html>

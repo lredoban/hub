@@ -1,0 +1,681 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seuilo — le copilote du passage à la TVA pour micro-entrepreneurs</title>
+<meta name="description" content="Simulateur de seuils TVA, checklist de passage au réel, rappels CA3 : Seuilo t'évite les mauvaises surprises administratives. Sans jargon, sans comptable à 100€/mois.">
+<meta property="og:title" content="Seuilo — le copilote du passage à la TVA">
+<meta property="og:description" content="Simulateur de seuils, checklist de passage au réel, rappels CA3. Le passage à la TVA sans y laisser ta santé mentale.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23E8734A'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' font-family='Georgia,serif' fill='%23FFF6EC'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF6EC;
+    --cream-2:#FCEEDC;
+    --paper:#FFFDF9;
+    --ink:#2B2118;
+    --ink-soft:#5B4C3D;
+    --rust:#E8734A;
+    --rust-dark:#C85A34;
+    --olive:#7C8B5A;
+    --olive-dark:#5F6E42;
+    --gold:#D9A441;
+    --line:#EAD9C4;
+    --shadow: 0 10px 30px -12px rgba(60,40,20,0.25);
+    --radius: 18px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Public Sans', system-ui, sans-serif;
+    color:var(--ink);
+    background:var(--cream);
+    line-height:1.55;
+  }
+  h1,h2,h3,.font-display{
+    font-family:'Fraunces', Georgia, serif;
+    color:var(--ink);
+    font-weight:600;
+    line-height:1.12;
+    margin:0;
+  }
+  img,svg{max-width:100%;display:block;}
+  a{color:inherit;}
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+  /* NAV */
+  header.site{
+    position:sticky; top:0; z-index:50;
+    background:rgba(255,246,236,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 24px;
+    max-width:1080px; margin:0 auto;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Fraunces', serif; font-weight:700; font-size:1.35rem;
+  }
+  .brand-mark{
+    width:34px;height:34px;border-radius:9px;
+    background:var(--rust);
+    color:var(--cream);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif; font-weight:700; font-size:1.1rem;
+  }
+  .nav-cta{
+    background:var(--ink);
+    color:var(--cream);
+    border:none;
+    padding:10px 20px;
+    border-radius:999px;
+    font-weight:600;
+    font-size:0.92rem;
+    cursor:pointer;
+    text-decoration:none;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .nav-cta:hover{background:var(--rust-dark); transform:translateY(-1px);}
+
+  /* HERO */
+  .hero{
+    padding:76px 0 60px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute;
+    top:-120px; right:-160px;
+    width:480px;height:480px;
+    background:radial-gradient(circle, rgba(232,115,74,0.18), transparent 70%);
+    z-index:0;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    bottom:-160px; left:-140px;
+    width:420px;height:420px;
+    background:radial-gradient(circle, rgba(124,139,90,0.16), transparent 70%);
+    z-index:0;
+  }
+  .hero-inner{position:relative; z-index:1; text-align:center; max-width:760px; margin:0 auto;}
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--cream-2);
+    border:1px solid var(--line);
+    color:var(--rust-dark);
+    font-weight:700;
+    font-size:0.82rem;
+    letter-spacing:.02em;
+    padding:7px 16px;
+    border-radius:999px;
+    margin-bottom:22px;
+  }
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--olive);}
+  .hero h1{
+    font-size:clamp(2.2rem, 5vw, 3.4rem);
+    letter-spacing:-0.01em;
+  }
+  .hero h1 em{
+    font-style:normal;
+    color:var(--rust-dark);
+    background:linear-gradient(180deg, transparent 62%, rgba(232,115,74,0.28) 62%);
+  }
+  .hero p.sub{
+    margin:22px auto 0;
+    font-size:1.15rem;
+    color:var(--ink-soft);
+    max-width:600px;
+  }
+  .hero-ctas{
+    margin-top:34px;
+    display:flex; gap:14px; justify-content:center; flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:15px 28px;
+    border-radius:999px;
+    font-weight:700;
+    font-size:1rem;
+    text-decoration:none;
+    cursor:pointer;
+    border:none;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .btn-primary{
+    background:var(--rust);
+    color:var(--cream);
+    box-shadow:var(--shadow);
+  }
+  .btn-primary:hover{background:var(--rust-dark); transform:translateY(-2px);}
+  .btn-ghost{
+    background:transparent;
+    color:var(--ink);
+    border:1.5px solid var(--ink);
+  }
+  .btn-ghost:hover{background:var(--ink); color:var(--cream);}
+  .hero-note{
+    margin-top:16px;
+    font-size:0.86rem;
+    color:var(--ink-soft);
+  }
+
+  /* mock */
+  .hero-mock{
+    margin:52px auto 0;
+    max-width:640px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:22px 24px;
+    text-align:left;
+  }
+  .hero-mock .row{display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px dashed var(--line);}
+  .hero-mock .row:last-child{border-bottom:none;}
+  .hero-mock .label{color:var(--ink-soft); font-size:0.92rem;}
+  .hero-mock .val{font-weight:700;}
+  .hero-mock .val.warn{color:var(--rust-dark);}
+  .progress{height:8px; background:var(--cream-2); border-radius:999px; overflow:hidden; margin-top:6px;}
+  .progress > div{height:100%; background:linear-gradient(90deg, var(--gold), var(--rust)); width:83%;}
+
+  section{padding:76px 0;}
+  .section-title{
+    text-align:center;
+    max-width:640px;
+    margin:0 auto 48px;
+  }
+  .section-title .kicker{
+    display:block;
+    color:var(--rust-dark);
+    font-weight:700;
+    font-size:0.85rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    margin-bottom:12px;
+  }
+  .section-title h2{font-size:clamp(1.7rem, 3.4vw, 2.3rem);}
+  .section-title p{color:var(--ink-soft); margin-top:14px; font-size:1.05rem;}
+
+  /* PROBLEM */
+  .problem{background:var(--paper); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .problem-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:22px;
+    max-width:980px; margin:0 auto;
+  }
+  .problem-card{
+    background:var(--cream);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px 24px;
+  }
+  .problem-card .icon{
+    width:42px;height:42px;border-radius:11px;
+    background:var(--cream-2);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:16px;
+  }
+  .problem-card h3{font-size:1.08rem; margin-bottom:8px;}
+  .problem-card p{color:var(--ink-soft); font-size:0.95rem; margin:0;}
+
+  /* FEATURES */
+  .features-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:24px;
+  }
+  .feature-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:28px 26px;
+    box-shadow:0 6px 18px -14px rgba(60,40,20,0.3);
+  }
+  .feature-card .num{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    color:var(--rust);
+    font-size:0.95rem;
+    margin-bottom:14px;
+    display:block;
+  }
+  .feature-card h3{font-size:1.15rem; margin-bottom:10px;}
+  .feature-card p{color:var(--ink-soft); font-size:0.95rem; margin:0;}
+  .feature-card.soon{border-style:dashed; opacity:0.85;}
+  .tag-soon{
+    display:inline-block;
+    font-size:0.7rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    color:var(--olive-dark);
+    background:#EEF0E1;
+    padding:3px 9px;
+    border-radius:999px;
+    margin-bottom:10px;
+  }
+
+  /* HOW */
+  .how{background:var(--cream-2);}
+  .steps{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:28px;
+    max-width:980px; margin:0 auto;
+    counter-reset:step;
+  }
+  .step{text-align:center; position:relative;}
+  .step .step-num{
+    width:52px; height:52px;
+    border-radius:50%;
+    background:var(--paper);
+    border:2px solid var(--rust);
+    color:var(--rust-dark);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif; font-weight:700; font-size:1.3rem;
+    margin:0 auto 18px;
+  }
+  .step h3{font-size:1.08rem; margin-bottom:8px;}
+  .step p{color:var(--ink-soft); font-size:0.93rem; margin:0;}
+
+  /* PRICING */
+  .pricing-grid{
+    display:grid; grid-template-columns:repeat(2, 1fr); gap:26px;
+    max-width:820px; margin:0 auto;
+  }
+  .plan{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:34px 30px;
+    display:flex; flex-direction:column;
+    position:relative;
+  }
+  .plan.featured{
+    border:2px solid var(--rust);
+    box-shadow:var(--shadow);
+  }
+  .plan-badge{
+    position:absolute; top:-13px; right:24px;
+    background:var(--rust);
+    color:var(--cream);
+    font-size:0.75rem;
+    font-weight:700;
+    padding:5px 13px;
+    border-radius:999px;
+  }
+  .plan h3{font-size:1.3rem; margin-bottom:6px;}
+  .plan .plan-desc{color:var(--ink-soft); font-size:0.93rem; margin-bottom:20px;}
+  .plan .price-row{display:flex; align-items:baseline; gap:10px; margin-bottom:4px;}
+  .plan .price-old{text-decoration:line-through; color:#B3A08A; font-size:1.1rem;}
+  .plan .price-new{font-family:'Fraunces', serif; font-weight:700; font-size:2.1rem;}
+  .plan .price-period{color:var(--ink-soft); font-size:0.9rem;}
+  .plan .early{color:var(--rust-dark); font-weight:700; font-size:0.85rem; margin-bottom:22px;}
+  .plan ul{list-style:none; padding:0; margin:0 0 26px; flex:1;}
+  .plan li{
+    display:flex; gap:10px; align-items:flex-start;
+    font-size:0.93rem; color:var(--ink); margin-bottom:11px;
+  }
+  .plan li::before{
+    content:"✓";
+    color:var(--olive-dark);
+    font-weight:700;
+    flex-shrink:0;
+  }
+  .plan .btn{width:100%; justify-content:center;}
+
+  /* FAQ */
+  .faq{background:var(--paper); border-top:1px solid var(--line);}
+  .faq-list{max-width:720px; margin:0 auto;}
+  details{
+    border-bottom:1px solid var(--line);
+    padding:18px 4px;
+  }
+  details summary{
+    cursor:pointer;
+    font-weight:700;
+    font-size:1.02rem;
+    list-style:none;
+    display:flex; justify-content:space-between; align-items:center;
+    gap:16px;
+  }
+  details summary::-webkit-details-marker{display:none;}
+  details summary::after{
+    content:"+";
+    font-family:'Fraunces', serif;
+    font-size:1.4rem;
+    color:var(--rust);
+    flex-shrink:0;
+  }
+  details[open] summary::after{content:"–";}
+  details p{color:var(--ink-soft); margin:12px 0 2px; font-size:0.96rem;}
+
+  /* FOOTER */
+  footer{
+    padding:40px 0;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:0.86rem;
+  }
+  footer .brand{justify-content:center; margin-bottom:14px; font-size:1.1rem;}
+  footer a.link{text-decoration:underline; color:var(--ink-soft);}
+
+  /* MODAL */
+  .modal-backdrop{
+    position:fixed; inset:0;
+    background:rgba(43,33,24,0.55);
+    display:none;
+    align-items:center; justify-content:center;
+    padding:20px;
+    z-index:200;
+  }
+  .modal-backdrop.open{display:flex;}
+  .modal{
+    background:var(--paper);
+    border-radius:20px;
+    max-width:420px;
+    width:100%;
+    padding:34px 30px 30px;
+    text-align:center;
+    box-shadow:0 20px 60px -20px rgba(0,0,0,0.5);
+    position:relative;
+    animation:pop .18s ease;
+  }
+  @keyframes pop{from{transform:scale(0.94); opacity:0;} to{transform:scale(1); opacity:1;}}
+  .modal .close{
+    position:absolute; top:14px; right:16px;
+    background:none; border:none; font-size:1.3rem;
+    cursor:pointer; color:var(--ink-soft);
+  }
+  .modal .emoji{font-size:2.4rem; margin-bottom:10px;}
+  .modal h3{font-size:1.25rem; margin-bottom:10px;}
+  .modal p{color:var(--ink-soft); font-size:0.95rem; margin:0 0 22px;}
+
+  @media (max-width:820px){
+    .problem-grid, .features-grid, .steps{grid-template-columns:1fr;}
+    .pricing-grid{grid-template-columns:1fr;}
+    section{padding:56px 0;}
+    .hero{padding:56px 0 44px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="nav">
+    <div class="brand"><span class="brand-mark">S</span>Seuilo</div>
+    <a href="#pricing" class="nav-cta cta-checkout" data-plan="nav">Réserver mon tarif early-bird</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <span class="badge"><span class="dot"></span> Early-bird : -50% à vie pour les 200 premiers</span>
+      <h1>Le seuil de TVA arrive.<br>Ne le découvre pas <em>en retard</em>.</h1>
+      <p class="sub">Seuilo simule tes seuils en temps réel, te dit exactement quoi faire le jour où tu les dépasses, et te rappelle tes déclarations CA3. En français normal, pas en jargon d'expert-comptable.</p>
+      <div class="hero-ctas">
+        <a href="#" class="btn btn-primary cta-checkout" data-plan="hero-guide">Je réserve mon accès early-bird</a>
+        <a href="#comment-ca-marche" class="btn btn-ghost">Voir comment ça marche</a>
+      </div>
+      <p class="hero-note">Sans engagement · Places limitées · Paiement sécurisé</p>
+
+      <div class="hero-mock">
+        <div class="row">
+          <span class="label">Chiffre d'affaires cumulé 2026 (prestations de services)</span>
+          <span class="val">28 400 €</span>
+        </div>
+        <div class="row">
+          <span class="label">Seuil majoré TVA</span>
+          <span class="val warn">34 400 €</span>
+        </div>
+        <div class="progress"><div></div></div>
+        <div class="row" style="border-bottom:none; padding-top:16px;">
+          <span class="label">Estimation avant dépassement</span>
+          <span class="val warn">≈ 6 semaines</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="problem">
+    <div class="wrap">
+      <div class="section-title">
+        <span class="kicker">La douleur, en vrai</span>
+        <h2>Tu gères déjà tout seul. Ça ne devrait pas être à toi de décoder le BOFiP.</h2>
+        <p>Le passage à la TVA, c'est le moment où la micro-entreprise devient un vrai casse-tête administratif — et personne ne t'explique clairement les règles.</p>
+      </div>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="icon">📉</div>
+          <h3>Tu découvres le dépassement trop tard</h3>
+          <p>Un relevé de compte, une facture en plus, et tu réalises que tu as franchi le seuil il y a trois semaines — sans le savoir.</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">📄</div>
+          <h3>La doc officielle est illisible</h3>
+          <p>Seuil de base, seuil majoré, tolérance, période de référence glissante... Le service-public.fr n'a pas été écrit pour des humains pressés.</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">💸</div>
+          <h3>Un comptable, c'est 100€+/mois</h3>
+          <p>Pour une question de seuils et deux déclarations par trimestre, embaucher un cabinet comptable coûte souvent plus cher que ce que ça rapporte.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="wrap">
+      <div class="section-title">
+        <span class="kicker">La solution</span>
+        <h2>Un copilote, pas un cours de fiscalité</h2>
+        <p>Seuilo transforme la mécanique des seuils de TVA en actions concrètes, au bon moment.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="num">01</span>
+          <h3>Simulateur de seuils en temps réel</h3>
+          <p>Renseigne ton activité et ton CA du moment : Seuilo calcule ta marge avant dépassement, seuil de base et seuil majoré inclus.</p>
+        </div>
+        <div class="feature-card">
+          <span class="num">02</span>
+          <h3>Checklist de passage au réel</h3>
+          <p>La liste exacte des démarches à faire (URSSAF, guichet unique, facturation) dans l'ordre, avec les liens directs vers les bons formulaires.</p>
+        </div>
+        <div class="feature-card">
+          <span class="num">03</span>
+          <h3>Rappels de déclaration CA3</h3>
+          <p>Fini les pénalités de retard : Seuilo t'alerte avant chaque échéance de déclaration, avec un résumé de ce que tu dois y mettre.</p>
+        </div>
+        <div class="feature-card">
+          <span class="num">04</span>
+          <h3>Guides en français clair</h3>
+          <p>Chaque notion expliquée sans jargon : franchise en base, tolérance, TVA collectée vs déductible, mentions obligatoires sur facture.</p>
+        </div>
+        <div class="feature-card soon">
+          <span class="tag-soon">Bientôt</span>
+          <h3>Générateur de factures conformes TVA</h3>
+          <p>Une fois assujetti, génère des factures avec les bonnes mentions légales automatiquement.</p>
+        </div>
+        <div class="feature-card soon">
+          <span class="tag-soon">Bientôt</span>
+          <h3>Estimation de ta TVA à décaisser</h3>
+          <p>Anticipe le montant à mettre de côté chaque trimestre pour ne jamais être pris au dépourvu.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how" id="comment-ca-marche">
+    <div class="wrap">
+      <div class="section-title">
+        <span class="kicker">Comment ça marche</span>
+        <h2>Trois étapes, zéro prise de tête</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Tu renseignes ton activité</h3>
+          <p>Type d'activité, CA actuel, régime : Seuilo situe précisément où tu en es par rapport aux seuils.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Tu reçois ta feuille de route</h3>
+          <p>Une checklist personnalisée et un calendrier de tes prochaines échéances, propres à ta situation.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Tu avances, on te rappelle</h3>
+          <p>Alertes avant les seuils, rappels avant les CA3. Tu gardes le contrôle sans y penser tous les jours.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing" id="pricing">
+    <div class="wrap">
+      <div class="section-title">
+        <span class="kicker">Tarifs</span>
+        <h2>Prix de lancement early-bird, réservé aux 200 premiers</h2>
+        <p>Après le lancement officiel, les tarifs repassent au prix plein. Réserve ta place maintenant.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="plan">
+          <h3>Guide + Outils</h3>
+          <p class="plan-desc">Accès à vie au simulateur, à la checklist et aux guides. Paiement unique.</p>
+          <div class="price-row">
+            <span class="price-old">99 €</span>
+            <span class="price-new">49 €</span>
+            <span class="price-period">une fois</span>
+          </div>
+          <p class="early">-50% early-bird, à vie</p>
+          <ul>
+            <li>Simulateur de seuils illimité</li>
+            <li>Checklist de passage au réel</li>
+            <li>Guides en français clair</li>
+            <li>Mises à jour incluses</li>
+          </ul>
+          <a href="#" class="btn btn-ghost cta-checkout" data-plan="guide-49">Réserver à 49 €</a>
+        </div>
+        <div class="plan featured">
+          <span class="plan-badge">Le plus complet</span>
+          <h3>Copilote mensuel</h3>
+          <p class="plan-desc">Tout le guide, plus les rappels automatiques de déclaration et les mises à jour réglementaires en continu.</p>
+          <div class="price-row">
+            <span class="price-old">9 €</span>
+            <span class="price-new">4,50 €</span>
+            <span class="price-period">/mois</span>
+          </div>
+          <p class="early">-50% early-bird tant que tu restes abonné</p>
+          <ul>
+            <li>Tout le plan Guide + Outils</li>
+            <li>Rappels de déclaration CA3</li>
+            <li>Alertes de dépassement de seuil</li>
+            <li>Nouveaux outils en avant-première</li>
+          </ul>
+          <a href="#" class="btn btn-primary cta-checkout" data-plan="copilote-mensuel">Réserver à 4,50 €/mois</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq">
+    <div class="wrap">
+      <div class="section-title">
+        <span class="kicker">Questions fréquentes</span>
+        <h2>Avant de te lancer</h2>
+      </div>
+      <div class="faq-list">
+        <details open>
+          <summary>C'est disponible quand ?</summary>
+          <p>Le lancement est imminent. Seuilo est en toute dernière ligne droite. Les early-birds qui réservent maintenant seront servis en premier, avant l'ouverture publique, et gardent leur tarif à -50% à vie.</p>
+        </details>
+        <details>
+          <summary>Est-ce que Seuilo remplace mon comptable ?</summary>
+          <p>Non — Seuilo t'aide à comprendre où tu en es et à ne rien louper côté seuils et déclarations. Pour les cas complexes (TVA intracommunautaire, mix d'activités, etc.), on te recommandera toujours de valider avec un professionnel.</p>
+        </details>
+        <details>
+          <summary>Ça marche pour toutes les activités en micro-entreprise ?</summary>
+          <p>Le simulateur couvre les seuils pour les activités de vente de marchandises et les prestations de services (BIC et BNC), avec leurs seuils spécifiques respectifs.</p>
+        </details>
+        <details>
+          <summary>Je peux annuler l'abonnement mensuel quand je veux ?</summary>
+          <p>Oui, sans engagement. Si tu annules puis reviens, le tarif early-bird n'est garanti que si tu ne l'as jamais interrompu — donc autant en profiter dès maintenant.</p>
+        </details>
+        <details>
+          <summary>Mes données sont-elles stockées quelque part ?</summary>
+          <p>Uniquement ce qui est nécessaire pour calculer tes seuils et te prévenir (CA déclaré, type d'activité). Rien n'est revendu, rien n'est partagé avec l'administration.</p>
+        </details>
+        <details>
+          <summary>Il y a vraiment un nombre limité de places early-bird ?</summary>
+          <p>Oui. Le tarif -50% à vie est réservé aux 200 premières réservations, pour garder un accompagnement de qualité au lancement.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="brand"><span class="brand-mark">S</span>Seuilo</div>
+    <p>Seuilo — le copilote du passage à la TVA pour micro-entrepreneurs. Fait en France, pour les indépendants français.</p>
+    <p style="margin-top:10px;"><a class="link" href="mailto:hello@seuilo.fr">hello@seuilo.fr</a></p>
+    <p style="margin-top:18px; font-size:0.8rem;">© 2026 Seuilo. Tous droits réservés.</p>
+  </div>
+</footer>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <button class="close" id="modalClose" aria-label="Fermer">✕</button>
+    <div class="emoji">🎉</div>
+    <h3>Ouverture des paiements imminente</h3>
+    <p>Ton offre early-bird est réservée. On t'écrit dès que les paiements ouvrent — reviens vite, les places sont limitées.</p>
+    <button class="btn btn-primary" id="modalOk" style="width:100%; justify-content:center;">Compris, à très vite</button>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var backdrop = document.getElementById('modalBackdrop');
+    var closeBtn = document.getElementById('modalClose');
+    var okBtn = document.getElementById('modalOk');
+
+    function openModal(){
+      backdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal(){
+      backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.cta-checkout').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        openModal();
+      });
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    okBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', function(e){
+      if(e.target === backdrop) closeModal();
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeModal();
+    });
+  })();
+</script>
+
+</body>
+</html>

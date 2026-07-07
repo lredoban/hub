@@ -1,0 +1,607 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trèfle — Solitaire, démineur, sudoku, dame de pique. Sans compte, sans blabla.</title>
+<meta name="description" content="Trèfle réunit les grands classiques (solitaire, démineur, sudoku, dame de pique) jouables en 2 secondes, sans compte ni installation. Premium sans pub à -50% en early-bird.">
+<meta property="og:title" content="Trèfle — Les classiques, jouables en 2 secondes">
+<meta property="og:description" content="Solitaire, démineur, sudoku, dame de pique : zéro compte, zéro install, zéro pub agressive. Premium à -50% pour les premiers inscrits.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23f2e8d5'/%3E%3Cpath d='M8 2c-1.1 0-2 .9-2 2 0 .3.1.6.2.8C5.5 4.3 4.8 4 4 4 2.3 4 1 5.3 1 7s1.3 3 3 3c.3 0 .6 0 .9-.1C4.3 10.5 4 11.2 4 12h8c0-.8-.3-1.5-.9-2.1.3.1.6.1.9.1 1.7 0 3-1.3 3-3s-1.3-3-3-3c-.8 0-1.5.3-2.2.8.1-.2.2-.5.2-.8 0-1.1-.9-2-2-2z' fill='%232a9d34'/%3E%3Crect x='7' y='12' width='2' height='3' fill='%235c3a21'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#f2e8d5;
+    --cream-2:#e8dcc0;
+    --ink:#241c14;
+    --ink-soft:#5c4d3a;
+    --green:#2a9d34;
+    --green-dark:#1f7a27;
+    --red:#e63946;
+    --amber:#e8a33d;
+    --line:#241c14;
+    --shadow: 4px 4px 0 var(--ink);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Space Mono', monospace;
+    font-size:16px;
+    line-height:1.6;
+  }
+  h1,h2,h3,.pixel{
+    font-family:'Press Start 2P', monospace;
+    line-height:1.5;
+  }
+  img,svg{max-width:100%;display:block;}
+  a{color:inherit;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  .btn{
+    display:inline-block;
+    font-family:'Press Start 2P', monospace;
+    font-size:.72rem;
+    text-decoration:none;
+    padding:16px 20px;
+    border:3px solid var(--line);
+    background:var(--green);
+    color:#fff;
+    box-shadow:var(--shadow);
+    cursor:pointer;
+    transition:transform .08s ease;
+    letter-spacing:.5px;
+  }
+  .btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);}
+  .btn:hover{filter:brightness(1.05);}
+  .btn.secondary{background:var(--cream);color:var(--ink);}
+  .btn.amber{background:var(--amber);color:var(--ink);}
+  .btn.small{font-size:.6rem;padding:12px 16px;}
+
+  header.nav{
+    position:sticky;top:0;z-index:20;
+    background:var(--cream);
+    border-bottom:3px solid var(--line);
+  }
+  header.nav .wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    padding-top:14px;padding-bottom:14px;
+  }
+  .logo{
+    font-family:'Press Start 2P', monospace;
+    font-size:1rem;
+    display:flex;align-items:center;gap:10px;
+  }
+  .logo .suit{color:var(--green);}
+  nav.links{display:flex;gap:22px;font-size:.85rem;}
+  nav.links a{text-decoration:none;border-bottom:2px solid transparent;}
+  nav.links a:hover{border-bottom-color:var(--ink);}
+
+  .hero{
+    padding:72px 0 64px;
+    border-bottom:3px dashed var(--ink-soft);
+    background-image:
+      radial-gradient(var(--ink-soft) 1px, transparent 1px);
+    background-size:22px 22px;
+    background-position:-11px -11px;
+  }
+  .hero-inner{
+    display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;
+  }
+  .badge{
+    display:inline-block;
+    background:var(--red);color:#fff;
+    font-family:'Press Start 2P', monospace;
+    font-size:.62rem;
+    padding:8px 12px;
+    border:3px solid var(--line);
+    box-shadow:var(--shadow);
+    margin-bottom:22px;
+    transform:rotate(-2deg);
+  }
+  h1{
+    font-size:1.9rem;
+    margin:0 0 18px;
+  }
+  h1 .hi{color:var(--green-dark);}
+  .sub{
+    font-size:1.05rem;
+    color:var(--ink-soft);
+    margin:0 0 28px;
+    max-width:46ch;
+  }
+  .hero-ctas{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:14px;}
+  .hero-note{font-size:.82rem;color:var(--ink-soft);}
+
+  .cabinet{
+    border:4px solid var(--line);
+    background:var(--ink);
+    box-shadow:var(--shadow);
+    padding:18px;
+  }
+  .cabinet .screen{
+    background:#0f2e14;
+    border:3px solid var(--line);
+    padding:20px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+  }
+  .card-face{
+    aspect-ratio:1/1;
+    background:var(--cream);
+    border:2px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Press Start 2P', monospace;
+    font-size:1.1rem;
+  }
+  .card-face.red{color:var(--red);}
+  .card-face.black{color:var(--ink);}
+  .card-face.green{color:var(--green-dark);background:#dff0d8;}
+  .cabinet-label{
+    color:var(--cream);
+    font-family:'Press Start 2P', monospace;
+    font-size:.6rem;
+    text-align:center;
+    margin-top:14px;
+    letter-spacing:1px;
+  }
+
+  section{padding:72px 0;}
+  .section-title{
+    font-size:1.3rem;
+    margin:0 0 12px;
+  }
+  .section-lead{
+    color:var(--ink-soft);
+    max-width:60ch;
+    margin:0 0 40px;
+    font-size:1rem;
+  }
+
+  .problem{background:var(--cream-2);border-bottom:3px dashed var(--ink-soft);border-top:3px dashed var(--ink-soft);}
+  .problem-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  }
+  .problem-card{
+    background:var(--cream);
+    border:3px solid var(--line);
+    padding:22px;
+    box-shadow:var(--shadow);
+  }
+  .problem-card .glyph{font-size:1.6rem;margin-bottom:10px;display:block;}
+  .problem-card h3{font-size:.85rem;margin:0 0 10px;}
+  .problem-card p{margin:0;color:var(--ink-soft);font-size:.92rem;}
+
+  .features-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:22px;
+  }
+  .feature{
+    border:3px solid var(--line);
+    background:var(--cream);
+    padding:22px;
+    box-shadow:var(--shadow);
+  }
+  .feature .tag{
+    display:inline-block;
+    font-family:'Press Start 2P', monospace;
+    font-size:.55rem;
+    background:var(--ink);
+    color:var(--cream);
+    padding:4px 8px;
+    margin-bottom:12px;
+  }
+  .feature .tag.soon{background:var(--amber);color:var(--ink);}
+  .feature h3{font-size:.95rem;margin:0 0 10px;}
+  .feature p{margin:0;color:var(--ink-soft);font-size:.92rem;}
+
+  .how{background:var(--ink);color:var(--cream);border-bottom:3px solid var(--line);}
+  .how .section-title,.how .section-lead{color:var(--cream);}
+  .how .section-lead{color:#c9bfa8;}
+  .steps{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;counter-reset:step;
+  }
+  .step{
+    border:3px solid var(--cream);
+    padding:24px 20px;
+    position:relative;
+  }
+  .step .num{
+    font-family:'Press Start 2P', monospace;
+    font-size:1.4rem;
+    color:var(--green);
+    margin-bottom:14px;
+    display:block;
+  }
+  .step h3{font-size:.85rem;margin:0 0 8px;color:var(--cream);}
+  .step p{margin:0;color:#c9bfa8;font-size:.9rem;}
+
+  .pricing{}
+  .plans{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:stretch;
+  }
+  .plan{
+    border:3px solid var(--line);
+    background:var(--cream);
+    padding:28px 24px;
+    box-shadow:var(--shadow);
+    display:flex;flex-direction:column;
+  }
+  .plan.featured{
+    background:#0f2e14;
+    color:var(--cream);
+    border-color:var(--line);
+    transform:translateY(-8px);
+  }
+  .plan.featured .plan-desc{color:#bcd6bc;}
+  .plan-name{font-family:'Press Start 2P', monospace;font-size:.85rem;margin-bottom:8px;}
+  .plan-desc{color:var(--ink-soft);font-size:.85rem;margin-bottom:20px;min-height:40px;}
+  .price-row{margin-bottom:6px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .price-old{
+    text-decoration:line-through;
+    color:var(--ink-soft);
+    font-family:'Press Start 2P', monospace;
+    font-size:.9rem;
+  }
+  .plan.featured .price-old{color:#8fae8f;}
+  .price-new{
+    font-family:'Press Start 2P', monospace;
+    font-size:1.5rem;
+    color:var(--green-dark);
+  }
+  .plan.featured .price-new{color:#7be084;}
+  .price-period{font-size:.8rem;color:var(--ink-soft);}
+  .plan.featured .price-period{color:#bcd6bc;}
+  .plan ul{list-style:none;margin:18px 0 26px;padding:0;font-size:.88rem;}
+  .plan ul li{margin-bottom:10px;padding-left:22px;position:relative;}
+  .plan ul li::before{content:"■";position:absolute;left:0;color:var(--green);font-size:.7rem;top:4px;}
+  .plan.featured ul li::before{color:var(--amber);}
+  .plan .btn{margin-top:auto;text-align:center;width:100%;}
+  .early-tag{
+    display:inline-block;
+    font-family:'Press Start 2P', monospace;
+    font-size:.55rem;
+    background:var(--red);
+    color:#fff;
+    padding:4px 8px;
+    margin-bottom:14px;
+    transform:rotate(-1deg);
+  }
+
+  .faq{background:var(--cream-2);border-top:3px dashed var(--ink-soft);}
+  .faq-list{max-width:760px;}
+  details{
+    border:3px solid var(--line);
+    background:var(--cream);
+    margin-bottom:14px;
+    padding:16px 20px;
+  }
+  details summary{
+    cursor:pointer;
+    font-family:'Press Start 2P', monospace;
+    font-size:.78rem;
+    list-style:none;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+  }
+  details summary::-webkit-details-marker{display:none;}
+  details summary::after{content:"+";font-size:1.2rem;color:var(--green-dark);}
+  details[open] summary::after{content:"–";}
+  details p{margin:14px 0 2px;color:var(--ink-soft);font-size:.92rem;}
+
+  .final-cta{
+    text-align:center;
+    padding:80px 0;
+    background:var(--ink);
+    color:var(--cream);
+  }
+  .final-cta h2{font-size:1.4rem;margin:0 0 16px;color:var(--cream);}
+  .final-cta p{color:#c9bfa8;margin:0 0 30px;}
+
+  footer{
+    padding:36px 0;
+    border-top:3px solid var(--line);
+    font-size:.82rem;
+    color:var(--ink-soft);
+  }
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:center;}
+  footer .logo{font-size:.85rem;}
+
+  /* modal */
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(36,28,20,.72);
+    display:none;align-items:center;justify-content:center;
+    z-index:100;padding:20px;
+  }
+  .modal-backdrop.open{display:flex;}
+  .modal{
+    background:var(--cream);
+    border:4px solid var(--line);
+    box-shadow:8px 8px 0 var(--ink);
+    max-width:420px;width:100%;
+    padding:32px 28px;
+    text-align:center;
+  }
+  .modal .glyph{font-size:2.2rem;margin-bottom:14px;display:block;}
+  .modal h3{font-family:'Press Start 2P', monospace;font-size:1rem;margin:0 0 14px;}
+  .modal p{color:var(--ink-soft);margin:0 0 24px;font-size:.92rem;}
+  .modal .btn{width:100%;}
+
+  @media (max-width:860px){
+    .hero-inner{grid-template-columns:1fr;}
+    .problem-grid,.features-grid,.steps,.plans{grid-template-columns:1fr;}
+    .plan.featured{transform:none;}
+    nav.links{display:none;}
+    h1{font-size:1.5rem;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <div class="logo"><span class="suit">♣</span>Trèfle</div>
+    <nav class="links">
+      <a href="#solution">Jeux</a>
+      <a href="#pricing">Tarifs</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a href="#pricing" class="btn small amber">Premium -50%</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <div>
+        <span class="badge">EARLY-BIRD −50% · PLACES LIMITÉES</span>
+        <h1>Solitaire, démineur, sudoku, dame de pique. <span class="hi">Ouvre, joue, ferme.</span></h1>
+        <p class="sub">Trèfle réunit les grands classiques dans une seule page. Pas de compte à créer, pas d'appli à installer, pas de popup qui te saute dessus. Ça marche pareil sur ton téléphone au feu rouge et sur ton PC au bureau.</p>
+        <div class="hero-ctas">
+          <a href="#" class="cta-checkout btn" data-plan="premium-vie">Réserver mon Premium à vie</a>
+          <a href="#solution" class="btn secondary">Voir les jeux</a>
+        </div>
+        <p class="hero-note">Gratuit avec pub discrète pour toujours. Premium sans pub réservé aux early-birds au prix moitié.</p>
+      </div>
+      <div class="cabinet">
+        <div class="screen">
+          <div class="card-face red">♦</div>
+          <div class="card-face black">♠</div>
+          <div class="card-face green">9</div>
+          <div class="card-face red">♥</div>
+          <div class="card-face black">♣</div>
+          <div class="card-face green">?</div>
+          <div class="card-face black">A</div>
+          <div class="card-face red">K</div>
+        </div>
+        <p class="cabinet-label">SOLITAIRE · DÉMINEUR · SUDOKU · PIQUE</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="problem">
+    <div class="wrap">
+      <h2 class="section-title">T'as juste 5 minutes, et pourtant...</h2>
+      <p class="section-lead">Tu veux juste une partie de solitaire pendant ta pause. Voilà ce qui t'attend d'habitude.</p>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <span class="glyph">⏳</span>
+          <h3>« Créer un compte »</h3>
+          <p>Email, mot de passe, confirmation, CGU à cocher. Pour un démineur. T'as fermé l'onglet avant la fin.</p>
+        </div>
+        <div class="problem-card">
+          <span class="glyph">📦</span>
+          <h3>« Télécharger l'appli »</h3>
+          <p>180 Mo, autorisations bizarres, mise à jour obligatoire. Pour une partie de sudoku dans le métro.</p>
+        </div>
+        <div class="problem-card">
+          <span class="glyph">🚫</span>
+          <h3>Pubs plein écran toutes les 2 mains</h3>
+          <p>Vidéo de 30 secondes, bouton "fermer" minuscule qui bouge. Tu ranges le téléphone, énervé.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="solution" id="solution">
+    <div class="wrap">
+      <h2 class="section-title">Trèfle, c'est l'inverse</h2>
+      <p class="section-lead">Un onglet, un jeu, zéro friction. Le strict nécessaire, bien fait, et quelques bonus qui arrivent vite.</p>
+      <div class="features-grid">
+        <div class="feature">
+          <span class="tag">DISPO</span>
+          <h3>4 classiques d'entrée</h3>
+          <p>Solitaire Klondike, démineur, sudoku et dame de pique. Les règles que tu connais déjà, sans réapprentissage.</p>
+        </div>
+        <div class="feature">
+          <span class="tag">DISPO</span>
+          <h3>Zéro compte</h3>
+          <p>Tu cliques, tu joues. Ta partie se garde dans ton navigateur, point final.</p>
+        </div>
+        <div class="feature">
+          <span class="tag">DISPO</span>
+          <h3>Pensé mobile d'abord</h3>
+          <p>Glisser-déposer au doigt, boutons assez gros, aucune pub qui recouvre le plateau.</p>
+        </div>
+        <div class="feature">
+          <span class="tag soon">PREMIUM</span>
+          <h3>Zéro pub, jamais</h3>
+          <p>Tu paies une fois ou par mois, la pub disparaît définitivement sur tous tes jeux.</p>
+        </div>
+        <div class="feature">
+          <span class="tag soon">PREMIUM</span>
+          <h3>Statistiques de partie</h3>
+          <p>Temps moyen, meilleur score, séries de victoires. De quoi te la raconter un peu.</p>
+        </div>
+        <div class="feature">
+          <span class="tag soon">PREMIUM</span>
+          <h3>Thèmes de plateau</h3>
+          <p>Tapis vert classique, mode sombre, style rétro 8-bit. Tu choisis ton ambiance.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how">
+    <div class="wrap">
+      <h2 class="section-title">Comment ça marche</h2>
+      <p class="section-lead">Trois étapes, aucune installation.</p>
+      <div class="steps">
+        <div class="step">
+          <span class="num">1</span>
+          <h3>Tu ouvres la page</h3>
+          <p>Sur mobile ou sur PC, depuis n'importe quel navigateur. Aucun téléchargement.</p>
+        </div>
+        <div class="step">
+          <span class="num">2</span>
+          <h3>Tu choisis ton jeu</h3>
+          <p>Solitaire, démineur, sudoku ou dame de pique. La partie démarre direct.</p>
+        </div>
+        <div class="step">
+          <span class="num">3</span>
+          <h3>Tu joues, tu fermes</h3>
+          <p>Ta progression reste sur ton appareil. Tu reviens quand tu veux, sans rien reconfigurer.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing" id="pricing">
+    <div class="wrap">
+      <h2 class="section-title">Un tarif simple, une offre de lancement</h2>
+      <p class="section-lead">Le gratuit reste gratuit pour toujours. Le Premium est à moitié prix pour les early-birds, à vie.</p>
+      <div class="plans">
+        <div class="plan">
+          <div class="plan-name">GRATUIT</div>
+          <div class="plan-desc">Pour jouer sans rien sortir de ta poche.</div>
+          <div class="price-row">
+            <span class="price-new">0€</span>
+          </div>
+          <ul>
+            <li>4 jeux classiques</li>
+            <li>Sauvegarde locale</li>
+            <li>Pub discrète, non intrusive</li>
+          </ul>
+          <a href="#" class="cta-checkout btn secondary" data-plan="gratuit">Commencer gratuitement</a>
+        </div>
+        <div class="plan featured">
+          <span class="early-tag">LE PLUS CHOISI</span>
+          <div class="plan-name">PREMIUM MENSUEL</div>
+          <div class="plan-desc">Zéro pub, stats et thèmes, résiliable quand tu veux.</div>
+          <div class="price-row">
+            <span class="price-old">4,90€</span>
+            <span class="price-new">2,45€</span>
+            <span class="price-period">/mois</span>
+          </div>
+          <ul>
+            <li>Zéro publicité, partout</li>
+            <li>Statistiques détaillées</li>
+            <li>Thèmes de plateau exclusifs</li>
+            <li>Prix bloqué à vie tant que tu restes abonné</li>
+          </ul>
+          <a href="#" class="cta-checkout btn amber" data-plan="premium-mensuel">Réserver -50%</a>
+        </div>
+        <div class="plan">
+          <span class="early-tag">STOCK LIMITÉ</span>
+          <div class="plan-name">PREMIUM À VIE</div>
+          <div class="plan-desc">Tu paies une fois, c'est réglé pour toujours.</div>
+          <div class="price-row">
+            <span class="price-old">39€</span>
+            <span class="price-new">19€</span>
+            <span class="price-period">une fois</span>
+          </div>
+          <ul>
+            <li>Tout le Premium, sans abonnement</li>
+            <li>Accès prioritaire aux nouveaux jeux</li>
+            <li>Tarif garanti à vie</li>
+          </ul>
+          <a href="#" class="cta-checkout btn" data-plan="premium-vie">Réserver mon accès à vie</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <div class="wrap">
+      <h2 class="section-title">Questions fréquentes</h2>
+      <div class="faq-list">
+        <details>
+          <summary>C'est disponible quand ?<span></span></summary>
+          <p>Le lancement est imminent. On peaufine encore les derniers réglages. Les early-birds inscrits maintenant seront servis en premier, dès l'ouverture, et gardent leur tarif à moitié prix pour toujours.</p>
+        </details>
+        <details>
+          <summary>Je dois créer un compte ?</summary>
+          <p>Non. Tu ouvres la page et tu joues. Pour le Premium, seul un email est nécessaire pour retrouver ton abonnement sur un autre appareil.</p>
+        </details>
+        <details>
+          <summary>Ça fonctionne sur mobile ?</summary>
+          <p>Oui, c'est même pensé mobile en premier. Tactile, rapide, pas de zoom à ajuster.</p>
+        </details>
+        <details>
+          <summary>Je peux annuler le Premium mensuel ?</summary>
+          <p>Oui, en un clic, à tout moment, sans justification à donner.</p>
+        </details>
+        <details>
+          <summary>Quels jeux sont prévus après les 4 premiers ?</summary>
+          <p>Belote, freecell et mots croisés sont sur la liste. L'ordre dépendra des retours des premiers joueurs.</p>
+        </details>
+        <details>
+          <summary>Pourquoi réserver maintenant si ce n'est pas encore ouvert ?</summary>
+          <p>Parce que le tarif early-bird à -50% ne sera plus proposé après le lancement, et les places sont limitées.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="wrap">
+      <h2>Réserve ta place avant l'ouverture</h2>
+      <p>Moitié prix, à vie, uniquement pour les premiers inscrits.</p>
+      <a href="#" class="cta-checkout btn amber" data-plan="premium-vie">Je réserve mon early-bird</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="logo"><span class="suit" style="color:var(--green-dark);">♣</span>Trèfle</div>
+    <span>© 2026 Trèfle. Fait avec ennui des popups.</span>
+  </div>
+</footer>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <span class="glyph">🎉</span>
+    <h3>Ouverture des paiements imminente</h3>
+    <p>Ton offre early-bird est réservée. On t'écrit dès que c'est ouvert pour que tu profites du tarif à -50% avant tout le monde. Reviens bientôt !</p>
+    <button class="btn" id="modalClose">C'est noté</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var backdrop = document.getElementById('modalBackdrop');
+  var closeBtn = document.getElementById('modalClose');
+  document.querySelectorAll('.cta-checkout').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      backdrop.classList.add('open');
+    });
+  });
+  function close(){ backdrop.classList.remove('open'); }
+  closeBtn.addEventListener('click', close);
+  backdrop.addEventListener('click', function(e){
+    if(e.target === backdrop) close();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') close();
+  });
+})();
+</script>
+
+</body>
+</html>

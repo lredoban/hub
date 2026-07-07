@@ -1,0 +1,638 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lueur — La lettre que vous écrivez aujourd'hui, ouverte dans des années</title>
+<meta name="description" content="Lueur scelle vos mots, vos photos et vos voix dans une capsule numérique, livrée à la date exacte que vous choisissez — 1 à 20 ans plus tard. Pensé pour les mariages, les naissances et les EVJF.">
+<meta property="og:title" content="Lueur — La lettre que vous écrivez aujourd'hui, ouverte dans des années">
+<meta property="og:description" content="Écrivez, photographiez, enregistrez votre voix. Choisissez une date dans 1 à 20 ans. Lueur délivre votre capsule pile au bon moment.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231b1533'/%3E%3Ccircle cx='50' cy='50' r='22' fill='%23f4c869'/%3E%3Ccircle cx='20' cy='22' r='3' fill='%23f4e9d8'/%3E%3Ccircle cx='78' cy='18' r='2' fill='%23f4e9d8'/%3E%3Ccircle cx='85' cy='55' r='2.5' fill='%23f4e9d8'/%3E%3Ccircle cx='14' cy='70' r='2' fill='%23f4e9d8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --nuit-1:#100c22;
+    --nuit-2:#1a1638;
+    --nuit-3:#241f4a;
+    --violet:#5b4b9e;
+    --violet-clair:#9a86d6;
+    --or:#e8bd6f;
+    --or-clair:#f4d99a;
+    --creme:#f6f1e6;
+    --creme-douce:#ded6c4;
+    --rose:#d99f9a;
+    --ligne: rgba(246,241,230,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background: var(--nuit-1);
+    color: var(--creme);
+    font-family:'Cormorant Garamond', serif;
+    font-size:19px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.brand{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    letter-spacing:0.01em;
+  }
+  a{color:inherit;}
+  img{max-width:100%; display:block;}
+  .container{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+  .stars{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 20% 30%, rgba(246,241,230,.9), transparent),
+      radial-gradient(1px 1px at 80% 10%, rgba(246,241,230,.7), transparent),
+      radial-gradient(1.5px 1.5px at 60% 70%, rgba(246,241,230,.6), transparent),
+      radial-gradient(1px 1px at 90% 60%, rgba(246,241,230,.8), transparent),
+      radial-gradient(1px 1px at 35% 85%, rgba(246,241,230,.6), transparent),
+      radial-gradient(1.5px 1.5px at 10% 65%, rgba(246,241,230,.5), transparent),
+      radial-gradient(1px 1px at 50% 15%, rgba(246,241,230,.7), transparent),
+      radial-gradient(1px 1px at 70% 45%, rgba(246,241,230,.5), transparent);
+    background-repeat:no-repeat;
+    opacity:.55;
+  }
+
+  /* NAV */
+  header{
+    position:relative; z-index:2;
+    padding:28px 0 0;
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .brand{
+    font-size:23px; color:var(--or-clair); letter-spacing:0.04em;
+  }
+  .brand span{color:var(--creme-douce); font-family:'Cormorant Garamond',serif; font-size:14px; display:block; letter-spacing:0.14em; text-transform:uppercase; margin-top:2px;}
+  .nav-cta{
+    font-family:'Cormorant Garamond', serif;
+    font-size:16px;
+    letter-spacing:0.03em;
+    border:1px solid var(--ligne);
+    padding:9px 20px;
+    border-radius:999px;
+    text-decoration:none;
+    transition: border-color .2s, background .2s;
+  }
+  .nav-cta:hover{ border-color:var(--or-clair); background:rgba(232,189,111,0.08); }
+
+  /* HERO */
+  .hero{
+    position:relative; z-index:1;
+    padding:110px 0 90px;
+    text-align:center;
+  }
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'Cormorant Garamond', serif;
+    font-size:15px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--or-clair);
+    border:1px solid rgba(232,189,111,0.35);
+    background:rgba(232,189,111,0.06);
+    padding:8px 18px;
+    border-radius:999px;
+    margin-bottom:34px;
+  }
+  .badge::before{ content:"✦"; }
+  .hero h1{
+    font-size:clamp(2.4rem, 5.4vw, 4.1rem);
+    line-height:1.12;
+    color:var(--creme);
+    max-width:880px;
+    margin:0 auto 26px;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--or-clair);
+  }
+  .hero p.lead{
+    font-size:22px;
+    color:var(--creme-douce);
+    max-width:620px;
+    margin:0 auto 44px;
+  }
+  .hero-ctas{
+    display:flex; gap:18px; justify-content:center; flex-wrap:wrap;
+    margin-bottom:20px;
+  }
+  .btn{
+    font-family:'Cormorant Garamond', serif;
+    font-size:19px; letter-spacing:0.02em;
+    text-decoration:none;
+    padding:16px 34px;
+    border-radius:999px;
+    display:inline-block;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .btn-primary{
+    background: linear-gradient(180deg, var(--or-clair), var(--or));
+    color:#241a05;
+    font-weight:600;
+    box-shadow: 0 10px 30px rgba(232,189,111,0.18);
+  }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 14px 36px rgba(232,189,111,0.28); }
+  .btn-ghost{
+    border:1px solid var(--ligne);
+    color:var(--creme);
+  }
+  .btn-ghost:hover{ border-color:var(--or-clair); }
+  .hero-note{
+    font-size:15px; color:var(--creme-douce); opacity:.75;
+  }
+  .hero-visual{
+    margin:70px auto 0; max-width:640px;
+    position:relative;
+  }
+  .capsule-orb{
+    width:180px; height:180px; margin:0 auto;
+    border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, rgba(244,217,154,0.9), rgba(155,134,214,0.35) 55%, transparent 75%);
+    filter: blur(0.5px);
+    position:relative;
+  }
+  .capsule-orb::after{
+    content:"";
+    position:absolute; inset:0; border-radius:50%;
+    border:1px solid rgba(244,217,154,0.4);
+  }
+  .capsule-caption{
+    text-align:center; margin-top:22px;
+    font-size:16px; color:var(--creme-douce); font-style:italic;
+  }
+
+  section{ position:relative; z-index:1; }
+
+  /* PROBLEM */
+  .problem{
+    padding:90px 0;
+    border-top:1px solid var(--ligne);
+    border-bottom:1px solid var(--ligne);
+    background:rgba(255,255,255,0.012);
+  }
+  .problem-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:start;
+  }
+  .kicker{
+    font-family:'Cormorant Garamond', serif;
+    font-size:14px; letter-spacing:0.16em; text-transform:uppercase;
+    color:var(--rose);
+    margin-bottom:18px;
+  }
+  .problem h2{
+    font-size:clamp(1.8rem, 3vw, 2.4rem);
+    color:var(--creme); line-height:1.25;
+  }
+  .problem-list{
+    list-style:none;
+  }
+  .problem-list li{
+    padding:20px 0;
+    border-top:1px solid var(--ligne);
+    font-size:19px; color:var(--creme-douce);
+  }
+  .problem-list li:last-child{ border-bottom:1px solid var(--ligne); }
+  .problem-list b{ color:var(--creme); font-weight:500; }
+
+  /* SOLUTION */
+  .solution{ padding:100px 0; text-align:center; }
+  .solution h2{
+    font-size:clamp(1.9rem, 3.4vw, 2.7rem);
+    max-width:700px; margin:0 auto 16px;
+  }
+  .solution .lead{
+    color:var(--creme-douce); max-width:560px; margin:0 auto 60px; font-size:20px;
+  }
+  .features{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:1px;
+    background:var(--ligne);
+    border:1px solid var(--ligne);
+    text-align:left;
+  }
+  .feature{
+    background:var(--nuit-1);
+    padding:38px 32px;
+  }
+  .feature .num{
+    font-family:'Fraunces', serif; font-size:14px; color:var(--or-clair);
+    letter-spacing:0.1em; margin-bottom:18px; display:block;
+  }
+  .feature h3{
+    font-size:22px; color:var(--creme); margin-bottom:10px; font-weight:500;
+  }
+  .feature p{ color:var(--creme-douce); font-size:18px; }
+
+  /* HOW */
+  .how{
+    padding:100px 0;
+    border-top:1px solid var(--ligne);
+    text-align:center;
+  }
+  .how h2{ font-size:clamp(1.9rem, 3.4vw, 2.7rem); margin-bottom:60px; }
+  .steps{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:44px;
+    text-align:left;
+  }
+  .step-num{
+    font-family:'Fraunces', serif; font-size:44px; color:var(--violet-clair);
+    margin-bottom:18px;
+  }
+  .step h3{ font-size:22px; margin-bottom:10px; color:var(--creme); font-weight:500;}
+  .step p{ color:var(--creme-douce); font-size:18px; }
+
+  /* PRICING */
+  .pricing{
+    padding:100px 0;
+    border-top:1px solid var(--ligne);
+    border-bottom:1px solid var(--ligne);
+    background:rgba(255,255,255,0.012);
+    text-align:center;
+  }
+  .pricing h2{ font-size:clamp(1.9rem, 3.4vw, 2.7rem); margin-bottom:12px; }
+  .pricing .lead{ color:var(--creme-douce); max-width:560px; margin:0 auto 60px; font-size:20px; }
+  .plans{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:28px;
+    text-align:left;
+  }
+  .plan{
+    background:var(--nuit-2);
+    border:1px solid var(--ligne);
+    border-radius:18px;
+    padding:38px 32px;
+    display:flex; flex-direction:column;
+  }
+  .plan.featured{
+    border-color:rgba(232,189,111,0.55);
+    background:linear-gradient(180deg, rgba(232,189,111,0.07), var(--nuit-2) 40%);
+    position:relative;
+  }
+  .plan.featured::before{
+    content:"Le plus choisi";
+    position:absolute; top:-13px; left:32px;
+    background:var(--or-clair); color:#241a05;
+    font-size:13px; letter-spacing:0.05em; text-transform:uppercase;
+    padding:5px 14px; border-radius:999px; font-family:'Cormorant Garamond',serif; font-weight:600;
+  }
+  .plan h3{ font-size:22px; color:var(--creme); margin-bottom:6px; font-weight:500; }
+  .plan .sub{ color:var(--creme-douce); font-size:16px; margin-bottom:22px; }
+  .price-row{ display:flex; align-items:baseline; gap:12px; margin-bottom:24px; }
+  .price-old{ text-decoration:line-through; color:var(--creme-douce); opacity:.55; font-size:20px; }
+  .price-new{ font-family:'Fraunces', serif; font-size:38px; color:var(--or-clair); }
+  .price-unit{ color:var(--creme-douce); font-size:16px; }
+  .plan ul{ list-style:none; margin-bottom:30px; flex-grow:1; }
+  .plan li{
+    padding:9px 0; color:var(--creme-douce); font-size:17px;
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .plan li::before{ content:"—"; color:var(--violet-clair); flex-shrink:0; }
+  .plan .btn{ text-align:center; width:100%; }
+
+  /* FAQ */
+  .faq{ padding:100px 0; }
+  .faq h2{ font-size:clamp(1.9rem, 3.4vw, 2.7rem); text-align:center; margin-bottom:56px; }
+  .faq-list{ max-width:760px; margin:0 auto; }
+  details{
+    border-top:1px solid var(--ligne);
+    padding:22px 0;
+  }
+  details:last-child{ border-bottom:1px solid var(--ligne); }
+  summary{
+    cursor:pointer;
+    font-family:'Fraunces', serif; font-size:20px; color:var(--creme);
+    list-style:none; display:flex; justify-content:space-between; align-items:center; gap:20px;
+  }
+  summary::-webkit-details-marker{ display:none; }
+  summary::after{
+    content:"+"; font-size:26px; color:var(--or-clair); flex-shrink:0;
+    transition:transform .2s;
+  }
+  details[open] summary::after{ transform:rotate(45deg); }
+  details p{
+    margin-top:16px; color:var(--creme-douce); font-size:18px; max-width:640px;
+  }
+
+  /* FINAL CTA */
+  .final-cta{
+    padding:110px 0 120px;
+    text-align:center;
+    border-top:1px solid var(--ligne);
+  }
+  .final-cta h2{ font-size:clamp(2rem,4vw,3rem); max-width:640px; margin:0 auto 22px; }
+  .final-cta p{ color:var(--creme-douce); font-size:20px; margin-bottom:40px; }
+
+  footer{
+    border-top:1px solid var(--ligne);
+    padding:44px 0;
+    text-align:center;
+    color:var(--creme-douce);
+    font-size:15px;
+  }
+  footer .brand{ font-size:18px; color:var(--or-clair); margin-bottom:8px; }
+  footer .fine{ opacity:.6; margin-top:6px; }
+
+  /* MODAL */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:50;
+    background:rgba(10,8,20,0.72);
+    display:none; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal{
+    background:var(--nuit-2);
+    border:1px solid rgba(232,189,111,0.3);
+    border-radius:20px;
+    max-width:440px; width:100%;
+    padding:42px 36px;
+    text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,0.5);
+  }
+  .modal .glyph{
+    width:52px; height:52px; margin:0 auto 22px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--or-clair), var(--violet-clair) 80%);
+  }
+  .modal h3{ font-family:'Fraunces',serif; font-size:24px; color:var(--creme); margin-bottom:14px; }
+  .modal p{ color:var(--creme-douce); font-size:18px; margin-bottom:28px; }
+  .modal .btn{ width:100%; text-align:center; }
+  .modal-close{
+    display:block; margin:18px auto 0; background:none; border:none;
+    color:var(--creme-douce); font-family:'Cormorant Garamond',serif; font-size:16px;
+    cursor:pointer; text-decoration:underline;
+  }
+
+  @media (max-width:860px){
+    .problem-grid{ grid-template-columns:1fr; gap:30px; }
+    .features{ grid-template-columns:1fr; }
+    .steps{ grid-template-columns:1fr; gap:34px; }
+    .plans{ grid-template-columns:1fr; }
+    .hero{ padding:80px 0 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+
+<header>
+  <div class="container nav-inner">
+    <div class="brand">Lueur<span>Capsules à retardement</span></div>
+    <a href="#pricing" class="nav-cta">Réserver mon tarif early-bird</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero container">
+    <div class="badge">Early-bird — -50% à vie sur votre première capsule</div>
+    <h1>Écrivez ce que vous ressentez <em>aujourd'hui</em>.<br>Faites-le lire dans des années.</h1>
+    <p class="lead">Lueur scelle vos mots, vos photos et votre voix dans une capsule numérique, et la délivre à la date exacte que vous choisissez — dans 1 à 20 ans, jour pour jour.</p>
+    <div class="hero-ctas">
+      <a href="#" class="cta-checkout btn btn-primary" data-plan="capsule-solo">Créer ma capsule — dès 7,50€</a>
+      <a href="#comment-ca-marche" class="btn btn-ghost">Voir comment ça marche</a>
+    </div>
+    <p class="hero-note">Aucune app à installer. Ouverture automatique, à la seconde près, le jour J.</p>
+
+    <div class="hero-visual">
+      <div class="capsule-orb"></div>
+      <p class="capsule-caption">« À ouvrir le 14 juin 2036 — pour vos 10 ans de mariage »</p>
+    </div>
+  </section>
+
+  <section class="problem">
+    <div class="container problem-grid">
+      <div>
+        <div class="kicker">Le problème</div>
+        <h2>Les mots les plus justes se disent au mauvais moment — ou jamais.</h2>
+      </div>
+      <ul class="problem-list">
+        <li><b>Le discours de mariage s'oublie</b> dès le lendemain, noyé dans les photos du photographe.</li>
+        <li><b>Les mots pour un nouveau-né</b> restent dans un brouillon de notes jamais envoyé.</li>
+        <li><b>Les enregistrements vocaux de l'EVJF</b> dorment dans une conversation WhatsApp perdue au bout de six mois.</li>
+        <li><b>Aucun outil actuel</b> ne garantit une livraison fiable dans 10, 15 ou 18 ans — un simple mail programmé ne survit pas à un changement d'adresse.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="solution">
+    <div class="container">
+      <div class="kicker" style="text-align:center">La solution</div>
+      <h2>Une capsule, une date, une promesse tenue</h2>
+      <p class="lead">Lueur est conçu pour un seul geste, fait une fois, avec le plus grand soin — puis oublié jusqu'au bon moment.</p>
+      <div class="features">
+        <div class="feature">
+          <span class="num">01</span>
+          <h3>Message, photos, voix</h3>
+          <p>Écrivez un texte, glissez vos photos préférées, enregistrez un message vocal directement depuis le navigateur.</p>
+        </div>
+        <div class="feature">
+          <span class="num">02</span>
+          <h3>Date exacte, 1 à 20 ans</h3>
+          <p>Vous choisissez le jour précis — un anniversaire de mariage, un 18e anniversaire, une date sans nom particulier.</p>
+        </div>
+        <div class="feature">
+          <span class="num">03</span>
+          <h3>Livraison garantie</h3>
+          <p>Rappels de mise à jour d'adresse tous les ans, redondance de stockage, aucune dépendance à un compte qui expire.</p>
+        </div>
+        <div class="feature">
+          <span class="num">04</span>
+          <h3>Capsule collective</h3>
+          <p>Pour un mariage : chaque invité enregistre sa propre capsule, toutes livrées ensemble aux mariés le jour choisi.</p>
+        </div>
+        <div class="feature">
+          <span class="num">05</span>
+          <h3>Aperçu scellé</h3>
+          <p>Une fois validée, la capsule est verrouillée — ni vous ni personne ne peut la modifier ou la lire avant l'heure.</p>
+        </div>
+        <div class="feature">
+          <span class="num">06</span>
+          <h3>Export à venir</h3>
+          <p>Bientôt : recevez aussi votre capsule sous forme de film souvenir généré automatiquement le jour de l'ouverture.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how" id="comment-ca-marche">
+    <div class="container">
+      <h2>Trois gestes, une émotion différée</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h3>Vous composez</h3>
+          <p>Texte, photos, voix — à votre rythme, sans limite de temps. Vous pouvez revenir dessus tant qu'elle n'est pas scellée.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h3>Vous choisissez la date</h3>
+          <p>Un jour précis, entre 1 et 20 ans. Vous scellez la capsule : plus personne n'y touche avant l'heure dite.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h3>Elle arrive, pile à temps</h3>
+          <p>Par email et lien privé, le jour J, à l'heure que vous avez fixée — même si vous avez tout oublié entre-temps.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <h2>Un tarif early-bird, une fois</h2>
+      <p class="lead">Pas d'abonnement. Vous payez votre capsule une fois, elle vous attend jusqu'au jour choisi. Places early-bird limitées.</p>
+      <div class="plans">
+        <div class="plan">
+          <h3>Capsule Solo</h3>
+          <p class="sub">Pour un message personnel, un souvenir, une lettre à soi-même.</p>
+          <div class="price-row">
+            <span class="price-old">15€</span>
+            <span class="price-new">7,50€</span>
+            <span class="price-unit">/ capsule</span>
+          </div>
+          <ul>
+            <li>1 message texte + 5 photos</li>
+            <li>1 message vocal (3 min)</li>
+            <li>Date de livraison au choix (1-20 ans)</li>
+            <li>Livraison garantie par email</li>
+          </ul>
+          <a href="#" class="cta-checkout btn btn-primary" data-plan="capsule-solo">Réserver à 7,50€</a>
+        </div>
+        <div class="plan featured">
+          <h3>Capsule Mariage</h3>
+          <p class="sub">Chaque invité enregistre sa capsule, livrée aux mariés à leurs 10 ans.</p>
+          <div class="price-row">
+            <span class="price-old">60€</span>
+            <span class="price-new">30€</span>
+            <span class="price-unit">/ événement</span>
+          </div>
+          <ul>
+            <li>Lien de collecte pour tous les invités</li>
+            <li>Textes, photos et vocaux illimités</li>
+            <li>Livraison groupée à la date anniversaire</li>
+            <li>Aperçu du contenu réservé aux mariés</li>
+            <li>Support prioritaire wedding planner</li>
+          </ul>
+          <a href="#" class="cta-checkout btn btn-primary" data-plan="capsule-mariage">Réserver à 30€</a>
+        </div>
+        <div class="plan">
+          <h3>Capsule Naissance</h3>
+          <p class="sub">Les mots d'aujourd'hui, livrés à ses 18 ans.</p>
+          <div class="price-row">
+            <span class="price-old">25€</span>
+            <span class="price-new">12,50€</span>
+            <span class="price-unit">/ capsule</span>
+          </div>
+          <ul>
+            <li>Messages illimités jusqu'au scellage</li>
+            <li>Photos et vocaux illimités</li>
+            <li>Date fixée automatiquement aux 18 ans</li>
+            <li>Rappels annuels de mise à jour de contact</li>
+          </ul>
+          <a href="#" class="cta-checkout btn btn-primary" data-plan="capsule-naissance">Réserver à 12,50€</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq">
+    <div class="container">
+      <h2>Questions fréquentes</h2>
+      <div class="faq-list">
+        <details>
+          <summary>C'est disponible quand ?</summary>
+          <p>Le lancement est imminent. Les places early-bird sont limitées et servies en priorité : en réservant maintenant, vous garantissez votre place dans la première vague d'accès et votre tarif à moitié prix, à vie sur cette capsule.</p>
+        </details>
+        <details>
+          <summary>Que se passe-t-il si je change d'adresse email d'ici 10 ou 18 ans ?</summary>
+          <p>Lueur vous envoie un rappel annuel pour confirmer ou mettre à jour vos coordonnées de livraison. En cas de silence prolongé, plusieurs canaux de secours (email alternatif, contact de confiance) prennent le relais.</p>
+        </details>
+        <details>
+          <summary>Puis-je modifier ma capsule après l'avoir scellée ?</summary>
+          <p>Non, c'est volontaire : une fois scellée, la capsule est verrouillée pour tout le monde, y compris vous. C'est ce qui garantit l'authenticité du message reçu le jour J.</p>
+        </details>
+        <details>
+          <summary>Comment fonctionne la capsule collective pour un mariage ?</summary>
+          <p>Vous recevez un lien unique à partager avec vos invités. Chacun enregistre sa propre capsule en quelques minutes, sans compte à créer. Le jour de l'anniversaire choisi, tous les messages sont livrés ensemble aux mariés.</p>
+        </details>
+        <details>
+          <summary>Mes données et enregistrements sont-ils en sécurité ?</summary>
+          <p>Vos contenus sont chiffrés et stockés de façon redondante, sans accès possible avant la date de livraison — ni par nous, ni par personne d'autre.</p>
+        </details>
+        <details>
+          <summary>Y a-t-il un abonnement ?</summary>
+          <p>Non. Chaque capsule est un achat unique. Vous payez une fois, elle vous attend jusqu'au jour choisi, sans frais récurrents.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="container">
+      <h2>Le message que vous n'écrirez jamais deux fois</h2>
+      <p>Réservez votre capsule maintenant et gardez votre tarif early-bird, à moitié prix.</p>
+      <a href="#" class="cta-checkout btn btn-primary" data-plan="capsule-solo">Créer ma capsule — dès 7,50€</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="brand">Lueur</div>
+    <div>La lettre que vous écrivez aujourd'hui, ouverte dans des années.</div>
+    <div class="fine">© 2026 Lueur — Tous droits réservés.</div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="glyph"></div>
+    <h3>Ouverture des paiements imminente</h3>
+    <p>Ton offre early-bird est réservée. Nous ouvrons les paiements très bientôt — reviens dans quelques jours pour créer ta capsule au tarif à -50%.</p>
+    <button class="btn btn-primary" id="modal-ok" style="width:100%; border:none; cursor:pointer;">C'est noté</button>
+    <button class="modal-close" id="modal-close">Fermer</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var overlay = document.getElementById('modal-overlay');
+  var closeBtn = document.getElementById('modal-close');
+  var okBtn = document.getElementById('modal-ok');
+
+  function openModal(){
+    overlay.classList.add('open');
+  }
+  function closeModal(){
+    overlay.classList.remove('open');
+  }
+
+  document.querySelectorAll('.cta-checkout').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault();
+      openModal();
+    });
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  okBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay) closeModal();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeModal();
+  });
+})();
+</script>
+</body>
+</html>

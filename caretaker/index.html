@@ -1,0 +1,585 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<title>Veillo — la fiche de garde qui remplace le pavé WhatsApp</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Veillo génère en 5 minutes une fiche de garde interactive pour tes plantes, ton animal ou ta maison. Un lien à partager, aucun compte à créer côté gardien. Fini les pavés WhatsApp de 40 lignes.">
+<meta property="og:title" content="Veillo — la fiche de garde qui remplace le pavé WhatsApp">
+<meta property="og:description" content="Crée ta fiche de garde en 5 minutes, partage un lien, pars tranquille. Pour plantes, animaux et maison.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%235B7A5C'/%3E%3Cpath d='M50 20 C 35 35, 30 50, 50 80 C 70 50, 65 35, 50 20 Z' fill='%23F4EDE1'/%3E%3Cpath d='M50 35 L50 68' stroke='%235B7A5C' stroke-width='3' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --sauge: #5B7A5C;
+    --sauge-dark: #3F5940;
+    --sauge-light: #E7EEE3;
+    --terracotta: #C96F4A;
+    --terracotta-dark: #A85536;
+    --cream: #F6F0E4;
+    --paper: #FFFCF6;
+    --ink: #2B2A24;
+    --ink-soft: #5A5850;
+    --line: #E3DAC7;
+    --radius: 20px;
+    --radius-sm: 12px;
+    --shadow: 0 10px 30px -12px rgba(43,42,36,0.18);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Karla', system-ui, sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', Georgia, serif;
+    font-weight:600;
+    line-height:1.12;
+    margin:0 0 0.5em;
+    letter-spacing:-0.01em;
+  }
+  p{margin:0 0 1em;}
+  a{color:inherit;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  section{padding:88px 0;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:15px 28px;
+    border-radius:999px;
+    font-family:'Karla',sans-serif;
+    font-weight:700;
+    font-size:1.02rem;
+    text-decoration:none;
+    cursor:pointer;
+    border:2px solid transparent;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{
+    background:var(--terracotta);
+    color:#fff;
+    box-shadow:0 8px 20px -6px rgba(201,111,74,0.55);
+  }
+  .btn-primary:hover{background:var(--terracotta-dark); box-shadow:0 10px 24px -6px rgba(201,111,74,0.65);}
+  .btn-outline{
+    background:transparent;
+    border-color:var(--sauge);
+    color:var(--sauge-dark);
+  }
+  .btn-outline:hover{background:var(--sauge-light);}
+  .btn-dark{
+    background:var(--sauge-dark);
+    color:#fff;
+  }
+  .btn-dark:hover{background:var(--sauge);}
+  .btn-block{width:100%;}
+
+  /* NAV */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(246,240,228,0.88);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1080px;margin:0 auto;padding:16px 24px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .logo{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Fraunces',serif;font-weight:700;font-size:1.35rem;color:var(--sauge-dark);
+    text-decoration:none;
+  }
+  .logo-mark{
+    width:34px;height:34px;border-radius:10px;background:var(--sauge);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .logo-mark svg{width:19px;height:19px;}
+  .nav-cta{font-size:0.92rem;padding:11px 20px;}
+
+  /* HERO */
+  .hero{padding:76px 0 60px;}
+  .hero-inner{
+    display:grid;grid-template-columns:1.1fr 0.9fr;gap:56px;align-items:center;
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--sauge-light);
+    color:var(--sauge-dark);
+    border:1px solid #cfe0cb;
+    padding:7px 16px;
+    border-radius:999px;
+    font-size:0.86rem;
+    font-weight:700;
+    margin-bottom:22px;
+  }
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--terracotta);}
+  .hero h1{font-size:clamp(2.2rem, 4.2vw, 3.4rem); color:var(--ink);}
+  .hero h1 em{font-style:normal;color:var(--sauge-dark);}
+  .hero-sub{font-size:1.15rem;color:var(--ink-soft);max-width:46ch;margin-bottom:32px;}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
+  .hero-note{font-size:0.88rem;color:var(--ink-soft);}
+
+  .hero-visual{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px;
+    box-shadow:var(--shadow);
+    transform:rotate(1.2deg);
+  }
+  .card-mini{
+    background:var(--cream);
+    border-radius:var(--radius-sm);
+    padding:18px 18px 14px;
+    border:1px solid var(--line);
+  }
+  .card-mini-head{
+    display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  }
+  .card-mini-head .avatar{
+    width:38px;height:38px;border-radius:50%;background:var(--terracotta);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem;
+  }
+  .card-mini-head strong{display:block;font-family:'Fraunces',serif;font-size:1.05rem;}
+  .card-mini-head span{font-size:0.82rem;color:var(--ink-soft);}
+  .step-row{
+    display:flex;gap:12px;align-items:flex-start;
+    padding:12px 0;border-top:1px dashed var(--line);
+  }
+  .step-row .num{
+    width:26px;height:26px;border-radius:50%;background:var(--sauge-light);color:var(--sauge-dark);
+    display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;flex-shrink:0;
+  }
+  .step-row p{margin:0;font-size:0.92rem;}
+  .step-row .done{
+    margin-left:auto;color:var(--sauge-dark);font-size:0.85rem;flex-shrink:0;
+  }
+  .share-pill{
+    margin-top:14px;display:flex;align-items:center;gap:10px;
+    background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 14px;
+    font-size:0.82rem;color:var(--ink-soft);
+  }
+  .share-pill svg{flex-shrink:0;}
+
+  /* PROBLEM */
+  .problem{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .problem .wrap{max-width:920px;}
+  .problem h2{font-size:clamp(1.7rem,3vw,2.3rem);text-align:center;margin-bottom:14px;}
+  .problem-sub{text-align:center;color:var(--ink-soft);max-width:56ch;margin:0 auto 44px;font-size:1.05rem;}
+  .agitation-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .agitation-card{
+    background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-sm);
+    padding:26px 22px;
+  }
+  .agitation-card .emoji-badge{
+    width:44px;height:44px;border-radius:12px;background:#fff;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;margin-bottom:14px;
+  }
+  .agitation-card h3{font-size:1.08rem;margin-bottom:8px;}
+  .agitation-card p{font-size:0.94rem;color:var(--ink-soft);margin:0;}
+
+  /* SOLUTION */
+  .solution h2{font-size:clamp(1.7rem,3vw,2.3rem);text-align:center;margin-bottom:14px;}
+  .solution-sub{text-align:center;color:var(--ink-soft);max-width:56ch;margin:0 auto 48px;font-size:1.05rem;}
+  .feature-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  }
+  .feature-card{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    padding:28px 24px;
+  }
+  .feature-icon{
+    width:48px;height:48px;border-radius:14px;background:var(--sauge-light);
+    display:flex;align-items:center;justify-content:center;margin-bottom:16px;
+  }
+  .feature-icon svg{width:24px;height:24px;stroke:var(--sauge-dark);}
+  .feature-card h3{font-size:1.12rem;margin-bottom:8px;}
+  .feature-card p{font-size:0.94rem;color:var(--ink-soft);margin:0;}
+  .feature-card.soon{border-style:dashed;}
+  .soon-tag{
+    display:inline-block;font-size:0.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    background:var(--terracotta);color:#fff;padding:3px 9px;border-radius:6px;margin-bottom:10px;
+  }
+
+  /* HOW */
+  .how{background:var(--sauge-dark);color:#fff;}
+  .how h2{text-align:center;font-size:clamp(1.7rem,3vw,2.3rem);color:#fff;margin-bottom:48px;}
+  .how-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;position:relative;}
+  .how-step{text-align:center;padding:0 12px;}
+  .how-step .num{
+    width:52px;height:52px;border-radius:50%;background:var(--terracotta);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 18px;
+    font-family:'Fraunces',serif;font-size:1.4rem;font-weight:700;
+  }
+  .how-step h3{color:#fff;font-size:1.15rem;margin-bottom:10px;}
+  .how-step p{color:#DCE6D9;font-size:0.94rem;margin:0;}
+
+  /* PRICING */
+  .pricing h2{text-align:center;font-size:clamp(1.7rem,3vw,2.3rem);margin-bottom:10px;}
+  .pricing-sub{text-align:center;color:var(--ink-soft);margin-bottom:16px;font-size:1.05rem;}
+  .earlybird-strip{
+    text-align:center;margin:0 auto 46px;
+    display:flex;justify-content:center;
+  }
+  .earlybird-strip span{
+    background:#FCEBD9;color:var(--terracotta-dark);border:1px solid #F3D2AC;
+    padding:8px 18px;border-radius:999px;font-size:0.88rem;font-weight:700;
+  }
+  .plans{display:grid;grid-template-columns:repeat(2,1fr);gap:26px;max-width:800px;margin:0 auto;}
+  .plan{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    padding:32px 28px;display:flex;flex-direction:column;
+  }
+  .plan.featured{
+    border:2px solid var(--terracotta);position:relative;box-shadow:var(--shadow);
+  }
+  .plan-tag{
+    position:absolute;top:-13px;left:28px;
+    background:var(--terracotta);color:#fff;font-size:0.75rem;font-weight:700;
+    padding:5px 12px;border-radius:999px;letter-spacing:.02em;
+  }
+  .plan h3{font-family:'Karla',sans-serif;font-weight:700;font-size:1rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);margin-bottom:6px;}
+  .price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
+  .price-old{font-size:1.1rem;color:var(--ink-soft);text-decoration:line-through;opacity:.7;}
+  .price-new{font-family:'Fraunces',serif;font-size:2.4rem;font-weight:700;color:var(--ink);}
+  .price-period{color:var(--ink-soft);font-size:0.9rem;}
+  .plan-desc{color:var(--ink-soft);font-size:0.92rem;margin-bottom:20px;}
+  .plan-features{list-style:none;padding:0;margin:0 0 26px;flex:1;}
+  .plan-features li{
+    display:flex;gap:10px;align-items:flex-start;font-size:0.94rem;padding:7px 0;color:var(--ink);
+  }
+  .plan-features li svg{flex-shrink:0;margin-top:3px;stroke:var(--sauge-dark);}
+
+  /* FAQ */
+  .faq{background:var(--paper);border-top:1px solid var(--line);}
+  .faq .wrap{max-width:760px;}
+  .faq h2{text-align:center;font-size:clamp(1.7rem,3vw,2.3rem);margin-bottom:44px;}
+  details{
+    border-bottom:1px solid var(--line);
+    padding:20px 0;
+  }
+  details summary{
+    cursor:pointer;font-family:'Fraunces',serif;font-weight:600;font-size:1.08rem;
+    list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;
+  }
+  details summary::-webkit-details-marker{display:none;}
+  details summary::after{
+    content:'+';font-family:'Karla',sans-serif;font-size:1.5rem;color:var(--terracotta);flex-shrink:0;
+    transition:transform .2s ease;
+  }
+  details[open] summary::after{content:'–';}
+  details p{margin-top:12px;color:var(--ink-soft);font-size:0.97rem;}
+
+  /* FINAL CTA */
+  .final-cta{
+    background:var(--sauge);color:#fff;text-align:center;
+  }
+  .final-cta h2{color:#fff;font-size:clamp(1.8rem,3.4vw,2.5rem);margin-bottom:14px;}
+  .final-cta p{color:#E4EDE1;max-width:50ch;margin:0 auto 30px;font-size:1.08rem;}
+
+  /* FOOTER */
+  footer{
+    padding:40px 0;background:var(--ink);color:#B9B6AC;
+    font-size:0.88rem;
+  }
+  .footer-inner{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
+  }
+  .footer-inner a{color:#DCD8CB;text-decoration:none;}
+
+  /* MODAL */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(43,42,36,0.55);
+    display:none;align-items:center;justify-content:center;z-index:200;padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:var(--paper);border-radius:var(--radius);max-width:400px;width:100%;
+    padding:34px 30px;text-align:center;box-shadow:0 24px 60px -12px rgba(0,0,0,0.35);
+    animation:pop .25s ease;
+  }
+  @keyframes pop{from{transform:scale(.93);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .modal-icon{
+    width:56px;height:56px;border-radius:50%;background:var(--sauge-light);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:1.6rem;
+  }
+  .modal h3{margin-bottom:10px;font-size:1.3rem;}
+  .modal p{color:var(--ink-soft);font-size:0.95rem;margin-bottom:22px;}
+
+  @media (max-width:880px){
+    section{padding:64px 0;}
+    .hero{padding:48px 0 40px;}
+    .hero-inner{grid-template-columns:1fr;gap:40px;}
+    .hero-visual{transform:none;order:-1;}
+    .agitation-grid, .feature-grid, .how-steps{grid-template-columns:1fr;}
+    .plans{grid-template-columns:1fr;}
+    .plan.featured{order:-1;}
+    .footer-inner{flex-direction:column;text-align:center;}
+  }
+</style>
+
+<header class="nav">
+  <div class="nav-inner wrap" style="padding-left:0;padding-right:0;">
+    <a href="#" class="logo">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4C8 8 6 12 12 20C18 12 16 8 12 4Z" fill="#F4EDE1"/></svg>
+      </span>
+      Veillo
+    </a>
+    <a href="#pricing" class="btn btn-primary nav-cta cta-checkout" data-plan="nav">Réserver mon early-bird</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <div class="badge"><span class="dot"></span> Early-bird : -50% à vie, places limitées</div>
+      <h1>La fiche de garde qui remplace ton <em>pavé WhatsApp</em> de 40 lignes.</h1>
+      <p class="hero-sub">Veillo génère une fiche de garde interactive pour tes plantes, ton chat ou ta maison — étape par étape, avec photos. Un lien à partager, et voilà : ton gardien n'installe rien, ne crée aucun compte.</p>
+      <div class="hero-actions">
+        <a href="#pricing" class="btn btn-primary cta-checkout" data-plan="hero-early-bird">Je réserve mon early-bird — 9€</a>
+        <a href="#comment-ca-marche" class="btn btn-outline">Voir comment ça marche</a>
+      </div>
+      <p class="hero-note">Sans engagement · Fiche gratuite dispo dès le lancement</p>
+    </div>
+    <div class="hero-visual">
+      <div class="card-mini">
+        <div class="card-mini-head">
+          <div class="avatar">🌿</div>
+          <div>
+            <strong>Garde de Basilic &amp; Momo</strong>
+            <span>Fiche partagée par Camille · 3 étapes</span>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="num">1</div>
+          <p>Arroser le basilic tous les 2 jours, terre sèche au toucher.</p>
+        </div>
+        <div class="step-row">
+          <div class="num">2</div>
+          <p>Croquettes de Momo : 1/2 mesure matin et soir, gamelle bleue.</p>
+        </div>
+        <div class="step-row">
+          <div class="num">3</div>
+          <p>Vétérinaire d'urgence si besoin — numéro en pièce jointe.</p>
+          <span class="done">📷 photo</span>
+        </div>
+        <div class="share-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v14"/></svg>
+          veillo.app/f/basilic-momo — aucun compte requis
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="problem">
+  <div class="wrap">
+    <h2>Tu connais la scène.</h2>
+    <p class="problem-sub">La veille du départ, à 23h, tu rédiges un roman WhatsApp que personne ne relira. Et pendant tes vacances, ton téléphone n'arrête pas de vibrer.</p>
+    <div class="agitation-grid">
+      <div class="agitation-card">
+        <div class="emoji-badge">📱</div>
+        <h3>Le pavé de 40 lignes</h3>
+        <p>Écrit à la va-vite la veille du départ, illisible, incomplet — et perdu au milieu de la conversation trois jours après.</p>
+      </div>
+      <div class="agitation-card">
+        <div class="emoji-badge">☎️</div>
+        <h3>Les appels paniqués</h3>
+        <p>"Le chat miaule bizarrement", "je trouve pas la clé du compteur" — en plein apéro sur la plage, forcément.</p>
+      </div>
+      <div class="agitation-card">
+        <div class="emoji-badge">🔁</div>
+        <h3>Tout réexpliquer, à chaque fois</h3>
+        <p>Nouveau pet-sitter, nouveaux voisins gentils : tu repars de zéro à chaque garde, sans rien de réutilisable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="solution" id="fonctionnalites">
+  <div class="wrap">
+    <h2>Une fiche de garde, pas un roman.</h2>
+    <p class="solution-sub">Tout ce qu'il faut pour que ton gardien se débrouille seul — rien de plus.</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+        <h3>Étapes claires, dans l'ordre</h3>
+        <p>Arrosage, repas, sortie du chien : chaque tâche listée pas à pas, sans ambiguïté possible.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+        <h3>Une photo par étape</h3>
+        <p>"La gamelle bleue, pas la rouge." Une image vaut mille explications au téléphone.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></div>
+        <h3>Un lien, c'est tout</h3>
+        <p>Aucune app à télécharger, aucun compte à créer. Le gardien clique et accède à la fiche direct.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+        <h3>Prête en 5 minutes</h3>
+        <p>Un formulaire guidé, quelques photos depuis ton téléphone, et ta fiche est en ligne.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11z"/></svg></div>
+        <h3>Contacts d'urgence intégrés</h3>
+        <p>Vétérinaire, plombier, voisin de confiance : tout au même endroit, visible en un clic.</p>
+      </div>
+      <div class="feature-card soon">
+        <span class="soon-tag">Bientôt</span>
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+        <h3>Rappels automatiques</h3>
+        <p>Un SMS au gardien à l'heure du repas ou de l'arrosage, pour ne rien oublier.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="comment-ca-marche">
+  <div class="wrap">
+    <h2>Comment ça marche</h2>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="num">1</div>
+        <h3>Tu décris la garde</h3>
+        <p>Plantes, animal, maison : réponds à quelques questions simples et ajoute tes photos.</p>
+      </div>
+      <div class="how-step">
+        <div class="num">2</div>
+        <h3>Veillo génère la fiche</h3>
+        <p>Une page claire, en étapes, prête à être consultée depuis n'importe quel téléphone.</p>
+      </div>
+      <div class="how-step">
+        <div class="num">3</div>
+        <h3>Tu partages le lien</h3>
+        <p>SMS, WhatsApp, email — le gardien ouvre, suit les étapes, et toi tu pars tranquille.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <h2>Un prix simple, pour toujours</h2>
+    <p class="pricing-sub">Les premiers inscrits paient moitié prix, à vie.</p>
+    <div class="earlybird-strip"><span>🌱 Places early-bird limitées — offre non reconductible</span></div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Découverte</h3>
+        <div class="price-row">
+          <span class="price-new">0€</span>
+        </div>
+        <p class="plan-desc">Pour tester Veillo sur ta prochaine garde.</p>
+        <ul class="plan-features">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> 1 fiche de garde active</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Étapes + photos illimitées</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Lien de partage sans compte</li>
+        </ul>
+        <a href="#" class="btn btn-outline btn-block cta-checkout" data-plan="decouverte-gratuit">Commencer gratuitement</a>
+      </div>
+      <div class="plan featured">
+        <span class="plan-tag">Early-bird -50%</span>
+        <h3>Illimité + premium</h3>
+        <div class="price-row">
+          <span class="price-old">18€</span>
+          <span class="price-new">9€</span>
+          <span class="price-period">paiement unique</span>
+        </div>
+        <p class="plan-desc">Pour ceux qui font garder régulièrement — ou qui gardent.</p>
+        <ul class="plan-features">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Fiches de garde illimitées</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Contacts d'urgence intégrés</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Modèles plantes / animaux / maison</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Accès prioritaire aux nouvelles fonctions</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Prix figé à vie, jamais de hausse</li>
+        </ul>
+        <a href="#" class="btn btn-primary btn-block cta-checkout" data-plan="illimite-early-bird">Réserver mon early-bird — 9€</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap">
+    <h2>Questions fréquentes</h2>
+    <details open>
+      <summary>C'est disponible quand ?</summary>
+      <p>Le lancement est imminent. On finalise les derniers détails techniques. Les early-birds sont servis en priorité, dès l'ouverture, et paient moitié prix pour toujours — les autres attendront la tarification normale.</p>
+    </details>
+    <details>
+      <summary>Le gardien doit créer un compte ?</summary>
+      <p>Non, jamais. Il reçoit un lien, il clique, il voit la fiche. Aucune app à installer, aucun mot de passe à retenir.</p>
+    </details>
+    <details>
+      <summary>Ça marche pour quoi comme garde ?</summary>
+      <p>Plantes d'intérieur, jardin, chats, chiens, poissons, maison pendant les vacances, colocation temporaire — tout ce qui se transmet en étapes avec des consignes précises.</p>
+    </details>
+    <details>
+      <summary>Je peux modifier ma fiche après l'avoir créée ?</summary>
+      <p>Oui, tu peux la mettre à jour à tout moment — les nouvelles consignes apparaissent immédiatement sur le lien déjà partagé.</p>
+    </details>
+    <details>
+      <summary>L'offre early-bird, c'est vraiment -50% à vie ?</summary>
+      <p>Oui. 9€ au lieu de 18€, paiement unique, et ce prix ne bougera jamais pour toi, même quand le tarif normal montera.</p>
+    </details>
+    <details>
+      <summary>Mes données et celles de mon gardien sont-elles visibles publiquement ?</summary>
+      <p>Non. Seules les personnes qui ont le lien de la fiche peuvent la consulter — le lien n'est pas indexé ni listé nulle part.</p>
+    </details>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="wrap">
+    <h2>Pars en vacances l'esprit léger.</h2>
+    <p>Crée ta première fiche gratuitement dès le lancement, ou réserve ton tarif early-bird à -50% dès maintenant.</p>
+    <a href="#pricing" class="btn btn-dark cta-checkout" data-plan="final-cta" style="background:#fff;color:var(--sauge-dark);">Je réserve mon early-bird</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>© 2026 Veillo. Fait avec 🌿 pour les gens qui partent sereins.</span>
+    <a href="mailto:hello@veillo.app">hello@veillo.app</a>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-icon">🎉</div>
+    <h3>Ouverture des paiements imminente</h3>
+    <p>Ton offre early-bird est réservée. On t'écrit dès que c'est ouvert — reviens très vite, les places sont limitées.</p>
+    <button class="btn btn-primary btn-block" id="modalClose">Compris, à très vite</button>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var overlay = document.getElementById('modalOverlay');
+    var closeBtn = document.getElementById('modalClose');
+    document.querySelectorAll('.cta-checkout').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        overlay.classList.add('open');
+      });
+    });
+    function close(){ overlay.classList.remove('open'); }
+    closeBtn.addEventListener('click', close);
+    overlay.addEventListener('click', function(e){
+      if(e.target === overlay) close();
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') close();
+    });
+  })();
+</script>

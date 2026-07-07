@@ -1,0 +1,540 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lulu Lit — L'appli qui apprend vraiment à lire, avec la méthode syllabique</title>
+<meta name="description" content="Lulu Lit apprend à lire à votre enfant (4-7 ans) avec la méthode syllabique, 10 minutes par jour, sans pub ni écran-récompense. Essai gratuit, -50% en early-bird.">
+<meta property="og:title" content="Lulu Lit — L'appli qui apprend vraiment à lire">
+<meta property="og:description" content="Méthode syllabique, 10 min/jour, suivi clair pour les parents. Zéro pub, zéro gadget. Places early-bird à -50%.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23FF8552'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' font-family='Georgia, serif' fill='white'%3Eb%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Literata:opsz,wght@18..144,400;18..144,500;18..144,600;18..144,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF8EE;
+    --cream-2:#FFF1DE;
+    --ink:#2E2A26;
+    --ink-soft:#5B554D;
+    --coral:#FF8552;
+    --coral-dark:#E86A3A;
+    --sky:#7FB6C9;
+    --leaf:#8BAA5C;
+    --yellow:#F6C453;
+    --line:#EBDFC9;
+    --white:#FFFFFF;
+    --radius:20px;
+    --shadow: 0 10px 30px rgba(46,42,38,0.08);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Literata', Georgia, serif;
+    color:var(--ink);
+    background:var(--cream);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.brand,.btn,.plan-name,.step-num,.badge,nav a{
+    font-family:'Fredoka', system-ui, sans-serif;
+  }
+  h1,h2,h3{ line-height:1.15; margin:0 0 .5em; color:var(--ink); }
+  p{margin:0 0 1em;}
+  a{color:inherit;}
+  img,svg{display:block;max-width:100%;}
+  .wrap{ max-width:1080px; margin:0 auto; padding:0 24px; }
+  section{ padding:88px 0; }
+  @media(max-width:640px){ section{ padding:56px 0; } }
+
+  /* NAV */
+  header.nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(255,248,238,0.9);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1080px; margin:0 auto; padding:14px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .brand{
+    display:flex; align-items:center; gap:8px;
+    font-weight:700; font-size:1.3rem; color:var(--ink); text-decoration:none;
+  }
+  .brand-mark{
+    width:34px;height:34px;border-radius:10px;background:var(--coral);
+    display:flex;align-items:center;justify-content:center;
+    color:white;font-weight:700;font-size:1.1rem;
+    transform:rotate(-4deg);
+  }
+  .nav-cta{
+    background:var(--coral); color:white; border:none;
+    padding:10px 20px; border-radius:999px; font-weight:600;
+    font-size:.95rem; cursor:pointer; text-decoration:none;
+    box-shadow:var(--shadow);
+    transition:transform .15s ease;
+  }
+  .nav-cta:hover{ transform:translateY(-2px); }
+
+  /* HERO */
+  .hero{ padding-top:64px; }
+  .hero-grid{
+    display:grid; grid-template-columns:1.1fr .9fr; gap:56px; align-items:center;
+  }
+  @media(max-width:900px){ .hero-grid{ grid-template-columns:1fr; } }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--cream-2); border:1px solid var(--line);
+    padding:6px 14px; border-radius:999px;
+    font-family:'Fredoka',sans-serif; font-weight:600; font-size:.82rem;
+    color:var(--coral-dark); margin-bottom:18px;
+  }
+  .hero h1{
+    font-size:clamp(2.1rem, 4.2vw, 3.2rem);
+    font-weight:700;
+    letter-spacing:-.01em;
+  }
+  .hero h1 em{ font-style:normal; color:var(--coral-dark); }
+  .hero .lead{
+    font-size:1.15rem; color:var(--ink-soft); max-width:46ch;
+  }
+  .hero-ctas{ display:flex; gap:14px; flex-wrap:wrap; margin-top:28px; align-items:center; }
+  .btn{
+    font-weight:600; font-size:1rem; border-radius:999px;
+    padding:15px 28px; text-decoration:none; display:inline-block;
+    cursor:pointer; border:none; transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary{ background:var(--coral); color:white; box-shadow:0 8px 20px rgba(255,133,82,0.35); }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(255,133,82,0.45); }
+  .btn-ghost{ background:transparent; color:var(--ink); border:2px solid var(--line); }
+  .btn-ghost:hover{ border-color:var(--coral); color:var(--coral-dark); }
+  .hero-note{ font-size:.85rem; color:var(--ink-soft); margin-top:10px; }
+  .badge-early{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--yellow); color:#5c4408;
+    font-family:'Fredoka',sans-serif; font-weight:600; font-size:.85rem;
+    padding:6px 12px; border-radius:999px; margin-top:18px;
+  }
+
+  .hero-art{
+    background:var(--white); border-radius:28px; border:1px solid var(--line);
+    box-shadow:var(--shadow); padding:28px;
+  }
+  .book-card{
+    background:var(--cream-2); border-radius:18px; padding:22px;
+    border:1px dashed #E4CFA6;
+  }
+  .book-row{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .syllable{
+    font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.4rem;
+    background:white; border:2px solid var(--sky); color:#2c6a80;
+    border-radius:12px; padding:6px 14px;
+  }
+  .syllable.b2{ border-color:var(--coral); color:var(--coral-dark); }
+  .syllable.b3{ border-color:var(--leaf); color:#4d6a2e; }
+  .arrow{ color:var(--ink-soft); font-size:1.2rem; }
+  .book-caption{ font-size:.9rem; color:var(--ink-soft); margin-top:16px; }
+  .progress-track{
+    height:10px; background:var(--line); border-radius:999px; overflow:hidden; margin-top:18px;
+  }
+  .progress-fill{ height:100%; width:62%; background:var(--leaf); border-radius:999px; }
+  .progress-label{ display:flex; justify-content:space-between; font-size:.78rem; color:var(--ink-soft); margin-top:6px; font-family:'Fredoka',sans-serif;}
+
+  /* PROBLEM */
+  .problem{ background:var(--white); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .problem-inner{ text-align:center; max-width:760px; margin:0 auto 48px; }
+  .problem-inner h2{ font-size:clamp(1.6rem,3vw,2.3rem); }
+  .problem-inner p{ color:var(--ink-soft); font-size:1.08rem; }
+  .pain-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  @media(max-width:760px){ .pain-grid{ grid-template-columns:1fr; } }
+  .pain-card{
+    background:var(--cream); border:1px solid var(--line); border-radius:var(--radius);
+    padding:24px;
+  }
+  .pain-card .icon{ font-size:1.6rem; margin-bottom:10px; display:block; }
+  .pain-card h3{ font-size:1.05rem; margin-bottom:6px; }
+  .pain-card p{ color:var(--ink-soft); font-size:.95rem; margin:0; }
+
+  /* SOLUTION */
+  .solution h2{ text-align:center; font-size:clamp(1.6rem,3vw,2.3rem); }
+  .solution > .wrap > p.sub{
+    text-align:center; color:var(--ink-soft); max-width:620px; margin:0 auto 48px; font-size:1.05rem;
+  }
+  .feature-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  @media(max-width:900px){ .feature-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:620px){ .feature-grid{ grid-template-columns:1fr; } }
+  .feature{
+    background:var(--white); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px; box-shadow:var(--shadow);
+  }
+  .feature .dot{
+    width:44px;height:44px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.3rem; margin-bottom:14px;
+  }
+  .dot.c1{ background:#FFE3D3; }
+  .dot.c2{ background:#DCEBEF; }
+  .dot.c3{ background:#E7EFD9; }
+  .dot.c4{ background:#FDE9C4; }
+  .dot.c5{ background:#FFE3D3; }
+  .dot.c6{ background:#DCEBEF; }
+  .feature h3{ font-size:1.05rem; margin-bottom:6px; }
+  .feature p{ color:var(--ink-soft); font-size:.95rem; margin:0; }
+
+  /* HOW */
+  .how{ background:var(--cream-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .how h2{ text-align:center; font-size:clamp(1.6rem,3vw,2.3rem); margin-bottom:48px; }
+  .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+  @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
+  .step{ text-align:left; }
+  .step-num{
+    width:38px;height:38px; border-radius:50%; background:var(--ink);
+    color:var(--cream); display:flex; align-items:center; justify-content:center;
+    font-weight:600; margin-bottom:14px;
+  }
+  .step h3{ font-size:1.05rem; }
+  .step p{ color:var(--ink-soft); font-size:.95rem; }
+
+  /* PRICING */
+  .pricing h2{ text-align:center; font-size:clamp(1.6rem,3vw,2.3rem); }
+  .pricing > .wrap > p.sub{ text-align:center; color:var(--ink-soft); max-width:600px; margin:0 auto 48px; }
+  .plans{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; align-items:stretch; }
+  @media(max-width:900px){ .plans{ grid-template-columns:1fr; max-width:420px; margin:0 auto; } }
+  .plan{
+    background:var(--white); border:1px solid var(--line); border-radius:var(--radius);
+    padding:30px 26px; display:flex; flex-direction:column; box-shadow:var(--shadow);
+    position:relative;
+  }
+  .plan.featured{ border:2px solid var(--coral); transform:translateY(-8px); }
+  .plan-tag{
+    position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+    background:var(--coral); color:white; font-family:'Fredoka',sans-serif;
+    font-size:.78rem; font-weight:600; padding:5px 14px; border-radius:999px;
+  }
+  .plan-name{ font-weight:600; font-size:1.15rem; margin-bottom:4px; }
+  .plan-desc{ color:var(--ink-soft); font-size:.9rem; margin-bottom:18px; }
+  .plan-price{ display:flex; align-items:baseline; gap:10px; margin-bottom:4px; }
+  .price-old{ text-decoration:line-through; color:#B8AF9E; font-size:1.1rem; font-family:'Fredoka',sans-serif; }
+  .price-new{ font-size:2rem; font-weight:700; font-family:'Fredoka',sans-serif; color:var(--ink); }
+  .price-period{ color:var(--ink-soft); font-size:.9rem; }
+  .plan-note{ font-size:.82rem; color:var(--coral-dark); font-weight:600; font-family:'Fredoka',sans-serif; margin-bottom:20px;}
+  .plan-features{ list-style:none; padding:0; margin:0 0 24px; flex-grow:1; }
+  .plan-features li{
+    padding:8px 0; border-top:1px solid var(--line); font-size:.92rem; color:var(--ink-soft);
+    display:flex; gap:8px; align-items:flex-start;
+  }
+  .plan-features li:first-child{ border-top:none; }
+  .plan-features li::before{ content:"✓"; color:var(--leaf); font-weight:700; }
+  .plan .btn{ width:100%; text-align:center; }
+
+  /* FAQ */
+  .faq{ background:var(--white); border-top:1px solid var(--line); }
+  .faq h2{ text-align:center; font-size:clamp(1.6rem,3vw,2.3rem); margin-bottom:40px; }
+  .faq-list{ max-width:720px; margin:0 auto; }
+  details{
+    border-bottom:1px solid var(--line); padding:18px 4px;
+  }
+  summary{
+    cursor:pointer; font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.02rem;
+    list-style:none; display:flex; justify-content:space-between; align-items:center; gap:12px;
+  }
+  summary::-webkit-details-marker{ display:none; }
+  summary::after{ content:"+"; font-size:1.4rem; color:var(--coral); flex-shrink:0; }
+  details[open] summary::after{ content:"–"; }
+  details p{ color:var(--ink-soft); margin:12px 0 0; font-size:.97rem; }
+
+  /* FINAL CTA */
+  .final-cta{
+    background:var(--ink); color:var(--cream); text-align:center; border-radius:28px;
+    margin:0 24px; padding:60px 24px;
+  }
+  .final-cta h2{ color:white; font-size:clamp(1.6rem,3vw,2.2rem); }
+  .final-cta p{ color:#D8D2C6; max-width:520px; margin:0 auto 28px; }
+  .final-cta .btn-primary{ font-size:1.05rem; }
+
+  /* FOOTER */
+  footer{ padding:40px 0 60px; text-align:center; color:var(--ink-soft); font-size:.88rem; }
+  footer .brand{ justify-content:center; margin-bottom:10px; }
+  footer a{ text-decoration:underline; }
+
+  /* MODAL */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(46,42,38,0.55);
+    display:none; align-items:center; justify-content:center; z-index:100; padding:20px;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal{
+    background:var(--cream); border-radius:22px; max-width:420px; width:100%;
+    padding:34px 30px; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,0.25);
+    border:1px solid var(--line);
+  }
+  .modal .icon{ font-size:2.4rem; margin-bottom:12px; }
+  .modal h3{ font-size:1.25rem; margin-bottom:10px; }
+  .modal p{ color:var(--ink-soft); font-size:.95rem; }
+  .modal .btn{ margin-top:16px; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#" class="brand"><span class="brand-mark">b</span>Lulu Lit</a>
+    <a href="#pricing" class="nav-cta">Réserver mon -50%</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">📖 Méthode syllabique, avis d'enseignants</span>
+      <h1>L'appli qui apprend <em>vraiment</em> à lire à votre enfant</h1>
+      <p class="lead">Des leçons-histoires progressives, 10 minutes par jour, du b-a au ba. Une pédagogie sérieuse pensée avec des enseignants — sans pub, sans écran-récompense qui déconcentre.</p>
+      <div class="hero-ctas">
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="Essai gratuit">Démarrer l'essai gratuit</a>
+        <a href="#comment-ca-marche" class="btn btn-ghost">Voir comment ça marche</a>
+      </div>
+      <div class="badge-early">🌱 Early-bird : -50% à vie pour les 200 premières familles</div>
+      <p class="hero-note">Sans engagement. Carte bancaire non requise pour l'essai.</p>
+    </div>
+    <div class="hero-art">
+      <div class="book-card">
+        <div class="book-row">
+          <span class="syllable">b</span><span class="arrow">+</span>
+          <span class="syllable b2">a</span><span class="arrow">=</span>
+          <span class="syllable b3">ba</span>
+        </div>
+        <p class="book-caption">Leçon 12 — « Le petit chat noir » · Chapitre 3</p>
+        <div class="progress-track"><div class="progress-fill"></div></div>
+        <div class="progress-label"><span>Progression du son [b]</span><span>62%</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="problem">
+  <div class="wrap">
+    <div class="problem-inner">
+      <h2>Apprendre à lire, ça ne devrait pas être une bataille tous les soirs</h2>
+      <p>Vous voyez bien que ça coince — mais entre le travail, les devoirs et la fatigue, difficile de savoir quoi faire de juste.</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <span class="icon">😓</span>
+        <h3>La méthode de l'école reste floue</h3>
+        <p>Syllabique, globale, mixte... vous ne savez pas ce qu'on attend vraiment de votre enfant, ni comment l'aider sans le perdre.</p>
+      </div>
+      <div class="pain-card">
+        <span class="icon">📱</span>
+        <h3>Les applis existantes sont des jeux, pas des cours</h3>
+        <p>Mini-jeux, badges, récompenses vidéo : ça occupe l'écran mais ça n'apprend pas à déchiffrer un mot.</p>
+      </div>
+      <div class="pain-card">
+        <span class="icon">🤷</span>
+        <h3>Aucun suivi réel de la progression</h3>
+        <p>Impossible de savoir quels sons sont acquis, lesquels butent encore — vous naviguez à l'aveugle.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="solution" id="solution">
+  <div class="wrap">
+    <h2>Une méthode syllabique, du premier son au premier livre</h2>
+    <p class="sub">Lulu Lit construit la lecture étape par étape, comme un manuel bien pensé — mais vivant, illustré, et adapté au rythme de votre enfant.</p>
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="dot c1">🔤</div>
+        <h3>Progression syllabique stricte</h3>
+        <p>Chaque son est introduit, répété, puis combiné : b, a, ba — jamais de raccourci qui sème la confusion.</p>
+      </div>
+      <div class="feature">
+        <div class="dot c2">📚</div>
+        <h3>Leçons-histoires</h3>
+        <p>Chaque notion est intégrée dans une petite histoire illustrée, pour donner du sens à ce qu'on déchiffre.</p>
+      </div>
+      <div class="feature">
+        <div class="dot c3">⏱️</div>
+        <h3>10 minutes par jour</h3>
+        <p>Des séances courtes et régulières, pensées pour tenir dans un quotidien de famille chargé.</p>
+      </div>
+      <div class="feature">
+        <div class="dot c4">📊</div>
+        <h3>Suivi clair pour les parents</h3>
+        <p>Un tableau de bord simple : sons acquis, sons en cours, temps passé — sans jargon d'orthophoniste.</p>
+      </div>
+      <div class="feature">
+        <div class="dot c5">🚫</div>
+        <h3>Zéro pub, zéro écran-récompense</h3>
+        <p>Pas de mini-jeu vidéo en fin de leçon : la motivation vient de la réussite à lire, pas d'un écran qui distrait.</p>
+      </div>
+      <div class="feature">
+        <div class="dot c6">🎨</div>
+        <h3>Illustrations douces et sobres</h3>
+        <p>Un univers graphique apaisant, pensé pour la concentration — pas pour capter l'attention à tout prix.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="comment-ca-marche">
+  <div class="wrap">
+    <h2>Comment ça marche</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Un test de niveau en 2 minutes</h3>
+        <p>Lulu Lit identifie les sons déjà connus et démarre exactement là où votre enfant en est.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Une leçon-histoire chaque jour</h3>
+        <p>10 minutes guidées à l'oral et à l'écrit, avec une voix off qui accompagne sans presser.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Un bilan hebdomadaire pour vous</h3>
+        <p>Chaque dimanche, un résumé clair des progrès — et ce sur quoi insister la semaine suivante.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <h2>Réservez votre place early-bird</h2>
+    <p class="sub">200 familles fondatrices profitent de -50% à vie. Le tarif remonte dès l'ouverture officielle.</p>
+    <div class="plans">
+      <div class="plan">
+        <div class="plan-name">Découverte</div>
+        <div class="plan-desc">Pour tester la méthode sans engagement</div>
+        <div class="plan-price">
+          <span class="price-new">0€</span>
+          <span class="price-period">/ 14 jours</span>
+        </div>
+        <div class="plan-note">Aucune carte requise</div>
+        <ul class="plan-features">
+          <li>Test de niveau complet</li>
+          <li>5 leçons-histoires</li>
+          <li>Suivi de progression basique</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-ghost" data-plan="Découverte">Commencer gratuitement</a>
+      </div>
+      <div class="plan featured">
+        <span class="plan-tag">Le plus choisi</span>
+        <div class="plan-name">Famille</div>
+        <div class="plan-desc">L'abonnement complet, un seul enfant</div>
+        <div class="plan-price">
+          <span class="price-old">8€</span>
+          <span class="price-new">4€</span>
+          <span class="price-period">/ mois</span>
+        </div>
+        <div class="plan-note">-50% à vie, réservé aux early-birds</div>
+        <ul class="plan-features">
+          <li>Toutes les leçons-histoires, à vie</li>
+          <li>Suivi détaillé par son et par semaine</li>
+          <li>Nouvelles leçons ajoutées chaque mois</li>
+          <li>Sans pub, sans écran-récompense</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="Famille">Réserver à 4€/mois</a>
+      </div>
+      <div class="plan">
+        <div class="plan-name">Fratrie</div>
+        <div class="plan-desc">Jusqu'à 3 enfants sur un compte</div>
+        <div class="plan-price">
+          <span class="price-old">14€</span>
+          <span class="price-new">7€</span>
+          <span class="price-period">/ mois</span>
+        </div>
+        <div class="plan-note">-50% à vie, réservé aux early-birds</div>
+        <ul class="plan-features">
+          <li>Tout le plan Famille</li>
+          <li>Jusqu'à 3 profils enfant</li>
+          <li>Un tableau de bord par enfant</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-ghost" data-plan="Fratrie">Réserver à 7€/mois</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap">
+    <h2>Questions fréquentes</h2>
+    <div class="faq-list">
+      <details open>
+        <summary>C'est disponible quand ?</summary>
+        <p>Le lancement est imminent. Nous finalisons les derniers contenus pédagogiques avec notre équipe d'enseignants. Les familles inscrites en early-bird seront prévenues et activées en priorité, avec leur tarif à -50% garanti à vie.</p>
+      </details>
+      <details>
+        <summary>Pourquoi la méthode syllabique et pas une autre ?</summary>
+        <p>C'est la méthode qui fait consensus chez les professionnels de l'apprentissage de la lecture : on part du son, on le combine, on construit le mot. Lulu Lit suit strictement cette logique, sans raccourci.</p>
+      </details>
+      <details>
+        <summary>À partir de quel âge ?</summary>
+        <p>Dès 4 ans pour la préparation aux sons, et jusqu'à 7 ans pour consolider une lecture fluide. Le test de niveau ajuste automatiquement le point de départ.</p>
+      </details>
+      <details>
+        <summary>Faut-il rester à côté de mon enfant ?</summary>
+        <p>Les premières leçons se font idéalement accompagnées, puis votre enfant peut gagner en autonomie. Le suivi hebdomadaire vous dit précisément où il en est.</p>
+      </details>
+      <details>
+        <summary>Y a-t-il de la publicité ou des achats intégrés surprises ?</summary>
+        <p>Non. Aucune publicité, aucun mini-jeu déguisé en récompense, aucun achat surprise. Un abonnement clair, un contenu pédagogique complet.</p>
+      </details>
+      <details>
+        <summary>Puis-je annuler à tout moment ?</summary>
+        <p>Oui, l'abonnement est sans engagement et résiliable en un clic depuis votre espace famille.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="final-cta">
+    <h2>Offrez à votre enfant une vraie méthode pour lire</h2>
+    <p>Places early-bird limitées à 200 familles. -50% à vie, garanti dès l'inscription.</p>
+    <a href="#" class="cta-checkout btn btn-primary" data-plan="Famille">Réserver mon early-bird</a>
+  </div>
+</section>
+
+<footer>
+  <a href="#" class="brand"><span class="brand-mark">b</span>Lulu Lit</a>
+  <p>Lulu Lit — apprendre à lire, sérieusement, dès 4 ans.</p>
+  <p><a href="mailto:bonjour@lululit.fr">bonjour@lululit.fr</a></p>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="icon">🎉</div>
+    <h3>Ouverture des paiements imminente</h3>
+    <p>Ton offre early-bird est réservée. Reviens très bientôt : nous t'écrirons dès que les inscriptions ouvrent, avec ton -50% garanti à vie.</p>
+    <button class="btn btn-primary" id="modalClose">Compris, à bientôt</button>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var overlay = document.getElementById('modalOverlay');
+    var closeBtn = document.getElementById('modalClose');
+    document.querySelectorAll('.cta-checkout').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        overlay.classList.add('open');
+      });
+    });
+    closeBtn.addEventListener('click', function(){ overlay.classList.remove('open'); });
+    overlay.addEventListener('click', function(e){
+      if(e.target === overlay){ overlay.classList.remove('open'); }
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){ overlay.classList.remove('open'); }
+    });
+  })();
+</script>
+
+</body>
+</html>

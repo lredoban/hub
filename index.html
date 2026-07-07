@@ -131,7 +131,7 @@ const P = [
    de:"Tes onglets organisés en kanban par tâche : à faire, en cours, terminé. Sessions sauvegardées."},
 ];
 document.getElementById('grid').innerHTML = P.map(p => `
-  <a class="card" href="https://lredoban.github.io/${p.s}/">
+  <a class="card" href="./${p.s}/">
     <div class="shot"><img src="shots/${p.s}.jpg" alt="Screenshot ${p.b}" loading="lazy"></div>
     <div class="body">
       <div class="top"><h2>${p.b}</h2>

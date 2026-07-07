@@ -1,0 +1,593 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<meta charset="UTF-8">
+<title>FacturX Kit — La lib TypeScript pour intégrer la facture électronique en 5 minutes</title>
+<meta name="description" content="Générez et validez vos factures Factur-X, UBL et CII en TypeScript. Open source, dev-first, conforme réforme 2026-2027. npm install et c'est parti.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:title" content="FacturX Kit — Facture électronique française, intégrée en 5 minutes">
+<meta property="og:description" content="La lib TypeScript open source pour générer et valider Factur-X / UBL / CII, plus une API de validation et conversion. Conforme réforme 2026-2027.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230d1117'/%3E%3Ctext x='50' y='68' font-size='58' font-family='monospace' font-weight='bold' fill='%2358e6a8' text-anchor='middle'%3E%3E_%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#0b0d10;
+    --bg-alt:#12151a;
+    --panel:#161a20;
+    --border:#242a33;
+    --text:#e6e9ee;
+    --text-dim:#9aa4b2;
+    --text-faint:#606a78;
+    --accent:#58e6a8;
+    --accent-dim:#2c8f6a;
+    --accent-soft:rgba(88,230,168,.12);
+    --warn:#e6b558;
+    --danger:#e6706a;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+    --sans:'Inter', system-ui, sans-serif;
+    --radius:10px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img,svg{max-width:100%; display:block;}
+  a{color:inherit;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px;}
+  .mono{font-family:var(--mono);}
+
+  /* background grid texture */
+  body{
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size:48px 48px;
+    background-position:center top;
+  }
+
+  /* NAV */
+  header.nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(11,13,16,.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  header.nav .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:64px;
+  }
+  .logo{
+    font-family:var(--mono); font-weight:800; font-size:1.05rem;
+    display:flex; align-items:center; gap:8px; letter-spacing:-.02em;
+  }
+  .logo .dot{color:var(--accent);}
+  .nav-links{display:flex; gap:28px; font-size:.9rem; color:var(--text-dim);}
+  .nav-links a{text-decoration:none; transition:color .15s;}
+  .nav-links a:hover{color:var(--text);}
+  .nav-cta{
+    font-family:var(--mono); font-size:.85rem; font-weight:600;
+    background:var(--accent); color:#06140e;
+    padding:9px 16px; border-radius:6px; text-decoration:none;
+    white-space:nowrap;
+  }
+  @media (max-width:720px){ .nav-links{display:none;} }
+
+  /* BADGE */
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:.78rem; font-weight:600;
+    color:var(--accent);
+    background:var(--accent-soft);
+    border:1px solid rgba(88,230,168,.35);
+    padding:6px 14px; border-radius:999px;
+    margin-bottom:24px;
+  }
+  .badge .pulse{
+    width:7px; height:7px; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 0 0 rgba(88,230,168,.6);
+    animation:pulse 1.8s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(88,230,168,.5);}
+    70%{box-shadow:0 0 0 8px rgba(88,230,168,0);}
+    100%{box-shadow:0 0 0 0 rgba(88,230,168,0);}
+  }
+
+  /* HERO */
+  .hero{padding:88px 0 72px; text-align:center;}
+  .hero h1{
+    font-size:clamp(2.1rem, 5vw, 3.4rem);
+    font-weight:800; letter-spacing:-.03em; line-height:1.12;
+    max-width:820px; margin:0 auto 20px;
+  }
+  .hero h1 .hl{color:var(--accent);}
+  .hero p.sub{
+    font-size:1.15rem; color:var(--text-dim); max-width:620px;
+    margin:0 auto 36px;
+  }
+  .cta-row{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:20px;}
+  .btn{
+    font-family:var(--mono); font-weight:700; font-size:.95rem;
+    padding:14px 26px; border-radius:8px; text-decoration:none;
+    border:1px solid transparent; cursor:pointer; transition:transform .12s, background .15s;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--accent); color:#06140e;}
+  .btn-primary:hover{background:#6ff0b8;}
+  .btn-ghost{
+    background:transparent; color:var(--text); border-color:var(--border);
+  }
+  .btn-ghost:hover{border-color:var(--text-dim);}
+  .hint{font-size:.85rem; color:var(--text-faint); font-family:var(--mono);}
+
+  .code-window{
+    max-width:640px; margin:56px auto 0;
+    background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden; text-align:left;
+    box-shadow:0 20px 60px -20px rgba(0,0,0,.6);
+  }
+  .code-window .bar{
+    display:flex; align-items:center; gap:6px;
+    padding:10px 14px; border-bottom:1px solid var(--border);
+    background:var(--bg-alt);
+  }
+  .code-window .bar span{width:10px; height:10px; border-radius:50%; background:#3a3f47;}
+  .code-window .bar .fname{
+    margin-left:8px; font-family:var(--mono); font-size:.78rem; color:var(--text-faint);
+  }
+  .code-window pre{
+    padding:20px; font-family:var(--mono); font-size:.85rem; overflow-x:auto;
+    line-height:1.7;
+  }
+  .code-window .c1{color:var(--text-faint);}
+  .code-window .c2{color:var(--accent);}
+  .code-window .c3{color:#8fb3ff;}
+  .code-window .c4{color:var(--warn);}
+
+  /* SECTION GENERIC */
+  section{padding:88px 0;}
+  .section-tag{
+    font-family:var(--mono); font-size:.8rem; color:var(--accent);
+    text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px;
+    display:block;
+  }
+  h2{
+    font-size:clamp(1.6rem,3.4vw,2.3rem); font-weight:800; letter-spacing:-.02em;
+    max-width:640px; margin-bottom:16px;
+  }
+  .section-intro{color:var(--text-dim); max-width:600px; font-size:1.05rem; margin-bottom:48px;}
+
+  /* PROBLEM */
+  .problem{background:var(--bg-alt); border-top:1px solid var(--border); border-bottom:1px solid var(--border);}
+  .pain-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  @media (max-width:800px){ .pain-grid{grid-template-columns:1fr;} }
+  .pain-card{
+    background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+    padding:24px;
+  }
+  .pain-card .num{
+    font-family:var(--mono); color:var(--danger); font-weight:700; font-size:.85rem; margin-bottom:12px; display:block;
+  }
+  .pain-card h3{font-size:1.05rem; margin-bottom:8px; font-weight:700;}
+  .pain-card p{color:var(--text-dim); font-size:.92rem;}
+
+  /* FEATURES */
+  .feat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  @media (max-width:900px){ .feat-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:600px){ .feat-grid{grid-template-columns:1fr;} }
+  .feat-card{
+    border:1px solid var(--border); border-radius:var(--radius); padding:24px;
+    background:linear-gradient(180deg, rgba(255,255,255,.015), transparent);
+    transition:border-color .15s;
+  }
+  .feat-card:hover{border-color:var(--accent-dim);}
+  .feat-icon{
+    width:36px; height:36px; border-radius:8px; background:var(--accent-soft);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); color:var(--accent); font-weight:800; margin-bottom:16px; font-size:1rem;
+  }
+  .feat-card h3{font-size:1.02rem; margin-bottom:8px; font-weight:700;}
+  .feat-card p{color:var(--text-dim); font-size:.9rem;}
+  .feat-tag{
+    display:inline-block; font-family:var(--mono); font-size:.68rem; color:var(--text-faint);
+    border:1px solid var(--border); padding:2px 8px; border-radius:4px; margin-top:12px;
+  }
+
+  /* HOW IT WORKS */
+  .how{background:var(--bg-alt); border-top:1px solid var(--border); border-bottom:1px solid var(--border);}
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:32px; counter-reset:step;}
+  @media (max-width:800px){ .steps{grid-template-columns:1fr;} }
+  .step{position:relative; padding-left:0;}
+  .step .step-num{
+    font-family:var(--mono); font-size:2.4rem; font-weight:800; color:var(--border);
+    -webkit-text-stroke:1px var(--accent-dim);
+    margin-bottom:12px; line-height:1;
+  }
+  .step h3{font-size:1.05rem; margin-bottom:8px; font-weight:700;}
+  .step p{color:var(--text-dim); font-size:.92rem;}
+  .step code{
+    display:block; margin-top:12px; font-family:var(--mono); font-size:.78rem;
+    background:var(--panel); border:1px solid var(--border); padding:8px 10px; border-radius:6px;
+    color:var(--accent); overflow-x:auto; white-space:pre;
+  }
+
+  /* PRICING */
+  .pricing-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:stretch;}
+  @media (max-width:900px){ .pricing-grid{grid-template-columns:1fr; max-width:400px; margin:0 auto;} }
+  .plan{
+    border:1px solid var(--border); border-radius:var(--radius); padding:28px;
+    background:var(--panel); display:flex; flex-direction:column;
+  }
+  .plan.featured{
+    border-color:var(--accent); position:relative;
+    background:linear-gradient(180deg, rgba(88,230,168,.06), var(--panel) 40%);
+  }
+  .plan.featured::before{
+    content:'RECOMMANDÉ'; position:absolute; top:-11px; left:24px;
+    background:var(--accent); color:#06140e; font-family:var(--mono); font-weight:800;
+    font-size:.68rem; padding:3px 10px; border-radius:4px; letter-spacing:.04em;
+  }
+  .plan h3{font-family:var(--mono); font-size:1rem; margin-bottom:4px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.04em;}
+  .plan .price-row{display:flex; align-items:baseline; gap:10px; margin:14px 0 4px;}
+  .plan .old-price{
+    font-family:var(--mono); color:var(--text-faint); text-decoration:line-through; font-size:1.1rem;
+  }
+  .plan .price{font-size:2.1rem; font-weight:800; font-family:var(--mono);}
+  .plan .price small{font-size:.9rem; font-weight:500; color:var(--text-dim);}
+  .plan .price-note{font-size:.78rem; color:var(--accent); font-family:var(--mono); margin-bottom:20px;}
+  .plan ul{list-style:none; margin:12px 0 28px; flex:1;}
+  .plan li{
+    font-size:.9rem; color:var(--text-dim); padding:8px 0; border-top:1px solid var(--border);
+    display:flex; gap:10px;
+  }
+  .plan li:first-child{border-top:none;}
+  .plan li::before{content:'✓'; color:var(--accent); font-weight:800; flex-shrink:0;}
+  .plan .btn{width:100%; justify-content:center; text-align:center;}
+
+  /* FAQ */
+  .faq{background:var(--bg-alt); border-top:1px solid var(--border); border-bottom:1px solid var(--border);}
+  .faq-list{max-width:720px;}
+  details{
+    border-bottom:1px solid var(--border); padding:20px 0;
+  }
+  details:first-child{border-top:1px solid var(--border);}
+  summary{
+    cursor:pointer; font-weight:700; font-size:1rem; list-style:none;
+    display:flex; justify-content:space-between; align-items:center; gap:16px;
+  }
+  summary::-webkit-details-marker{display:none;}
+  summary::after{
+    content:'+'; font-family:var(--mono); color:var(--accent); font-size:1.3rem; flex-shrink:0;
+    transition:transform .15s;
+  }
+  details[open] summary::after{transform:rotate(45deg);}
+  details p{color:var(--text-dim); margin-top:12px; font-size:.95rem; max-width:640px;}
+
+  /* FINAL CTA */
+  .final-cta{text-align:center; padding:100px 0;}
+  .final-cta h2{margin:0 auto 16px; max-width:520px;}
+  .final-cta p{color:var(--text-dim); max-width:480px; margin:0 auto 32px;}
+
+  footer{
+    border-top:1px solid var(--border); padding:36px 0; text-align:center;
+  }
+  footer p{color:var(--text-faint); font-size:.85rem; font-family:var(--mono);}
+  footer .foot-links{margin-top:12px; display:flex; gap:20px; justify-content:center; font-size:.85rem; color:var(--text-dim);}
+  footer a{text-decoration:none;}
+  footer a:hover{color:var(--accent);}
+
+  /* MODAL */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(6,7,9,.7); backdrop-filter:blur(4px);
+    display:none; align-items:center; justify-content:center; z-index:100; padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:var(--panel); border:1px solid var(--accent-dim); border-radius:12px;
+    max-width:420px; width:100%; padding:32px; text-align:center;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.7);
+    animation:modalIn .18s ease-out;
+  }
+  @keyframes modalIn{from{opacity:0; transform:translateY(8px) scale(.98);} to{opacity:1; transform:none;}}
+  .modal .emoji{font-size:2.2rem; margin-bottom:14px;}
+  .modal h3{font-size:1.15rem; margin-bottom:10px; font-weight:800;}
+  .modal p{color:var(--text-dim); font-size:.92rem; margin-bottom:24px;}
+  .modal .plan-name{
+    font-family:var(--mono); color:var(--accent); font-size:.8rem;
+    background:var(--accent-soft); display:inline-block; padding:4px 10px; border-radius:6px; margin-bottom:16px;
+  }
+  .modal button{
+    font-family:var(--mono); font-weight:700; background:var(--accent); color:#06140e;
+    border:none; padding:11px 22px; border-radius:8px; cursor:pointer; font-size:.9rem;
+  }
+</style>
+
+<header class="nav">
+  <div class="wrap">
+    <div class="logo"><span class="dot">&gt;_</span>FacturX Kit</div>
+    <nav class="nav-links">
+      <a href="#probleme">Problème</a>
+      <a href="#solution">Solution</a>
+      <a href="#pricing">Tarifs</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a href="#pricing" class="nav-cta">Réserver mon early-bird</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <span class="badge"><span class="pulse"></span>-50% early-bird · places limitées</span>
+      <h1>La facture électronique française, <span class="hl">intégrée en 5 minutes</span>, pas en 5 sprints.</h1>
+      <p class="sub">FacturX Kit est une lib TypeScript open source pour générer et valider vos factures Factur-X, UBL et CII — plus une API de validation &amp; conversion pour ne plus jamais y repenser.</p>
+      <div class="cta-row">
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="early-bird-hero">Réserver mon accès early-bird →</a>
+        <a href="#solution" class="btn btn-ghost">Voir comment ça marche</a>
+      </div>
+      <p class="hint">npm install @facturx-kit/core · MIT license · aucune CB requise pour la lib</p>
+
+      <div class="code-window">
+        <div class="bar">
+          <span></span><span></span><span></span>
+          <span class="fname">invoice.ts</span>
+        </div>
+        <pre><span class="c1">// 1. Installer</span>
+<span class="c2">$</span> npm install @facturx-kit/core
+
+<span class="c1">// 2. Générer une facture conforme</span>
+<span class="c3">import</span> { createInvoice } <span class="c3">from</span> <span class="c4">"@facturx-kit/core"</span>;
+
+<span class="c3">const</span> pdf = <span class="c3">await</span> createInvoice({
+  profile: <span class="c4">"factur-x-basic"</span>,
+  format: <span class="c4">"CII"</span>,
+  lines: [...],
+});
+<span class="c1">// → PDF/A-3 + XML embarqué, prêt à envoyer</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="problem" id="probleme">
+    <div class="wrap">
+      <span class="section-tag">Le problème</span>
+      <h2>La réforme arrive vite. Votre stack facturation n'est pas prête.</h2>
+      <p class="section-intro">Réception obligatoire dès septembre 2026, émission pour toutes les entreprises en 2027. Entre les consultants hors de prix et les usines à gaz "enterprise", les devs sont livrés à eux-mêmes.</p>
+      <div class="pain-grid">
+        <div class="pain-card">
+          <span class="num">01</span>
+          <h3>La doc officielle est un mur</h3>
+          <p>Specs CII, UBL, profils Factur-X (MINIMUM à EXTENDED), PDP, PPF... des centaines de pages pour comprendre ce qu'il faut réellement coder.</p>
+        </div>
+        <div class="pain-card">
+          <span class="num">02</span>
+          <h3>Les prestataires facturent au forfait consultant</h3>
+          <p>Devis à 5 chiffres pour une intégration que n'importe quel dev backend devrait pouvoir faire en un après-midi avec les bons outils.</p>
+        </div>
+        <div class="pain-card">
+          <span class="num">03</span>
+          <h3>Le deadline ne bouge pas</h3>
+          <p>Vos clients SaaS vous demandent déjà "vous serez prêts pour 2026 ?". Chaque mois sans solution est un mois de risque commercial.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="solution">
+    <div class="wrap">
+      <span class="section-tag">La solution</span>
+      <h2>Une lib qu'on installe, pas une usine qu'on subit.</h2>
+      <p class="section-intro">FacturX Kit encapsule la complexité normative dans une API TypeScript typée, testée sur les cas réels de la DGFiP. Le MVP couvre l'essentiel, la roadmap couvre le reste.</p>
+      <div class="feat-grid">
+        <div class="feat-card">
+          <div class="feat-icon">TS</div>
+          <h3>Génération Factur-X</h3>
+          <p>PDF/A-3 + XML CII embarqué en un appel de fonction. Profils MINIMUM, BASIC WL, BASIC, EN 16931.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">✓</div>
+          <h3>Validation stricte</h3>
+          <p>Vérifiez la conformité d'une facture existante avant envoi : schéma XML, règles métier, cohérence des montants.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">⇄</div>
+          <h3>Conversion UBL ↔ CII</h3>
+          <p>Passez d'un format à l'autre sans réécrire votre pipeline. Utile face à des partenaires qui imposent leur syntaxe.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">{ }</div>
+          <h3>Typage complet</h3>
+          <p>Interfaces TypeScript générées depuis les schémas XSD officiels. Autocomplete et erreurs à la compilation, pas en prod.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">API</div>
+          <h3>API de validation cloud</h3>
+          <p>Endpoint REST pour valider/convertir en masse sans gérer d'infra XML. Pensé pour vos jobs batch et votre CI.</p>
+          <span class="feat-tag">plan payant</span>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">→</div>
+          <h3>Connecteurs PDP</h3>
+          <p>Roadmap : envoi direct vers les plateformes de dématérialisation partenaires dès leur ouverture.</p>
+          <span class="feat-tag">à venir</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how">
+    <div class="wrap">
+      <span class="section-tag">Comment ça marche</span>
+      <h2>Trois étapes entre vous et une facturation conforme.</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h3>Installez la lib</h3>
+          <p>Un package npm, zéro dépendance native lourde, compatible Node et edge runtimes.</p>
+          <code>npm i @facturx-kit/core</code>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h3>Branchez vos données</h3>
+          <p>Mappez vos objets facture existants sur le typage FacturX Kit. Un helper de migration couvre les cas courants.</p>
+          <code>createInvoice({ profile, lines })</code>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h3>Validez et envoyez</h3>
+          <p>Validation locale gratuite, ou passez par l'API pour du volume et du monitoring de conformité en continu.</p>
+          <code>await validate(invoice)</code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="wrap">
+      <span class="section-tag">Tarifs</span>
+      <h2>La lib est gratuite. L'API se paie quand elle vous fait gagner du temps.</h2>
+      <p class="section-intro">Prix de lancement early-bird verrouillés à vie pour les premiers inscrits, quel que soit le tarif public futur.</p>
+      <div class="pricing-grid">
+        <div class="plan">
+          <h3>Open Source</h3>
+          <div class="price-row"><span class="price">0€</span></div>
+          <div class="price-note">pour toujours</div>
+          <ul>
+            <li>Lib TypeScript complète</li>
+            <li>Génération Factur-X illimitée</li>
+            <li>Validation locale illimitée</li>
+            <li>Licence MIT</li>
+            <li>Support communautaire (GitHub)</li>
+          </ul>
+          <a href="#" class="cta-checkout btn btn-ghost" data-plan="open-source">npm install</a>
+        </div>
+        <div class="plan featured">
+          <h3>Starter API</h3>
+          <div class="price-row">
+            <span class="old-price">29€</span>
+            <span class="price">14<small>€/mois</small></span>
+          </div>
+          <div class="price-note">-50% à vie · early-bird</div>
+          <ul>
+            <li>Tout Open Source, plus :</li>
+            <li>API validation/conversion cloud</li>
+            <li>2 000 factures/mois</li>
+            <li>Conversion UBL ↔ CII</li>
+            <li>Support email prioritaire</li>
+          </ul>
+          <a href="#" class="cta-checkout btn btn-primary" data-plan="starter-api">Réserver -50% à vie</a>
+        </div>
+        <div class="plan">
+          <h3>Scale API</h3>
+          <div class="price-row">
+            <span class="old-price">149€</span>
+            <span class="price">74<small>€/mois</small></span>
+          </div>
+          <div class="price-note">-50% à vie · early-bird</div>
+          <ul>
+            <li>Tout Starter, plus :</li>
+            <li>Volume illimité</li>
+            <li>SLA &amp; monitoring de conformité</li>
+            <li>Connecteurs PDP prioritaires</li>
+            <li>Support Slack dédié</li>
+          </ul>
+          <a href="#" class="cta-checkout btn btn-ghost" data-plan="scale-api">Réserver -50% à vie</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <div class="wrap">
+      <span class="section-tag">FAQ</span>
+      <h2>Questions fréquentes</h2>
+      <div class="faq-list">
+        <details open>
+          <summary>C'est disponible quand ?</summary>
+          <p>Le lancement est imminent — on finalise les derniers tests de conformité sur les profils Factur-X. Les inscrits early-bird sont prévenus et servis en premier, et paient leur abonnement moitié prix à vie. La lib open source sera publiée en premier, l'API suit de près.</p>
+        </details>
+        <details>
+          <summary>Pourquoi la lib est gratuite si l'API est payante ?</summary>
+          <p>Parce qu'un outil de conformité réglementaire doit être vérifiable et auditable par tous, sans boîte noire. La lib fait le travail de base sans limite. L'API, elle, vend de l'infra, du monitoring et du temps — c'est ce qui a un coût.</p>
+        </details>
+        <details>
+          <summary>Ça couvre quels formats exactement ?</summary>
+          <p>Factur-X (profils MINIMUM, BASIC WL, BASIC, EN 16931), UBL 2.1 et CII (Cross Industry Invoice), conformes aux exigences DGFiP pour la réforme de facturation électronique française.</p>
+        </details>
+        <details>
+          <summary>Faut-il être expert en facturation électronique pour l'utiliser ?</summary>
+          <p>Non. L'API TypeScript expose des concepts métier (facture, ligne, TVA, profil) et gère la complexité XML/PDF en interne. Si vous savez modéliser une facture en JSON, vous savez utiliser FacturX Kit.</p>
+        </details>
+        <details>
+          <summary>Ça remplace mon PDP ou ma plateforme de facturation ?</summary>
+          <p>Non, FacturX Kit se glisse en amont ou en aval : il génère/valide le document conforme que votre PDP ou votre outil de facturation transmettra ensuite. C'est la brique technique, pas le tuyau réglementaire.</p>
+        </details>
+        <details>
+          <summary>Quelle est la différence de prix entre early-bird et tarif public ?</summary>
+          <p>Les plans Starter et Scale seront lancés à 29€ et 149€/mois. En réservant maintenant, vous verrouillez 14€ et 74€/mois à vie, tant que vous restez abonné sans interruption.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="wrap">
+      <h2>Ne réintégrez pas la réforme deux fois.</h2>
+      <p>Faites-le une fois, proprement, avec une lib maintenue — et verrouillez votre tarif à moitié prix pendant que c'est encore possible.</p>
+      <a href="#" class="cta-checkout btn btn-primary" data-plan="final-cta">Réserver mon early-bird -50% →</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="mono">&gt;_ FacturX Kit — Facturation électronique française pour développeurs</p>
+    <div class="foot-links">
+      <a href="#pricing">Tarifs</a>
+      <a href="#faq">FAQ</a>
+      <a href="#probleme">Problème</a>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="emoji">🎉</div>
+    <h3>Ouverture des paiements imminente</h3>
+    <p id="modalPlanText" class="plan-name"></p>
+    <p>Ton offre early-bird est réservée. On t'écrit dès que les paiements ouvrent — reviens bientôt, les places sont limitées.</p>
+    <button id="modalClose">Compris</button>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var overlay = document.getElementById('modalOverlay');
+    var planText = document.getElementById('modalPlanText');
+    document.querySelectorAll('.cta-checkout').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        var plan = btn.getAttribute('data-plan') || 'default';
+        planText.textContent = 'Offre : ' + plan;
+        overlay.classList.add('open');
+      });
+    });
+    document.getElementById('modalClose').addEventListener('click', function(){
+      overlay.classList.remove('open');
+    });
+    overlay.addEventListener('click', function(e){
+      if(e.target === overlay) overlay.classList.remove('open');
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') overlay.classList.remove('open');
+    });
+  })();
+</script>

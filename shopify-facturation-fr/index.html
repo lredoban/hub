@@ -1,0 +1,589 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Facturia — Conformité facturation électronique pour Shopify</title>
+<meta name="description" content="Facturia génère automatiquement vos factures Factur-X conformes à chaque commande Shopify, ajoute les mentions légales obligatoires et prépare votre e-reporting 2026-2027. Zéro prise de tête.">
+<meta property="og:title" content="Facturia — Conformité facturation électronique pour Shopify">
+<meta property="og:description" content="Factur-X automatique, mentions légales, e-reporting 2026-2027 : votre boutique Shopify conforme sans y penser.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B6E4F'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='white' font-family='Georgia,serif'%3EF%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12241d;
+    --ink-soft:#3f5850;
+    --paper:#fbfaf6;
+    --paper-alt:#f2f1e9;
+    --green:#0b6e4f;
+    --green-dark:#084f39;
+    --green-soft:#e4f2ea;
+    --line:#e1ddd0;
+    --gold:#c8862a;
+    --radius:14px;
+    --shadow:0 8px 30px rgba(18,36,29,0.08);
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',Georgia,serif;
+    font-weight:600;
+    line-height:1.12;
+    margin:0 0 .5em;
+    letter-spacing:-.01em;
+  }
+  p{margin:0 0 1em;}
+  a{color:inherit;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--green-soft);color:var(--green-dark);
+    border:1px solid #cfe8da;
+    padding:6px 14px;border-radius:999px;
+    font-size:.82rem;font-weight:700;letter-spacing:.02em;
+    text-transform:uppercase;
+  }
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);}
+
+  /* NAV */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(251,250,246,.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;max-width:1120px;margin:0 auto;
+  }
+  .logo{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Fraunces',serif;font-weight:700;font-size:1.28rem;
+    text-decoration:none;color:var(--ink);
+  }
+  .logo-mark{
+    width:32px;height:32px;border-radius:8px;background:var(--green);
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem;
+    flex-shrink:0;
+  }
+  .nav-cta{
+    background:var(--green);color:#fff;border:none;
+    padding:10px 20px;border-radius:9px;font-weight:700;font-size:.92rem;
+    cursor:pointer;text-decoration:none;transition:background .15s ease, transform .15s ease;
+    font-family:inherit;
+  }
+  .nav-cta:hover{background:var(--green-dark);transform:translateY(-1px);}
+
+  /* HERO */
+  .hero{padding:76px 0 64px;border-bottom:1px solid var(--line);}
+  .hero-inner{max-width:760px;margin:0 auto;text-align:center;}
+  .hero h1{font-size:clamp(2.1rem,5vw,3.4rem);}
+  .hero .accent{color:var(--green);}
+  .hero .sub{
+    font-size:1.15rem;color:var(--ink-soft);max-width:600px;
+    margin:18px auto 30px;
+  }
+  .hero-badge-row{display:flex;justify-content:center;margin-bottom:20px;}
+  .hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;}
+  .btn{
+    display:inline-block;border:none;border-radius:10px;
+    padding:15px 28px;font-weight:700;font-size:1rem;
+    cursor:pointer;text-decoration:none;font-family:inherit;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .btn-primary{background:var(--green);color:#fff;box-shadow:0 10px 24px rgba(11,110,79,.22);}
+  .btn-primary:hover{background:var(--green-dark);transform:translateY(-2px);}
+  .btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--green);color:var(--green-dark);}
+  .hero-note{font-size:.85rem;color:var(--ink-soft);}
+  .hero-visual{
+    margin:52px auto 0;max-width:920px;
+    background:#fff;border:1px solid var(--line);border-radius:18px;
+    box-shadow:var(--shadow);padding:22px;
+  }
+  .invoice-mock{
+    background:var(--paper-alt);border-radius:12px;padding:28px;
+    display:grid;grid-template-columns:1fr 1fr;gap:20px;text-align:left;
+    font-size:.86rem;
+  }
+  .invoice-mock .col b{display:block;font-family:'Fraunces',serif;font-size:1rem;margin-bottom:6px;}
+  .invoice-mock .row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);color:var(--ink-soft);}
+  .invoice-mock .row.total{color:var(--ink);font-weight:700;border-bottom:none;}
+  .tag-ok{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--green-soft);color:var(--green-dark);
+    padding:4px 10px;border-radius:999px;font-size:.75rem;font-weight:700;
+  }
+
+  /* SECTION generic */
+  section{padding:80px 0;}
+  .section-head{max-width:640px;margin:0 auto 48px;text-align:center;}
+  .eyebrow{
+    color:var(--green-dark);font-weight:800;font-size:.8rem;
+    letter-spacing:.09em;text-transform:uppercase;display:block;margin-bottom:10px;
+  }
+  .section-head h2{font-size:clamp(1.7rem,3.6vw,2.4rem);}
+  .section-head p{color:var(--ink-soft);font-size:1.05rem;}
+
+  /* PROBLEM */
+  .problem{background:var(--paper-alt);border-bottom:1px solid var(--line);}
+  .problem-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  }
+  .problem-card{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px;
+  }
+  .problem-card .icon{
+    width:42px;height:42px;border-radius:10px;background:#fdf1e4;
+    display:flex;align-items:center;justify-content:center;margin-bottom:16px;
+    color:var(--gold);font-size:1.3rem;
+  }
+  .problem-card h3{font-size:1.08rem;margin-bottom:8px;}
+  .problem-card p{color:var(--ink-soft);font-size:.94rem;margin:0;}
+
+  /* FEATURES */
+  .features-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:22px;
+  }
+  .feature-card{
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:28px;background:#fff;transition:box-shadow .15s ease, transform .15s ease;
+  }
+  .feature-card:hover{box-shadow:var(--shadow);transform:translateY(-3px);}
+  .feature-card .icon{
+    width:44px;height:44px;border-radius:10px;background:var(--green-soft);
+    display:flex;align-items:center;justify-content:center;margin-bottom:16px;
+    color:var(--green-dark);font-size:1.35rem;
+  }
+  .feature-card h3{font-size:1.1rem;margin-bottom:8px;}
+  .feature-card p{color:var(--ink-soft);font-size:.94rem;margin:0;}
+  .feature-card.soon{border-style:dashed;background:var(--paper-alt);}
+  .soon-tag{
+    font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--gold);background:#fdf1e4;padding:3px 8px;border-radius:6px;
+    display:inline-block;margin-bottom:10px;
+  }
+
+  /* HOW */
+  .how{background:var(--paper-alt);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .steps{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:32px;
+    counter-reset:step;
+  }
+  .step{position:relative;text-align:center;padding:0 12px;}
+  .step-num{
+    width:52px;height:52px;border-radius:50%;background:var(--green);
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-weight:700;font-size:1.3rem;
+    margin:0 auto 18px;
+  }
+  .step h3{font-size:1.08rem;margin-bottom:8px;}
+  .step p{color:var(--ink-soft);font-size:.94rem;}
+
+  /* PRICING */
+  .pricing-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch;
+  }
+  .plan{
+    border:1px solid var(--line);border-radius:16px;padding:32px 26px;
+    background:#fff;display:flex;flex-direction:column;
+  }
+  .plan.featured{
+    border:2px solid var(--green);box-shadow:0 16px 40px rgba(11,110,79,.14);
+    position:relative;
+  }
+  .plan.featured::before{
+    content:"Le plus choisi";
+    position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+    background:var(--green);color:#fff;font-size:.72rem;font-weight:800;
+    padding:5px 14px;border-radius:999px;letter-spacing:.03em;text-transform:uppercase;
+  }
+  .plan h3{font-size:1.15rem;margin-bottom:4px;}
+  .plan .plan-desc{color:var(--ink-soft);font-size:.88rem;margin-bottom:18px;}
+  .price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:4px;flex-wrap:wrap;}
+  .price-old{color:#a9a297;text-decoration:line-through;font-size:1.1rem;font-weight:600;}
+  .price-new{font-family:'Fraunces',serif;font-size:2.1rem;font-weight:700;}
+  .price-period{color:var(--ink-soft);font-size:.9rem;}
+  .early-tag{
+    display:inline-block;color:var(--gold);font-weight:800;font-size:.76rem;
+    text-transform:uppercase;letter-spacing:.04em;margin-bottom:20px;
+  }
+  .plan ul{list-style:none;padding:0;margin:0 0 26px;flex-grow:1;}
+  .plan li{
+    display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:.92rem;color:var(--ink-soft);
+  }
+  .plan li b{color:var(--ink);font-weight:600;}
+  .plan li .check{color:var(--green);font-weight:800;flex-shrink:0;}
+  .plan .btn{width:100%;text-align:center;}
+  .pricing-note{text-align:center;color:var(--ink-soft);font-size:.86rem;margin-top:28px;}
+
+  /* FAQ */
+  .faq{max-width:760px;margin:0 auto;}
+  details{
+    border-bottom:1px solid var(--line);padding:20px 4px;
+  }
+  details summary{
+    cursor:pointer;font-weight:700;font-size:1.02rem;list-style:none;
+    display:flex;justify-content:space-between;align-items:center;gap:16px;
+  }
+  details summary::-webkit-details-marker{display:none;}
+  details summary::after{
+    content:"+";font-size:1.4rem;color:var(--green);flex-shrink:0;font-weight:400;
+    transition:transform .2s ease;
+  }
+  details[open] summary::after{transform:rotate(45deg);}
+  details p{color:var(--ink-soft);margin:12px 0 0;font-size:.95rem;}
+
+  /* FINAL CTA */
+  .final-cta{
+    background:var(--green-dark);color:#fff;text-align:center;border-radius:20px;
+    padding:56px 32px;margin:0 24px;
+  }
+  .final-cta-wrap{max-width:1120px;margin:0 auto;}
+  .final-cta h2{color:#fff;font-size:clamp(1.6rem,3.4vw,2.2rem);}
+  .final-cta p{color:#cfe6da;max-width:520px;margin:0 auto 26px;}
+  .final-cta .btn-primary{background:#fff;color:var(--green-dark);box-shadow:none;}
+  .final-cta .btn-primary:hover{background:#eef7f1;}
+
+  /* FOOTER */
+  footer{padding:48px 0 32px;color:var(--ink-soft);font-size:.85rem;}
+  .footer-inner{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
+    border-top:1px solid var(--line);padding-top:28px;
+  }
+  .footer-logo{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--ink);}
+
+  /* MODAL */
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(18,36,29,.55);
+    display:none;align-items:center;justify-content:center;z-index:100;padding:20px;
+  }
+  .modal-backdrop.open{display:flex;}
+  .modal{
+    background:#fff;border-radius:16px;max-width:420px;width:100%;
+    padding:32px 28px;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,.25);
+    animation:pop .18s ease;
+  }
+  @keyframes pop{from{transform:scale(.94);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .modal .icon-big{font-size:2.6rem;margin-bottom:6px;}
+  .modal h3{margin-bottom:10px;font-size:1.3rem;}
+  .modal p{color:var(--ink-soft);font-size:.95rem;margin-bottom:22px;}
+  .modal button.close-btn{
+    background:var(--green);color:#fff;border:none;border-radius:9px;
+    padding:12px 24px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.95rem;
+  }
+
+  @media (max-width:860px){
+    .problem-grid,.features-grid,.steps,.pricing-grid{grid-template-columns:1fr;}
+    .invoice-mock{grid-template-columns:1fr;}
+    .plan.featured{order:-1;}
+    section{padding:56px 0;}
+    .hero{padding:52px 0 44px;}
+    .final-cta{padding:44px 22px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo"><span class="logo-mark">F</span>Facturia</a>
+    <a href="#pricing" class="nav-cta">Réserver mon tarif early-bird</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-badge-row">
+      <span class="badge"><span class="dot"></span>Early-bird — 50% de réduction à vie</span>
+    </div>
+    <h1>Votre boutique Shopify, <span class="accent">conforme à la facture électronique</span> sans lever le petit doigt</h1>
+    <p class="sub">Facturia génère une facture Factur-X valide à chaque commande, ajoute vos mentions légales obligatoires et prépare votre e-reporting — pendant que Shopify, lui, ne fait rien de tout ça.</p>
+    <div class="hero-ctas">
+      <a href="#" class="cta-checkout btn btn-primary" data-plan="Starter">Réserver ma place early-bird</a>
+      <a href="#how" class="btn btn-ghost">Voir comment ça marche</a>
+    </div>
+    <p class="hero-note">Sans engagement · Installation en 5 minutes · App Store Shopify</p>
+
+    <div class="hero-visual">
+      <div class="invoice-mock">
+        <div class="col">
+          <b>Commande #FR-10482</b>
+          <div class="row"><span>Client</span><span>Boutique Lumière SARL</span></div>
+          <div class="row"><span>SIREN</span><span>512 345 678</span></div>
+          <div class="row"><span>N° facture</span><span>2026-000482</span></div>
+          <div class="row total"><span>Total TTC</span><span>147,00 €</span></div>
+        </div>
+        <div class="col">
+          <b>Statut conformité</b>
+          <div class="row"><span>Format Factur-X</span><span class="tag-ok">✓ Généré</span></div>
+          <div class="row"><span>Mentions légales</span><span class="tag-ok">✓ Complètes</span></div>
+          <div class="row"><span>E-reporting 2026</span><span class="tag-ok">✓ Prêt</span></div>
+          <div class="row"><span>Envoi client</span><span class="tag-ok">✓ Automatique</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="problem">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Le problème</span>
+      <h2>La réforme approche. Votre stack Shopify, elle, n'est pas prête.</h2>
+      <p>Vous vendez, Shopify encaisse — mais la conformité facturation, c'est à vous de la bricoler. Et le bricolage ne passera pas un contrôle.</p>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="icon">⚠</div>
+        <h3>Shopify ne génère pas de Factur-X</h3>
+        <p>Vos factures actuelles sont des PDF basiques, sans les données structurées exigées par la réforme. Non conformes en l'état.</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">📋</div>
+        <h3>Mentions légales oubliées</h3>
+        <p>SIREN, TVA intracommunautaire, mentions obligatoires spécifiques B2B/B2C : un oubli, et c'est la facture qui saute en cas de contrôle.</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">⏳</div>
+        <h3>L'e-reporting arrive vite</h3>
+        <p>2026 pour les grandes entreprises, 2027 pour les PME — le calendrier est fixé. Sans outil dédié, vous le découvrirez en retard.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">La solution</span>
+      <h2>Ce que Facturia fait à votre place</h2>
+      <p>Une app installée sur votre boutique, connectée à chaque commande, silencieuse et fiable.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="icon">🧾</div>
+        <h3>Facture Factur-X automatique</h3>
+        <p>Chaque commande génère une facture au format hybride Factur-X (PDF + XML structuré), conforme au socle légal de la réforme.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">✅</div>
+        <h3>Mentions légales complètes</h3>
+        <p>SIREN, TVA, adresse, conditions de vente : toutes les mentions obligatoires B2B et B2C insérées automatiquement, sans template à retoucher.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📤</div>
+        <h3>Envoi client automatique</h3>
+        <p>La facture part par email dès validation de la commande. Vos clients l'ont, vous n'y pensez plus.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🗂</div>
+        <h3>Archivage centralisé</h3>
+        <p>Toutes vos factures conservées et exportables, prêtes pour votre comptable ou un contrôle fiscal.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🇫🇷</div>
+        <h3>Distinction B2B / B2C</h3>
+        <p>Facturia détecte le type de client et applique les règles de facturation qui s'appliquent réellement à chaque commande.</p>
+      </div>
+      <div class="feature-card soon">
+        <span class="soon-tag">Bientôt</span>
+        <div class="icon">📡</div>
+        <h3>E-reporting automatisé</h3>
+        <p>Transmission directe des données de vente à l'administration fiscale, prête pour l'échéance 2026-2027.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Comment ça marche</span>
+      <h2>Installé en 5 minutes, oublié pour de bon</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Installez depuis l'App Store Shopify</h3>
+        <p>Facturia se connecte à votre boutique en quelques clics, sans toucher à votre thème ni votre stack existante.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Renseignez vos infos légales</h3>
+        <p>SIREN, TVA, coordonnées : un formulaire unique, une seule fois. Facturia s'occupe du reste sur chaque commande.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Chaque commande devient conforme</h3>
+        <p>Facture Factur-X générée, mentions ajoutées, client notifié — automatiquement, à chaque vente.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Tarifs</span>
+      <h2>Moitié prix pour les premiers marchands</h2>
+      <p>Places early-bird limitées. Le tarif est bloqué à vie pour ceux qui réservent maintenant.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="plan">
+        <h3>Starter</h3>
+        <p class="plan-desc">Pour tester la conformité sans friction, petit volume.</p>
+        <div class="price-row">
+          <span class="price-old">18€</span>
+          <span class="price-new">9€</span>
+          <span class="price-period">/ mois</span>
+        </div>
+        <span class="early-tag">-50% à vie, early-bird</span>
+        <ul>
+          <li><span class="check">✓</span> Jusqu'à 100 commandes/mois</li>
+          <li><span class="check">✓</span> Factur-X automatique</li>
+          <li><span class="check">✓</span> Mentions légales incluses</li>
+          <li><span class="check">✓</span> Archivage 12 mois</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="Starter">Réserver ce tarif</a>
+      </div>
+      <div class="plan featured">
+        <h3>Croissance</h3>
+        <p class="plan-desc">Pour les boutiques qui vendent chaque jour, B2B et B2C.</p>
+        <div class="price-row">
+          <span class="price-old">38€</span>
+          <span class="price-new">19€</span>
+          <span class="price-period">/ mois</span>
+        </div>
+        <span class="early-tag">-50% à vie, early-bird</span>
+        <ul>
+          <li><span class="check">✓</span> Commandes <b>illimitées</b></li>
+          <li><span class="check">✓</span> Factur-X automatique</li>
+          <li><span class="check">✓</span> Distinction B2B / B2C</li>
+          <li><span class="check">✓</span> Archivage illimité</li>
+          <li><span class="check">✓</span> Accès prioritaire e-reporting</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="Croissance">Réserver ce tarif</a>
+      </div>
+      <div class="plan">
+        <h3>Multi-boutiques</h3>
+        <p class="plan-desc">Pour les marchands qui gèrent plusieurs boutiques Shopify.</p>
+        <div class="price-row">
+          <span class="price-old">58€</span>
+          <span class="price-new">29€</span>
+          <span class="price-period">/ mois</span>
+        </div>
+        <span class="early-tag">-50% à vie, early-bird</span>
+        <ul>
+          <li><span class="check">✓</span> Jusqu'à 5 boutiques</li>
+          <li><span class="check">✓</span> Tout Croissance inclus</li>
+          <li><span class="check">✓</span> Facturation consolidée</li>
+          <li><span class="check">✓</span> Support prioritaire</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="Multi-boutiques">Réserver ce tarif</a>
+      </div>
+    </div>
+    <p class="pricing-note">Aucune carte débitée aujourd'hui. Vous confirmez au lancement, au tarif que vous avez réservé.</p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">FAQ</span>
+      <h2>Les questions qu'on nous pose</h2>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>C'est disponible quand ?</summary>
+        <p>Le lancement est imminent : Facturia est en toute fin de développement. Les marchands early-bird sont prévenus et activés en premier, dans l'ordre d'inscription, et gardent leur tarif à moitié prix à vie. Réservez votre place maintenant pour ne pas attendre.</p>
+      </details>
+      <details>
+        <summary>Qu'est-ce que le format Factur-X exactement ?</summary>
+        <p>C'est le format hybride (PDF lisible + XML structuré) retenu par l'administration française pour la facturation électronique. C'est ce format que Facturia génère automatiquement à chaque commande.</p>
+      </details>
+      <details>
+        <summary>Facturia remplace-t-il mon expert-comptable ?</summary>
+        <p>Non. Facturia génère et archive vos factures conformes ; votre comptable continue son travail habituel, avec des documents propres et exploitables en plus.</p>
+      </details>
+      <details>
+        <summary>Est-ce que ça fonctionne avec mon thème Shopify actuel ?</summary>
+        <p>Oui. Facturia s'installe en tant qu'app, sans toucher à votre thème ni à votre checkout. Aucune compétence technique requise.</p>
+      </details>
+      <details>
+        <summary>Que se passe-t-il si je vends aussi à l'étranger ?</summary>
+        <p>Facturia applique les règles françaises à vos ventes concernées par la réforme et reste compatible avec vos factures export existantes.</p>
+      </details>
+      <details>
+        <summary>Puis-je annuler à tout moment ?</summary>
+        <p>Oui, aucun engagement. Votre tarif early-bird reste garanti tant que votre abonnement est actif.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="final-cta">
+    <div class="final-cta-wrap">
+      <h2>Ne payez jamais le plein tarif</h2>
+      <p>Les places early-bird sont limitées et le tarif double au lancement public. Réservez la vôtre en 30 secondes.</p>
+      <a href="#" class="cta-checkout btn btn-primary" data-plan="Croissance">Réserver mon tarif early-bird</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div class="footer-logo"><span class="logo-mark" style="width:26px;height:26px;font-size:.9rem;">F</span>Facturia</div>
+    <div>© 2026 Facturia — Conformité facturation électronique pour Shopify. Fait en France.</div>
+  </div>
+</footer>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="icon-big">🎉</div>
+    <h3>Ouverture des paiements imminente</h3>
+    <p>Ton offre early-bird est réservée. Reviens très bientôt pour finaliser ton abonnement au tarif -50% verrouillé à vie.</p>
+    <button class="close-btn" id="modalClose">Compris</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var backdrop = document.getElementById('modalBackdrop');
+  var closeBtn = document.getElementById('modalClose');
+  document.querySelectorAll('.cta-checkout').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault();
+      backdrop.classList.add('open');
+    });
+  });
+  function closeModal(){ backdrop.classList.remove('open'); }
+  closeBtn.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', function(e){
+    if(e.target === backdrop) closeModal();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeModal();
+  });
+})();
+</script>
+
+</body>
+</html>

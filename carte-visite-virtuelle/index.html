@@ -1,0 +1,576 @@
+<!-- TODO: remplacer les href des .cta-checkout par les vrais liens de paiement Stripe -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kardo — Ta carte de visite, sans carte</title>
+<meta name="description" content="Kardo transforme ton téléphone en carte de visite intelligente. Un scan, et ton contact s'ajoute direct dans le répertoire. Zéro carte NFC, zéro app à installer pour la personne en face.">
+<meta property="og:title" content="Kardo — Ta carte de visite, sans carte">
+<meta property="og:description" content="Un QR, un scan, un contact enregistré. Choisis ce que tu partages selon le contexte : pro, perso, chantier.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231a1a18'/%3E%3Crect x='24' y='34' width='52' height='34' rx='6' fill='none' stroke='%23d97a3f' stroke-width='6'/%3E%3Ccircle cx='38' cy='51' r='5' fill='%23d97a3f'/%3E%3Cline x1='50' y1='47' x2='66' y2='47' stroke='%23d97a3f' stroke-width='4' stroke-linecap='round'/%3E%3Cline x1='50' y1='55' x2='62' y2='55' stroke='%23d97a3f' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1a1a18;
+    --ink-soft:#4a4844;
+    --paper:#faf8f4;
+    --paper-alt:#f0ece3;
+    --line:#e2ddd2;
+    --accent:#d97a3f;
+    --accent-dark:#b8622e;
+    --accent-tint:#fbe8da;
+    --radius:14px;
+    --maxw:1080px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    line-height:1.12;
+  }
+  a{color:inherit;}
+  img,svg{display:block;max-width:100%;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+  section{padding:96px 0;}
+  @media (max-width:640px){ section{padding:64px 0;} }
+
+  /* NAV */
+  .nav{
+    position:sticky;top:0;z-index:40;
+    background:rgba(250,248,244,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav .wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    padding-top:16px;padding-bottom:16px;
+  }
+  .logo{
+    font-family:'Fraunces',serif;font-weight:700;font-size:1.35rem;
+    display:flex;align-items:center;gap:8px;
+  }
+  .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);display:inline-block;}
+  .nav-cta{
+    font-size:0.9rem;font-weight:600;
+    background:var(--ink);color:var(--paper);
+    padding:10px 20px;border-radius:999px;
+    text-decoration:none;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .nav-cta:hover{background:var(--accent-dark);transform:translateY(-1px);}
+
+  /* HERO */
+  .hero{padding-top:76px;padding-bottom:72px;}
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--accent-tint);color:var(--accent-dark);
+    font-size:0.82rem;font-weight:600;
+    padding:7px 14px;border-radius:999px;
+    margin-bottom:26px;
+    border:1px solid #f0cfae;
+  }
+  .hero h1{
+    font-size:clamp(2.3rem, 5vw, 3.6rem);
+    max-width:14ch;
+    margin-bottom:22px;
+  }
+  .hero h1 em{color:var(--accent);font-style:normal;}
+  .hero .sub{
+    font-size:1.18rem;color:var(--ink-soft);
+    max-width:52ch;margin-bottom:36px;
+  }
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+  .btn{
+    display:inline-block;
+    font-weight:600;font-size:1rem;
+    padding:15px 28px;border-radius:999px;
+    text-decoration:none;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary{
+    background:var(--accent);color:#fff;
+    box-shadow:0 8px 20px -8px rgba(217,122,63,0.6);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 24px -8px rgba(217,122,63,0.7);}
+  .btn-ghost{
+    background:transparent;color:var(--ink);
+    border:1.5px solid var(--line);
+  }
+  .btn-ghost:hover{border-color:var(--ink);}
+  .hero-note{font-size:0.88rem;color:var(--ink-soft);margin-top:16px;}
+
+  .hero-visual{
+    margin-top:56px;
+    background:var(--paper-alt);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:38px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:28px;
+    align-items:center;
+  }
+  @media (max-width:720px){ .hero-visual{grid-template-columns:1fr;} }
+  .phone-mock{
+    background:var(--ink);
+    border-radius:26px;
+    padding:18px;
+    max-width:260px;
+    margin:0 auto;
+  }
+  .phone-screen{
+    background:#fff;border-radius:16px;padding:22px 18px;
+  }
+  .phone-screen .qr{
+    width:100%;aspect-ratio:1;
+    background:
+      repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px),
+      repeating-linear-gradient(0deg, var(--ink) 0 6px, transparent 6px 12px);
+    background-blend-mode:multiply;
+    border-radius:8px;
+    margin-bottom:14px;
+    opacity:0.92;
+  }
+  .phone-screen .name{font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem;}
+  .phone-screen .role{font-size:0.82rem;color:var(--ink-soft);margin-top:2px;}
+  .toast{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;
+    box-shadow:0 10px 30px -14px rgba(0,0,0,0.2);
+  }
+  .toast .top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .toast .avatar{width:34px;height:34px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+  .toast .t1{font-weight:600;font-size:0.92rem;}
+  .toast .t2{font-size:0.8rem;color:var(--ink-soft);}
+  .toast .body{font-size:0.85rem;color:var(--ink-soft);}
+
+  /* PROBLEM */
+  .problem{background:var(--ink);color:var(--paper);}
+  .problem h2{color:#fff;font-size:clamp(1.8rem,3.4vw,2.5rem);max-width:20ch;margin-bottom:20px;}
+  .problem .lead{color:#c9c6bd;max-width:56ch;margin-bottom:48px;font-size:1.08rem;}
+  .pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  @media (max-width:820px){ .pain-grid{grid-template-columns:1fr;} }
+  .pain-card{
+    background:#26251f;border:1px solid #38362d;border-radius:var(--radius);
+    padding:26px;
+  }
+  .pain-card .num{font-family:'Fraunces',serif;color:var(--accent);font-size:1.6rem;margin-bottom:12px;}
+  .pain-card p{color:#d8d5cc;font-size:0.96rem;}
+
+  /* SOLUTION */
+  .section-head{max-width:42ch;margin-bottom:52px;}
+  .section-head .kicker{
+    color:var(--accent-dark);font-weight:700;font-size:0.82rem;
+    text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;display:block;
+  }
+  .section-head h2{font-size:clamp(1.8rem,3.4vw,2.4rem);}
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  @media (max-width:900px){ .features{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:600px){ .features{grid-template-columns:1fr;} }
+  .feature{
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:28px 24px;background:#fff;
+  }
+  .feature .icon{
+    width:42px;height:42px;border-radius:10px;
+    background:var(--accent-tint);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:18px;
+  }
+  .feature h3{font-size:1.08rem;margin-bottom:8px;font-weight:600;}
+  .feature p{font-size:0.92rem;color:var(--ink-soft);}
+  .feature.soon{opacity:0.75;}
+  .feature .tag{
+    display:inline-block;font-size:0.7rem;font-weight:700;text-transform:uppercase;
+    letter-spacing:0.04em;color:var(--accent-dark);background:var(--accent-tint);
+    padding:3px 8px;border-radius:5px;margin-bottom:10px;
+  }
+
+  /* HOW */
+  .how{background:var(--paper-alt);}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;counter-reset:step;}
+  @media (max-width:820px){ .steps{grid-template-columns:1fr;} }
+  .step{position:relative;padding-left:0;}
+  .step .step-num{
+    font-family:'Fraunces',serif;font-size:2.6rem;font-weight:600;
+    color:var(--accent);margin-bottom:10px;line-height:1;
+  }
+  .step h3{font-size:1.1rem;margin-bottom:8px;}
+  .step p{font-size:0.94rem;color:var(--ink-soft);}
+
+  /* PRICING */
+  .plans{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:820px;}
+  @media (max-width:700px){ .plans{grid-template-columns:1fr;} }
+  .plan{
+    border:1px solid var(--line);border-radius:20px;
+    padding:34px 30px;background:#fff;
+    display:flex;flex-direction:column;
+  }
+  .plan.featured{
+    border:2px solid var(--accent);
+    position:relative;
+    box-shadow:0 20px 40px -24px rgba(217,122,63,0.4);
+  }
+  .plan.featured::before{
+    content:"Le plus choisi";
+    position:absolute;top:-13px;left:30px;
+    background:var(--accent);color:#fff;
+    font-size:0.72rem;font-weight:700;
+    padding:4px 12px;border-radius:999px;
+  }
+  .plan .pname{font-weight:700;font-size:1.05rem;margin-bottom:6px;}
+  .plan .pdesc{font-size:0.88rem;color:var(--ink-soft);margin-bottom:22px;}
+  .plan .price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:4px;}
+  .plan .old-price{text-decoration:line-through;color:#b3ada0;font-size:1.1rem;}
+  .plan .price{font-family:'Fraunces',serif;font-size:2.4rem;font-weight:600;}
+  .plan .per{color:var(--ink-soft);font-size:0.9rem;}
+  .plan .early{font-size:0.82rem;color:var(--accent-dark);font-weight:600;margin-bottom:24px;}
+  .plan ul{list-style:none;margin-bottom:28px;flex-grow:1;}
+  .plan li{
+    font-size:0.92rem;padding:8px 0;
+    border-top:1px solid var(--line);
+    display:flex;gap:10px;align-items:flex-start;
+  }
+  .plan li:first-child{border-top:none;}
+  .plan li svg{flex-shrink:0;margin-top:3px;}
+  .plan .btn{text-align:center;width:100%;}
+
+  /* FAQ */
+  .faq{background:var(--paper-alt);}
+  .faq-list{max-width:760px;}
+  details{
+    border-bottom:1px solid var(--line);
+    padding:22px 0;
+  }
+  details summary{
+    cursor:pointer;font-weight:600;font-size:1.02rem;
+    list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;
+  }
+  details summary::-webkit-details-marker{display:none;}
+  details summary::after{
+    content:"+";font-size:1.4rem;color:var(--accent);flex-shrink:0;
+    transition:transform .2s ease;font-weight:400;
+  }
+  details[open] summary::after{transform:rotate(45deg);}
+  details p{margin-top:14px;color:var(--ink-soft);font-size:0.95rem;max-width:64ch;}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--line);padding:40px 0;}
+  footer .wrap{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:16px;
+  }
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+
+  /* FINAL CTA */
+  .final-cta{text-align:center;}
+  .final-cta .wrap{max-width:640px;}
+  .final-cta h2{font-size:clamp(1.9rem,4vw,2.6rem);margin-bottom:16px;}
+  .final-cta p{color:var(--ink-soft);margin-bottom:32px;font-size:1.05rem;}
+
+  /* MODAL */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(26,26,24,0.55);
+    display:none;align-items:center;justify-content:center;
+    z-index:100;padding:20px;
+    backdrop-filter:blur(3px);
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:#fff;border-radius:18px;
+    max-width:420px;width:100%;padding:36px 30px;
+    text-align:center;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.35);
+    animation:pop .25s ease;
+  }
+  @keyframes pop{from{transform:scale(0.94);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .modal .emoji{font-size:2.4rem;margin-bottom:14px;}
+  .modal h3{font-size:1.25rem;margin-bottom:10px;}
+  .modal p{color:var(--ink-soft);font-size:0.95rem;margin-bottom:24px;}
+  .modal button{
+    background:var(--ink);color:#fff;border:none;
+    padding:12px 26px;border-radius:999px;font-weight:600;
+    font-size:0.95rem;cursor:pointer;font-family:inherit;
+  }
+  .modal button:hover{background:var(--accent-dark);}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="logo"><span class="dot"></span>Kardo</div>
+    <a href="#pricing" class="nav-cta">Réserver mon early-bird</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="badge">⚡ Early-bird : -50% à vie pour les 200 premiers</span>
+    <h1>Ta carte de visite, <em>sans carte</em>.</h1>
+    <p class="sub">Un scan, et ton contact s'ajoute automatiquement dans le répertoire iPhone ou Android de la personne en face. Tu choisis ce que tu partages selon le moment : rendez-vous pro, salon, chantier.</p>
+    <div class="hero-ctas">
+      <a href="#" class="cta-checkout btn btn-primary" data-plan="Premium annuel">Je réserve mon early-bird</a>
+      <a href="#comment" class="btn btn-ghost">Voir comment ça marche</a>
+    </div>
+    <p class="hero-note">Pas de carte NFC à 30€. Pas d'app à faire installer à l'autre. Places early-bird limitées.</p>
+
+    <div class="hero-visual">
+      <div class="phone-mock">
+        <div class="phone-screen">
+          <div class="qr"></div>
+          <div class="name">Claire Vignal</div>
+          <div class="role">Électricienne — Dépannage &amp; Rénovation</div>
+        </div>
+      </div>
+      <div class="toast">
+        <div class="top">
+          <div class="avatar"></div>
+          <div>
+            <div class="t1">Contact ajouté</div>
+            <div class="t2">Claire Vignal · à l'instant</div>
+          </div>
+        </div>
+        <div class="body">Numéro, mail et site enregistrés directement dans le répertoire. Aucune app installée.</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="problem">
+  <div class="wrap">
+    <h2>Tu réseautes bien. Tes contacts, eux, disparaissent.</h2>
+    <p class="lead">Sur un salon, un chantier ou après un rendez-vous, le contact se perd avant même d'arriver au bureau.</p>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="num">01</div>
+        <p>La carte papier finit froissée au fond d'une poche, ou à la poubelle avant le soir.</p>
+      </div>
+      <div class="pain-card">
+        <div class="num">02</div>
+        <p>Le "je t'ajoute sur LinkedIn" reste sans suite une fois de retour au bureau.</p>
+      </div>
+      <div class="pain-card">
+        <div class="num">03</div>
+        <p>Ta carte NFC à 30€ oblige l'autre à avoir le bon téléphone, au bon endroit, sans bug.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="solution">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">La solution</span>
+      <h2>Une carte qui s'adapte à qui tu as en face.</h2>
+    </div>
+    <div class="features">
+      <div class="feature">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" stroke="#d97a3f" stroke-width="2"/><rect x="14" y="3" width="7" height="7" stroke="#d97a3f" stroke-width="2"/><rect x="3" y="14" width="7" height="7" stroke="#d97a3f" stroke-width="2"/><rect x="14" y="14" width="3" height="3" fill="#d97a3f"/><rect x="18" y="18" width="3" height="3" fill="#d97a3f"/></svg>
+        </div>
+        <h3>Scan &amp; enregistrement direct</h3>
+        <p>Un QR code, une photo, et le contact tombe dans le répertoire natif — iPhone comme Android. Aucune app à télécharger pour la personne en face.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4z" stroke="#d97a3f" stroke-width="2"/><path d="M4 9h16" stroke="#d97a3f" stroke-width="2"/></svg>
+        </div>
+        <h3>Plusieurs profils, un seul toi</h3>
+        <p>Un profil "chantier" avec ton portable et ton numéro d'urgence, un profil "pro" avec ton site et tes horaires, un profil "réseau" plus léger. Tu bascules en un tap.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#d97a3f" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#d97a3f" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Prête en 3 minutes</h3>
+        <p>Photo, nom, métier, coordonnées. Ton lien et ton QR sont générés tout de suite, sans carte à commander ni à attendre.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2l3 6 6 1-4.5 4.5L18 20l-6-3-6 3 1.5-6.5L3 9l6-1z" stroke="#d97a3f" stroke-width="2" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Zéro matériel à acheter</h3>
+        <p>Pas de carte NFC, pas de plastique à recommander quand tu changes de numéro. Ton lien vit dans ton téléphone, tu le mets à jour toi-même.</p>
+      </div>
+      <div class="feature soon">
+        <span class="tag">Bientôt</span>
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 12l6-9h6l6 9-6 9H9z" stroke="#d97a3f" stroke-width="2"/></svg>
+        </div>
+        <h3>Shortlink perso</h3>
+        <p>kardo.fr/tonprenom à mettre sur ton camion, ta facture ou ta signature mail.</p>
+      </div>
+      <div class="feature soon">
+        <span class="tag">Bientôt</span>
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 19V9M12 19V5M20 19v-7" stroke="#d97a3f" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Stats de contact</h3>
+        <p>Combien de personnes t'ont enregistré cette semaine, et depuis quel profil.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="comment">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Comment ça marche</span>
+      <h2>Trois étapes, zéro friction.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Tu crées ta carte</h3>
+        <p>Nom, métier, coordonnées, photo. Tu ajoutes autant de profils que de contextes.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Tu montres ton QR</h3>
+        <p>Depuis ton téléphone, à l'écran ou imprimé sur ta facture, ta camionnette, ton stand.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>L'autre scanne, c'est ajouté</h3>
+        <p>Le contact atterrit direct dans son répertoire, avec le profil que tu as choisi de partager.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Tarifs</span>
+      <h2>Simple, et à moitié prix si tu es parmi les premiers.</h2>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <div class="pname">Gratuit</div>
+        <div class="pdesc">Pour tester et avoir enfin une carte à jour.</div>
+        <div class="price-row"><span class="price">0€</span></div>
+        <div class="early">&nbsp;</div>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#d97a3f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> 1 profil de carte</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#d97a3f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> QR code personnel</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#d97a3f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Enregistrement iPhone &amp; Android</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-ghost" data-plan="Gratuit">Commencer gratuitement</a>
+      </div>
+      <div class="plan featured">
+        <div class="pname">Premium</div>
+        <div class="pdesc">Pour ceux qui jonglent entre plusieurs casquettes.</div>
+        <div class="price-row">
+          <span class="old-price">5€</span>
+          <span class="price">2,50€</span>
+          <span class="per">/ mois</span>
+        </div>
+        <div class="early">Prix early-bird garanti à vie</div>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#d97a3f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Profils illimités (pro, perso, chantier…)</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#d97a3f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Shortlink perso kardo.fr/toi</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#d97a3f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Stats de contacts ajoutés</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#d97a3f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Support prioritaire</li>
+        </ul>
+        <a href="#" class="cta-checkout btn btn-primary" data-plan="Premium mensuel">Je réserve mon early-bird</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Questions fréquentes</span>
+      <h2>Avant de te lancer</h2>
+    </div>
+    <div class="faq-list">
+      <details open>
+        <summary>C'est disponible quand ?</summary>
+        <p>Le lancement est imminent. On finalise les derniers réglages. Les personnes inscrites en early-bird seront servies en premier, et paieront leur abonnement moitié prix, à vie. Réserve ta place maintenant, tu ne seras débité qu'à l'ouverture.</p>
+      </details>
+      <details>
+        <summary>Est-ce que la personne en face doit installer une app ?</summary>
+        <p>Non. C'est tout l'intérêt : elle scanne ton QR ou ouvre ton lien, et le contact s'ajoute directement dans son répertoire natif, sans rien installer.</p>
+      </details>
+      <details>
+        <summary>Ça remplace une carte NFC ?</summary>
+        <p>Oui, sans le coût du matériel ni le risque de casse ou de perte. Ton QR fonctionne partout où tu peux l'afficher : écran, facture, camion, stand.</p>
+      </details>
+      <details>
+        <summary>Je peux avoir plusieurs versions de ma carte ?</summary>
+        <p>C'est le principe du plan Premium : un profil pour tes clients pro, un pour un chantier avec ton numéro direct, un pour un salon avec juste l'essentiel. Tu choisis lequel montrer selon le contexte.</p>
+      </details>
+      <details>
+        <summary>Et si je change de numéro ou d'adresse ?</summary>
+        <p>Tu modifies ta carte une fois, et tout le monde qui l'a scannée voit l'info à jour la prochaine fois — plus besoin de rimprimer quoi que ce soit.</p>
+      </details>
+      <details>
+        <summary>Combien de places early-bird restantes ?</summary>
+        <p>Places limitées aux 200 premiers inscrits. Passé ce cap, le tarif remonte au prix plein pour les nouveaux arrivants.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="wrap">
+    <h2>Ne reperds plus jamais un contact de salon.</h2>
+    <p>Réserve ta place early-bird aujourd'hui, à moitié prix, pour toujours.</p>
+    <a href="#" class="cta-checkout btn btn-primary" data-plan="Premium annuel">Je réserve mon early-bird</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo"><span class="dot"></span>Kardo</div>
+    <p class="fine">© 2026 Kardo. Fait pour les artisans, indépendants et freelances qui réseautent.</p>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="emoji">🎉</div>
+    <h3>Ouverture des paiements imminente</h3>
+    <p>Ton offre early-bird est réservée. On t'écrit dès que Kardo ouvre les inscriptions — reviens vite, les places sont limitées.</p>
+    <button id="modalClose">Compris</button>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var overlay = document.getElementById('modalOverlay');
+    var closeBtn = document.getElementById('modalClose');
+    document.querySelectorAll('.cta-checkout').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        overlay.classList.add('open');
+      });
+    });
+    function closeModal(){ overlay.classList.remove('open'); }
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', function(e){
+      if(e.target === overlay) closeModal();
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeModal();
+    });
+  })();
+</script>
+
+</body>
+</html>
