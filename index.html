@@ -59,6 +59,14 @@
   .badge.b2c{color:var(--b2c);background:var(--b2c-bg)}
   .badge.dev{color:var(--dev);background:var(--dev-bg)}
   footer{max-width:1200px;margin:3rem auto 0;color:var(--muted);font-size:.85rem}
+  .report-link{
+    display:flex;align-items:center;gap:.6rem;max-width:1200px;margin:1.2rem auto 0;
+    background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:var(--radius);padding:.85rem 1.1rem;text-decoration:none;color:inherit;
+    font-size:.95rem;transition:transform .15s ease;
+  }
+  .report-link:hover{transform:translateY(-2px)}
+  .report-link .arrow{margin-left:auto;color:var(--accent);font-weight:700}
   @media (prefers-color-scheme:dark){
     :root{
       --bg:#171614;--card:#201f1c;--ink:#f0ede6;--muted:#a39e93;--line:#33312c;--accent:#fb923c;
@@ -75,6 +83,7 @@
 <header>
   <h1>🧪 Le lab</h1>
   <p>20 idées, 20 landing pages de validation. Classées par score marché (Validation + Scope MVP + Monétisation + Distribution, sans avantage perso) — survole ou tape le score pour le détail. Clique pour voir la landing.</p>
+  <a class="report-link" href="rapport.html">📋 <strong>Comité d'investissement</strong>&nbsp;— verdict sur la shortlist de 5 projets + résumé des recherches marché <span class="arrow">→</span></a>
 </header>
 <main class="grid" id="grid"></main>
 <footer>Landings de validation — scores et potentiels issus de la grille maker (Notion).</footer>

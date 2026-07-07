@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comité d'investissement — verdict & recherches</title>
+<meta name="description" content="Verdict du comité d'investissement solo-dev sur la shortlist de 5 projets, avec résumé des recherches marché.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+<style>
+  :root{
+    --bg:#f6f4ef; --card:#ffffff; --ink:#1d1c1a; --muted:#6b675f;
+    --accent:#c2410c; --line:#e5e1d8; --radius:14px;
+    --go:#15803d; --go-bg:rgba(21,128,61,.09);
+    --backup:#b45309; --backup-bg:rgba(180,83,9,.10);
+    --kill:#b91c1c; --kill-bg:rgba(185,28,28,.08);
+    --sleep:#52525b; --sleep-bg:rgba(82,82,91,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.6;padding:2rem 1rem 4rem}
+  .wrap{max-width:820px;margin:0 auto}
+  a{color:var(--accent)}
+  .back{display:inline-block;text-decoration:none;color:var(--muted);font-size:.9rem;margin-bottom:1.5rem}
+  h1{font-size:clamp(1.5rem,4vw,2.2rem);letter-spacing:-.02em;line-height:1.2}
+  .date{color:var(--muted);font-size:.85rem;margin:.4rem 0 1.5rem}
+  h2{font-size:1.25rem;margin:2.5rem 0 .8rem;letter-spacing:-.01em}
+  h3{font-size:1.02rem;margin:1.2rem 0 .4rem}
+  p{margin:.6rem 0}
+  ul,ol{margin:.6rem 0 .6rem 1.3rem}
+  li{margin:.3rem 0}
+  .lead{font-size:1.05rem}
+  .verdict-banner{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.2rem 1.3rem;margin:1.2rem 0;display:flex;flex-direction:column;gap:.5rem}
+  .vrow{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+  .tag{font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:99px;white-space:nowrap}
+  .tag.go{color:var(--go);background:var(--go-bg)}
+  .tag.backup{color:var(--backup);background:var(--backup-bg)}
+  .tag.kill{color:var(--kill);background:var(--kill-bg)}
+  .tag.sleep{color:var(--sleep);background:var(--sleep-bg)}
+  .proj{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.3rem 1.4rem;margin:1.2rem 0}
+  .proj-head{display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;flex-wrap:wrap;margin-bottom:.3rem}
+  .proj-head h3{margin:0;font-size:1.15rem}
+  .proj .sub{color:var(--muted);font-size:.88rem;margin-bottom:.7rem}
+  .ff{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.8rem 0}
+  @media (max-width:640px){.ff{grid-template-columns:1fr}}
+  .ff div{border-left:3px solid var(--go);padding-left:.8rem}
+  .ff div.faible{border-color:var(--kill)}
+  .ff strong{font-size:.85rem;text-transform:uppercase;letter-spacing:.04em}
+  .ff ul{margin-left:1rem;font-size:.92rem}
+  .facts{font-size:.92rem;color:var(--muted)}
+  .facts li{margin:.35rem 0}
+  .num{font-weight:700;color:var(--ink)}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.8rem 0}
+  th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .scroll{overflow-x:auto}
+  .callout{border-left:4px solid var(--accent);background:var(--card);border-radius:0 var(--radius) var(--radius) 0;padding:1rem 1.2rem;margin:1rem 0}
+  .steps li{margin:.45rem 0}
+  footer{max-width:820px;margin:3rem auto 0;color:var(--muted);font-size:.85rem}
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#171614;--card:#201f1c;--ink:#f0ede6;--muted:#a39e93;--line:#33312c;--accent:#fb923c;
+      --go:#86d9a3;--go-bg:rgba(134,217,163,.10);--backup:#f3b46a;--backup-bg:rgba(243,180,106,.10);
+      --kill:#fca5a5;--kill-bg:rgba(252,165,165,.09);--sleep:#a1a1aa;--sleep-bg:rgba(161,161,170,.12)}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="./">← Retour au lab</a>
+<h1>📋 Comité d'investissement — verdict</h1>
+<p class="date">7 juillet 2026 · basé sur 5 études marché web (concurrents, prix, réglementation) menées le jour même</p>
+
+<div class="verdict-banner">
+  <div class="vrow"><span class="tag go">GO</span><strong>FacturX Kit</strong><span style="color:var(--muted)">— construire maintenant</span></div>
+  <div class="vrow"><span class="tag backup">BACKUP</span><strong>Veillance</strong><span style="color:var(--muted)">— si FacturX Kit meurt sur ses signaux stop</span></div>
+  <div class="vrow"><span class="tag sleep">SOMMEIL</span><strong>Décroch'IA</strong><span style="color:var(--muted)">— réveil seulement avec un canal de distribution partenaire</span></div>
+  <div class="vrow"><span class="tag kill">TUER</span><strong>Reelci · Ancre</strong><span style="color:var(--muted)">— commoditisé gratuit / paiement famille jamais validé nulle part</span></div>
+</div>
+
+<h2>Le raisonnement en 5 points</h2>
+<ol>
+  <li><strong>L'asymétrie avant la taille de marché.</strong> Pour un solo-dev, la question n'est pas « quel marché est le plus gros » mais « où 1&nbsp;h de mon temps produit le plus de valeur vendable ». FacturX Kit part de code déjà en production (travail Factur-X chez Kompa) quand les concurrents partent de la spec EN16931.</li>
+  <li><strong>Une deadline mur, pas une tendance.</strong> Réception Factur-X obligatoire le <span class="num">1er septembre 2026</span> — dans 8 semaines. Aucune des 4 autres idées n'a de deadline.</li>
+  <li><strong>Le seul canal de vente naturel pour un dev.</strong> npm + GitHub + contenu technique = inbound. Décroch'IA exige de la vente terrain, Veillance de l'outbound à froid, Ancre du marketing B2C émotionnel.</li>
+  <li><strong>Échec récupérable à ~80&nbsp;%.</strong> La lib alimente Facturia (app Shopify, 2e meilleur score marché) et Kompa. Aucun autre projet n'a cette propriété.</li>
+  <li><strong>Lucidité sur le plafond.</strong> MRR probable 5-10&nbsp;k€, pas 50&nbsp;k€. Trois concurrents jeunes déjà en piste : on y va pour prendre la place de « lib de référence » vite.</li>
+</ol>
+
+<h2>Résumé des recherches, projet par projet</h2>
+
+<div class="proj">
+  <div class="proj-head"><h3>1. FacturX Kit</h3><span class="tag go">GO</span></div>
+  <p class="sub">Lib TypeScript open source + API pour générer/valider Factur-X, UBL, CII — réforme facturation électronique FR.</p>
+  <ul class="facts">
+    <li>Calendrier verrouillé : réception <span class="num">sept. 2026</span>, émission GE/ETI sept. 2026, TPE sept. 2027. Report rejeté par l'Assemblée (avril 2025). Mais <span class="num">tolérance sans sanction sept. 2026 → août 2027</span> qui dilue l'urgence (EY).</li>
+    <li>Concurrents commerciaux jeunes, aucun leader : FacturX API (freemium, prix cachés), FactPulse (white-label éditeurs), Factur-X Engine (open-core). OSS mature en Python (akretion), Java (Mustang), PHP (horstoeko 428★) — <span class="num">le créneau TypeScript est le moins servi</span> (@e-invoice-eu/core 143★).</li>
+    <li>Les 101-138 PDP agréées sont une couche transport/annuaire ; plusieurs exigent du Factur-X valide en entrée → le besoin de génération/validation côté éditeur persiste. Le PPF est réduit à annuaire + concentrateur fiscal depuis oct. 2024.</li>
+    <li>Willingness-to-pay prouvée par comparables : connecteur custom <span class="num">5-25 k€</span>, Vatstack 15-150 $/mois, Storecove ~495 €/mois, budget conformité PME <span class="num">3-15 k€/an</span>.</li>
+    <li>Point faible détecté : signal de demande dev organique faible (pas de threads SO/Reddit) — marché porté par les intégrateurs B2B, pas par une communauté virale.</li>
+  </ul>
+  <div class="ff">
+    <div><strong>Forces</strong><ul><li>Deadline réglementaire non reportable</li><li>Créneau TS sous-servi</li><li>Budgets conformité réels et récurrents</li></ul></div>
+    <div class="faible"><strong>Faiblesses</strong><ul><li>3 concurrents directs déjà en prod</li><li>PDP gratuites qui internalisent la conversion</li><li>Pas de communauté dev bruyante = acquisition par contenu à construire</li></ul></div>
+  </div>
+</div>
+
+<div class="proj">
+  <div class="proj-head"><h3>2. Veillance</h3><span class="tag backup">BACKUP</span></div>
+  <p class="sub">Monitoring d'accessibilité RGAA multi-sites pour agences web (EAA en vigueur depuis 06/2025).</p>
+  <ul class="facts">
+    <li>Précédent judiciaire concret : Auchan, Carrefour, E.Leclerc, Picard assignés (nov. 2025) ; <span class="num">Carrefour condamné en juin 2026</span> (TJ Caen) à rendre site et app accessibles. Mais le moteur est le contentieux associatif, pas des amendes administratives massives → peur réelle, urgence molle.</li>
+    <li>Trou de marché documenté : Siteimprove <span class="num">12-30 k$/an</span>, Silktide 300-1&nbsp;000 $/mois, Pope Tech 150 $/mois (US, pas RGAA) ; côté FR, uniquement de l'open source expert (Ara DINUM, Asqatasun ~45 % du RGAA) ou des cabinets à <span class="num">1 800-5 600 €</span> l'audit (Access42). Personne ne fait « monitoring RGAA agences, prix affiché ».</li>
+    <li>Plafond technique dur : <span class="num">~30 % des critères pleinement automatisables</span>, 60 % exigent un humain → interdit de vendre « conformité garantie », positionnement « pré-audit + veille » obligatoire.</li>
+    <li>Budget agence validé par analogie : Sistrix ~119 €/mois, Semrush agency 270-455 $/mois. Sweet spot estimé 149-299 €/mois multi-sites.</li>
+  </ul>
+  <div class="ff">
+    <div><strong>Forces</strong><ul><li>Fenêtre réglementaire + jurisprudence 2026</li><li>Marché FR quasi vide entre audit cher et outil US premium</li><li>1 vente agence = 20-50 sites</li></ul></div>
+    <div class="faible"><strong>Faiblesses</strong><ul><li>Demande privée non prouvée (signal = contenu marketing)</li><li>60 % du RGAA non automatisable</li><li>Vente outbound sans crédibilité a11y établie</li></ul></div>
+  </div>
+</div>
+
+<div class="proj">
+  <div class="proj-head"><h3>3. Décroch'IA</h3><span class="tag sleep">SOMMEIL</span></div>
+  <p class="sub">Standard téléphonique IA pour artisans du dépannage (49-99 €/mois).</p>
+  <ul class="facts">
+    <li>Niche déjà encombrée mi-2026 : <span class="num">6-8 acteurs FR</span> sur les mêmes mots-clés — Eliocall 49 €/mois (« 120+ pros »), appels-manques.fr, monstandard.ai, LeadFlow, Nerolia, Callifly, Rounded… plusieurs sites au contenu visiblement généré par IA = ruée sans gagnant établi.</li>
+    <li>Références US financées : Goodcall 79-249 $/mois, Smith.ai ~95 $/mois, Beside a levé <span class="num">32 M$</span> (nov. 2025).</li>
+    <li>Douleur documentée : jusqu'à <span class="num">28-40 %</span> d'appels sans réponse en TPE (Napsis). WTP artisan prouvée : ils paient déjà 20-180 €/mois (Simplébo, Obat, PagesJaunes).</li>
+    <li>Économie fragile : coût réel voix <span class="num">0,09-0,25 $/min</span> → un dépanneur à fort volume rend un plan « illimité » à 79 € déficitaire. Contraintes AI Act art. 50 (déclarer l'IA à l'appelant) + CNIL.</li>
+    <li>Risque institutionnel : la CAPEB pousse son propre outil IA (« IArtisans ») via ses canaux.</li>
+  </ul>
+  <p class="facts">Pourquoi sommeil : la bataille se gagne en vente terrain, pas au clavier. Zéro avantage perso. À réveiller uniquement si un partenariat distribution tombe (ex. logiciel devis type Obat/Tolteck).</p>
+</div>
+
+<div class="proj">
+  <div class="proj-head"><h3>4. Reelci</h3><span class="tag kill">TUER</span></div>
+  <p class="sub">Vidéos/GIFs de démo auto-générés depuis les tests E2E en CI ($29-99/mois).</p>
+  <ul class="facts">
+    <li>Le pain est réel (screenshots de doc périmés à chaque sprint) mais <span class="num">déjà commoditisé en gratuit</span> : Playwright fait vidéo + trace viewer nativement ; shot-scraper (Simon Willison) automatise les screenshots de doc en CI depuis 2022 — jamais monétisé.</li>
+    <li>Coup de grâce : <span class="num">deux OSS de 2026</span> font exactement ce produit — Argo (trace Playwright → MP4 narré par IA) et playwright-recast (trace.zip → MP4 + voix ElevenLabs + sous-titres). L'itch se résout en package npm gratuit, pas en SaaS.</li>
+    <li>Acheteur (DevRel/docs) en compression budgétaire post-layoffs ; 67 % citent le ROI comme obstacle n°1. Concurrents de capture manuelle bien financés (Arcade 297 $/mois, Storylane, Navattic &gt;500 $/mois).</li>
+    <li>Risque structurel maximal que Playwright/GitHub absorbent la feature nativement.</li>
+  </ul>
+  <p class="facts">Verdict : feature, pas entreprise. Marché 100 % international où tu n'as ni réseau ni avantage.</p>
+</div>
+
+<div class="proj">
+  <div class="proj-head"><h3>5. Ancre</h3><span class="tag kill">TUER</span></div>
+  <p class="sub">Carnet de liaison numérique aidants/famille/auxiliaires (5-9 €/mois payés par les enfants).</p>
+  <ul class="facts">
+    <li>Signal structurel le plus fort de l'étude : <span class="num">aucun acteur au monde n'a validé le paiement direct famille à l'échelle</span>. CareZone (racheté Walmart) fermé en 2023 ; CaringBridge = nonprofit à dons ; Ianacare (15,8 M$ levés) = B2B2C assureurs/employeurs.</li>
+    <li>Créneau FR exact déjà occupé : Famirelay à <span class="num">4,99-5,99 €/mois</span>, sans traction visible. Concurrence gratuite associative (La Compagnie des Aidants) et institutionnelle (Coorganiz/Tilia, Malakoff Humanis).</li>
+    <li>Les logiciels SAAD (Ximi Family, Arche MC2) embarquent déjà la liaison numérique — encadrée réglementairement (décret 2023-608) → la brique arrive gratuitement par le prestataire.</li>
+    <li>Médication = donnée de santé = <span class="num">hébergement HDS obligatoire</span> (jusqu'à 300 k€ / 5 ans de prison en cas de manquement). Disproportionné pour un solo.</li>
+    <li>Churn structurel : l'usage se termine par le décès ou l'entrée en EHPAD → LTV plombée sur un panier de 6 €/mois. Marché pourtant massif : 7,1 M d'aidants (DREES 2025).</li>
+  </ul>
+  <p class="facts">L'ami directeur d'EHPAD reste un atout — mais pour un futur produit B2B EHPAD, pas pour celui-ci (le « recueil des habitudes de vie » est déjà dans NetSoins/Titan/Ogirys).</p>
+</div>
+
+<h2>Hypothèses les plus risquées (à tuer en premier)</h2>
+<ol>
+  <li><strong>H1</strong> — Les éditeurs veulent une brique indépendante de leur PDP (et pas sa conversion incluse). Si faux → tout s'effondre. Test : 20 conversations.</li>
+  <li><strong>H2</strong> — L'OSS gratuit convertit en API payante. Test : ratio téléchargements npm → signups.</li>
+  <li><strong>H3</strong> — La tolérance sans sanction ne gèle pas les budgets 12 mois. Test : demander la date de mise en prod à chaque prospect.</li>
+  <li><strong>H4</strong> — Tu peux prendre la place de « lib de référence » avant FacturX API / FactPulse. Test : leur traction visible vs ta vitesse npm.</li>
+</ol>
+
+<h2>Plan 14 jours</h2>
+<ol class="steps">
+  <li><strong>J1</strong> — Brancher de vrais Payment Links Stripe sur la landing facturx-toolkit (29/99/299 €, early-bird -50 %) + analytics. La fake door devient une vraie porte.</li>
+  <li><strong>J1-2</strong> — Extraire le code Factur-X de Kompa → repo MIT <code>facturx-kit</code> (profils Minimum + EN16931, génération + validation XSD).</li>
+  <li><strong>J3</strong> — Publier v0.1 sur npm, README exceptionnel avec comparatif honnête vs akretion/Mustang/horstoeko.</li>
+  <li><strong>J4</strong> — Article technique : « Factur-X en TypeScript sans lire les 400 pages de spec » (dev.to, LinkedIn).</li>
+  <li><strong>J4-5</strong> — Liste de 100 éditeurs SaaS FR qui facturent (appvizer, FNFE, App Store Shopify FR…).</li>
+  <li><strong>J6-10</strong> — Outreach des 100 : « réception obligatoire dans 8 semaines — votre plan Factur-X ? ». Objectif 20 réponses, 10 calls.</li>
+  <li><strong>J8</strong> — Show HN / r/webdev / communauté Vue-Nuxt FR.</li>
+  <li><strong>J10</strong> — Validateur Factur-X en ligne gratuit (upload → rapport) = aimant à leads.</li>
+  <li><strong>J11-14</strong> — 10 calls découverte, vendre l'offre pilote en fin de call, noter les verbatims H1/H3.</li>
+  <li><strong>J14</strong> — Revue go/stop (critères ci-dessous).</li>
+</ol>
+
+<div class="callout">
+  <h3 style="margin-top:0">Offre pilote « Conforme avant le 1er septembre » (5 places)</h3>
+  <p>Sprint d'intégration done-with-you : audit du flux de facturation, intégration lib/API, jeu de tests de validation, 30 jours de support. <strong>1 490 € HT one-shot + 12 mois d'API Pro inclus</strong>, puis 99 €/mois.</p>
+  <p style="margin-bottom:0">API self-serve : <strong>29 €</strong> (1 000 validations) / <strong>99 €</strong> (10 000 + conversion UBL-CII) / <strong>299 €/mois</strong> (volume + SLA). Early-bird -50 % un an pour les 20 premiers.</p>
+</div>
+
+<h2>Go / stop à J+14</h2>
+<div class="scroll"><table>
+  <tr><th>GO si (2 sur 3)</th><th>STOP / PIVOT si</th></tr>
+  <tr><td>≥ 2 paiements réels (CB passée)</td><td>&lt; 5 réponses sur 100 outreach ET 0 paiement</td></tr>
+  <tr><td>≥ 8 calls dont ≥ 4 « on doit régler ça avant septembre »</td><td>≥ 6 prospects sur 10 : « notre PDP s'en charge » (H1 falsifiée)</td></tr>
+  <tr><td>≥ 15 % de réponses sur les 100 outreach</td><td>→ pivot Veillance, ou Facturia en réutilisant la lib</td></tr>
+</table></div>
+<p class="facts"><strong>Signal parasite à ignorer :</strong> les stars GitHub et les bravos LinkedIn. Seuls comptent les calls et les CB.</p>
+
+</div>
+<footer>Sources détaillées dans les 5 études marché (Vendr, Silktide, Access42, DGCCRF, ecommercemag, EY, Pennylane, Goodcall, Napsis, CNIL, DREES, Famirelay, TechCrunch…) — rapport complet : <code>comite-investissement.md</code>.</footer>
+</body>
+</html>
