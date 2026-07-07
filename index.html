@@ -4,13 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Le lab — 20 idées en validation</title>
-<meta name="description" content="20 landing pages de validation d'idées, classées par score.">
+<meta name="description" content="20 landing pages de validation d'idées, classées par score marché.">
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
 <style>
   :root{
     --bg:#f6f4ef; --card:#ffffff; --ink:#1d1c1a; --muted:#6b675f;
     --accent:#c2410c; --line:#e5e1d8; --radius:14px;
+    --b2b:#1d4ed8; --b2b-bg:rgba(29,78,216,.08);
+    --b2c:#15803d; --b2c-bg:rgba(21,128,61,.08);
+    --dev:#b45309; --dev-bg:rgba(180,83,9,.10);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{
@@ -36,13 +39,33 @@
   .body{padding:1rem 1.1rem 1.2rem;display:flex;flex-direction:column;gap:.35rem;flex:1}
   .top{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem}
   h2{font-size:1.05rem;letter-spacing:-.01em}
-  .score{font-size:.75rem;font-weight:600;color:var(--accent);white-space:nowrap;
-    background:rgba(194,65,12,.08);border-radius:99px;padding:.15rem .55rem}
   .idea{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-  .desc{font-size:.9rem;color:var(--muted);margin-top:.25rem}
+  .desc{font-size:.9rem;color:var(--muted);margin-top:.25rem;flex:1}
+  .score{
+    font-size:.78rem;font-weight:600;color:var(--accent);white-space:nowrap;
+    background:rgba(194,65,12,.08);border-radius:99px;padding:.15rem .55rem;
+    position:relative;cursor:help;outline:none;
+  }
+  .score:hover::after,.score:focus::after{
+    content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);right:0;
+    background:var(--ink);color:var(--bg);padding:.45rem .65rem;border-radius:8px;
+    font-size:.72rem;font-weight:500;line-height:1.4;width:max-content;max-width:230px;
+    white-space:normal;z-index:10;box-shadow:0 6px 18px rgba(0,0,0,.25);
+  }
+  .meta{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.6rem}
+  .badge{font-size:.72rem;font-weight:600;padding:.15rem .55rem;border-radius:99px}
+  .badge.pot{border:1px solid var(--line);color:var(--muted);background:transparent}
+  .badge.b2b{color:var(--b2b);background:var(--b2b-bg)}
+  .badge.b2c{color:var(--b2c);background:var(--b2c-bg)}
+  .badge.dev{color:var(--dev);background:var(--dev-bg)}
   footer{max-width:1200px;margin:3rem auto 0;color:var(--muted);font-size:.85rem}
   @media (prefers-color-scheme:dark){
-    :root{--bg:#171614;--card:#201f1c;--ink:#f0ede6;--muted:#a39e93;--line:#33312c;--accent:#fb923c}
+    :root{
+      --bg:#171614;--card:#201f1c;--ink:#f0ede6;--muted:#a39e93;--line:#33312c;--accent:#fb923c;
+      --b2b:#93b4ff;--b2b-bg:rgba(147,180,255,.10);
+      --b2c:#86d9a3;--b2c-bg:rgba(134,217,163,.10);
+      --dev:#f3b46a;--dev-bg:rgba(243,180,106,.10);
+    }
     .card:hover{box-shadow:0 10px 28px rgba(0,0,0,.4)}
     .shot{background:#111}
   }
@@ -51,30 +74,68 @@
 <body>
 <header>
   <h1>🧪 Le lab</h1>
-  <p>20 idées, 20 landing pages de validation. Classées par score maker. Clique pour voir la landing.</p>
+  <p>20 idées, 20 landing pages de validation. Classées par score marché (Validation + Scope MVP + Monétisation + Distribution, sans avantage perso) — survole ou tape le score pour le détail. Clique pour voir la landing.</p>
 </header>
-<main class="grid">
-  <a class="card" href="https://lredoban.github.io/facturx-toolkit/"><div class="shot"><img src="shots/facturx-toolkit.jpg" alt="Screenshot FacturX Kit" loading="lazy"></div><div class="body"><div class="top"><h2>FacturX Kit</h2><span class="score">8.6</span></div><div class="idea">Factur-X Dev Toolkit</div><p class="desc">Lib TypeScript open source + API pour générer et valider des factures Factur-X, UBL et CII avant la réforme 2026.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/shopify-facturation-fr/"><div class="shot"><img src="shots/shopify-facturation-fr.jpg" alt="Screenshot Facturia" loading="lazy"></div><div class="body"><div class="top"><h2>Facturia</h2><span class="score">8.2</span></div><div class="idea">App Shopify facturation FR</div><p class="desc">L'app qui met les boutiques Shopify françaises en conformité facture électronique : Factur-X, mentions, e-reporting.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/copilote-tva/"><div class="shot"><img src="shots/copilote-tva.jpg" alt="Screenshot Seuilo" loading="lazy"></div><div class="body"><div class="top"><h2>Seuilo</h2><span class="score">7.6</span></div><div class="idea">Copilote TVA micro</div><p class="desc">Le copilote TVA des micro-entrepreneurs : simulateur de seuils, checklist de passage au réel, rappels CA3.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/chess-canvas/"><div class="shot"><img src="shots/chess-canvas.jpg" alt="Screenshot Échiquier" loading="lazy"></div><div class="body"><div class="top"><h2>Échiquier</h2><span class="score">7.4</span></div><div class="idea">Chess Canvas</div><p class="desc">Ta partie d'échecs (PGN) transformée en affiche d'art : heatmap, courbe Stockfish, ouverture. Digital ou print FR.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/race-poster/"><div class="shot"><img src="shots/race-poster.jpg" alt="Screenshot TRACÉ" loading="lazy"></div><div class="body"><div class="top"><h2>TRACÉ</h2><span class="score">7.2</span></div><div class="idea">Race Poster</div><p class="desc">Ton GPX devient un poster de course : tracé, profil d'altitude, splits, météo du jour. Print fabriqué en France.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/sentinelle-rgaa/"><div class="shot"><img src="shots/sentinelle-rgaa.jpg" alt="Screenshot Veillance" loading="lazy"></div><div class="body"><div class="top"><h2>Veillance</h2><span class="score">6.8</span></div><div class="idea">Sentinelle RGAA</div><p class="desc">Monitoring d'accessibilité RGAA continu pour agences : scans multi-sites, alertes de régression, déclaration générée.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/nuxt-boilerplate-france/"><div class="shot"><img src="shots/nuxt-boilerplate-france.jpg" alt="Screenshot Croissant" loading="lazy"></div><div class="body"><div class="top"><h2>Croissant</h2><span class="score">6.8</span></div><div class="idea">Boilerplate Nuxt France</div><p class="desc">Le boilerplate Nuxt SaaS conforme France : Stripe + TVA FR, Factur-X ready, RGPD/CGV pré-rédigés. Ship ce week-end.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/copilote-dpe/"><div class="shot"><img src="shots/copilote-dpe.jpg" alt="Screenshot Loyable" loading="lazy"></div><div class="body"><div class="top"><h2>Loyable</h2><span class="score">6.6</span></div><div class="idea">Copilote DPE bailleur</div><p class="desc">Le copilote des bailleurs de passoires thermiques : simulateur gratuit, alertes calendrier F/G, plan d'action.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/cypress-demo-videos/"><div class="shot"><img src="shots/cypress-demo-videos.jpg" alt="Screenshot Reelci" loading="lazy"></div><div class="body"><div class="top"><h2>Reelci</h2><span class="score">6.6</span></div><div class="idea">Demos vidéo via CI (EN)</div><p class="desc">Vidéos et GIFs de démo produit auto-générés par tes tests E2E en CI — tes docs ne mentent plus jamais.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/time-capsule/"><div class="shot"><img src="shots/time-capsule.jpg" alt="Screenshot Lueur" loading="lazy"></div><div class="body"><div class="top"><h2>Lueur</h2><span class="score">6.4</span></div><div class="idea">Capsule temporelle</div><p class="desc">Messages, photos et vocaux délivrés dans 1 à 20 ans. Mariages, naissances, mots pour plus tard.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/caretaker/"><div class="shot"><img src="shots/caretaker.jpg" alt="Screenshot Veillo" loading="lazy"></div><div class="body"><div class="top"><h2>Veillo</h2><span class="score">6.4</span></div><div class="idea">Caretaker</div><p class="desc">Fiches de garde interactives pour plantes, animaux et maison — partageables par lien, sans compte ni app.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/resa-ceramique/"><div class="shot"><img src="shots/resa-ceramique.jpg" alt="Screenshot Argilo" loading="lazy"></div><div class="body"><div class="top"><h2>Argilo</h2><span class="score">6.4</span></div><div class="idea">Résa ateliers céramique</div><p class="desc">Réservation, acomptes, bons cadeaux et suivi des cuissons pour ateliers céramique. 0% de commission.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/carnet-aidants/"><div class="shot"><img src="shots/carnet-aidants.jpg" alt="Screenshot Ancre" loading="lazy"></div><div class="body"><div class="top"><h2>Ancre</h2><span class="score">6.2</span></div><div class="idea">Carnet de liaison aidants</div><p class="desc">Le carnet de liaison famille + auxiliaires autour d'un parent âgé à domicile. QR sur le frigo, zéro compte.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/standard-ia-artisans/"><div class="shot"><img src="shots/standard-ia-artisans.jpg" alt="Screenshot Décroch'IA" loading="lazy"></div><div class="body"><div class="top"><h2>Décroch'IA</h2><span class="score">6.0</span></div><div class="idea">Standard IA artisans</div><p class="desc">Le standard IA qui décroche pendant le chantier : qualifie l'urgence, prend l'adresse, cale le RDV.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/assistant-subventions/"><div class="shot"><img src="shots/assistant-subventions.jpg" alt="Screenshot Subvento" loading="lazy"></div><div class="body"><div class="top"><h2>Subvento</h2><span class="score">5.8</span></div><div class="idea">Assistant subventions assos</div><p class="desc">Dossiers de subvention assistés pour associations : Cerfa 12156, budget prévisionnel, veille et deadlines.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/minicv/"><div class="shot"><img src="shots/minicv.jpg" alt="Screenshot Kasket" loading="lazy"></div><div class="body"><div class="top"><h2>Kasket</h2><span class="score">5.4</span></div><div class="idea">MiniCV multi-casquettes</div><p class="desc">Le link-in-bio des multi-casquettes : un avatar qui change de rôle, un profil par facette, un seul lien.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/carte-visite-virtuelle/"><div class="shot"><img src="shots/carte-visite-virtuelle.jpg" alt="Screenshot Kardo" loading="lazy"></div><div class="body"><div class="top"><h2>Kardo</h2><span class="score">5.4</span></div><div class="idea">Carte de visite virtuelle</div><p class="desc">Ta carte de visite en un scan : contact ajouté direct au répertoire, tu choisis ce que tu partages.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/apprendre-a-lire/"><div class="shot"><img src="shots/apprendre-a-lire.jpg" alt="Screenshot Lulu Lit" loading="lazy"></div><div class="body"><div class="top"><h2>Lulu Lit</h2><span class="score">5.4</span></div><div class="idea">App apprendre à lire</div><p class="desc">Apprendre à lire en méthode syllabique, 4-7 ans : leçons-histoires progressives, 10 minutes par jour.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/jeux-classiques-premium/"><div class="shot"><img src="shots/jeux-classiques-premium.jpg" alt="Screenshot Trèfle" loading="lazy"></div><div class="body"><div class="top"><h2>Trèfle</h2><span class="score">5.4</span></div><div class="idea">Portail jeux classiques</div><p class="desc">Solitaire, démineur, sudoku jouables en 2 secondes, sans compte. Premium sans pub à petit prix.</p></div></a>
-  <a class="card" href="https://lredoban.github.io/kanban-tabs/"><div class="shot"><img src="shots/kanban-tabs.jpg" alt="Screenshot Kanbly" loading="lazy"></div><div class="body"><div class="top"><h2>Kanbly</h2><span class="score">4.6</span></div><div class="idea">Kanban d'onglets</div><p class="desc">Tes onglets organisés en kanban par tâche : à faire, en cours, terminé. Sessions sauvegardées.</p></div></a>
-</main>
-<footer>Landings de validation — les scores viennent de la grille maker (Notion).</footer>
+<main class="grid" id="grid"></main>
+<footer>Landings de validation — scores et potentiels issus de la grille maker (Notion).</footer>
+<script>
+const P = [
+  {s:"facturx-toolkit",b:"FacturX Kit",i:"Factur-X Dev Toolkit",c:"b2b",cl:"B2B",pot:"~5k€/mois",sc:"8.3",v:9,sm:8,m:8,d:8,
+   de:"Lib TypeScript open source + API pour générer et valider des factures Factur-X, UBL et CII avant la réforme 2026."},
+  {s:"shopify-facturation-fr",b:"Facturia",i:"App Shopify facturation FR",c:"b2b",cl:"B2B",pot:"~5k€/mois",sc:"8.0",v:7,sm:7,m:9,d:9,
+   de:"L'app qui met les boutiques Shopify françaises en conformité facture électronique : Factur-X, mentions, e-reporting."},
+  {s:"copilote-tva",b:"Seuilo",i:"Copilote TVA micro",c:"b2b",cl:"B2B",pot:"~1k€/mois",sc:"7.3",v:8,sm:8,m:5,d:8,
+   de:"Le copilote TVA des micro-entrepreneurs : simulateur de seuils, checklist de passage au réel, rappels CA3."},
+  {s:"chess-canvas",b:"Échiquier",i:"Chess Canvas",c:"b2c",cl:"B2C",pot:"~1k€/mois",sc:"7.3",v:8,sm:8,m:6,d:7,
+   de:"Ta partie d'échecs (PGN) transformée en affiche d'art : heatmap, courbe Stockfish, ouverture. Digital ou print FR."},
+  {s:"race-poster",b:"TRACÉ",i:"Race Poster",c:"b2c",cl:"B2C",pot:"~1k€/mois",sc:"7.0",v:8,sm:8,m:6,d:6,
+   de:"Ton GPX devient un poster de course : tracé, profil d'altitude, splits, météo du jour. Print fabriqué en France."},
+  {s:"sentinelle-rgaa",b:"Veillance",i:"Sentinelle RGAA",c:"b2b",cl:"B2B",pot:"~5k€/mois",sc:"7.0",v:7,sm:6,m:8,d:7,
+   de:"Monitoring d'accessibilité RGAA continu pour agences : scans multi-sites, alertes de régression, déclaration générée."},
+  {s:"copilote-dpe",b:"Loyable",i:"Copilote DPE bailleur",c:"b2c",cl:"B2C",pot:"~1k€/mois",sc:"7.0",v:8,sm:7,m:5,d:8,
+   de:"Le copilote des bailleurs de passoires thermiques : simulateur gratuit, alertes calendrier F/G, plan d'action."},
+  {s:"nuxt-boilerplate-france",b:"Croissant",i:"Boilerplate Nuxt France",c:"dev",cl:"Dev / Prosumer",pot:"~1k€/mois",sc:"6.5",v:8,sm:6,m:6,d:6,
+   de:"Le boilerplate Nuxt SaaS conforme France : Stripe + TVA FR, Factur-X ready, RGPD/CGV pré-rédigés. Ship ce week-end."},
+  {s:"time-capsule",b:"Lueur",i:"Capsule temporelle",c:"b2c",cl:"B2C",pot:"~1k€/mois",sc:"6.5",v:7,sm:7,m:6,d:6,
+   de:"Messages, photos et vocaux délivrés dans 1 à 20 ans. Mariages, naissances, mots pour plus tard."},
+  {s:"cypress-demo-videos",b:"Reelci",i:"Demos vidéo via CI (EN)",c:"b2b",cl:"B2B",pot:"~1k€/mois",sc:"6.3",v:6,sm:5,m:7,d:7,
+   de:"Vidéos et GIFs de démo produit auto-générés par tes tests E2E en CI — tes docs ne mentent plus jamais."},
+  {s:"caretaker",b:"Veillo",i:"Caretaker",c:"b2c",cl:"B2C",pot:"~1k€/mois",sc:"6.3",v:8,sm:8,m:3,d:6,
+   de:"Fiches de garde interactives pour plantes, animaux et maison — partageables par lien, sans compte ni app."},
+  {s:"carnet-aidants",b:"Ancre",i:"Carnet de liaison aidants",c:"b2c",cl:"B2C",pot:"~5k€/mois",sc:"6.3",v:6,sm:7,m:6,d:6,
+   de:"Le carnet de liaison famille + auxiliaires autour d'un parent âgé à domicile. QR sur le frigo, zéro compte."},
+  {s:"resa-ceramique",b:"Argilo",i:"Résa ateliers céramique",c:"b2b",cl:"B2B",pot:"~5k€/mois",sc:"6.0",v:6,sm:4,m:7,d:7,
+   de:"Réservation, acomptes, bons cadeaux et suivi des cuissons pour ateliers céramique. 0% de commission."},
+  {s:"standard-ia-artisans",b:"Décroch'IA",i:"Standard IA artisans",c:"b2b",cl:"B2B",pot:"~5k€/mois",sc:"6.0",v:6,sm:5,m:8,d:5,
+   de:"Le standard IA qui décroche pendant le chantier : qualifie l'urgence, prend l'adresse, cale le RDV."},
+  {s:"assistant-subventions",b:"Subvento",i:"Assistant subventions assos",c:"b2b",cl:"B2B",pot:"~1k€/mois",sc:"6.0",v:7,sm:6,m:4,d:7,
+   de:"Dossiers de subvention assistés pour associations : Cerfa 12156, budget prévisionnel, veille et deadlines."},
+  {s:"carte-visite-virtuelle",b:"Kardo",i:"Carte de visite virtuelle",c:"b2c",cl:"B2C",pot:"~1k€/mois",sc:"5.5",v:6,sm:6,m:5,d:5,
+   de:"Ta carte de visite en un scan : contact ajouté direct au répertoire, tu choisis ce que tu partages."},
+  {s:"minicv",b:"Kasket",i:"MiniCV multi-casquettes",c:"b2c",cl:"B2C",pot:"~1k€/mois",sc:"5.3",v:6,sm:6,m:4,d:5,
+   de:"Le link-in-bio des multi-casquettes : un avatar qui change de rôle, un profil par facette, un seul lien."},
+  {s:"apprendre-a-lire",b:"Lulu Lit",i:"App apprendre à lire",c:"b2c",cl:"B2C",pot:"~1k€/mois",sc:"5.3",v:5,sm:4,m:6,d:6,
+   de:"Apprendre à lire en méthode syllabique, 4-7 ans : leçons-histoires progressives, 10 minutes par jour."},
+  {s:"jeux-classiques-premium",b:"Trèfle",i:"Portail jeux classiques",c:"b2c",cl:"B2C",pot:"~1k€/mois",sc:"5.3",v:5,sm:7,m:5,d:4,
+   de:"Solitaire, démineur, sudoku jouables en 2 secondes, sans compte. Premium sans pub à petit prix."},
+  {s:"kanban-tabs",b:"Kanbly",i:"Kanban d'onglets",c:"dev",cl:"Dev / Prosumer",pot:"~1k€/mois",sc:"4.3",v:4,sm:4,m:4,d:5,
+   de:"Tes onglets organisés en kanban par tâche : à faire, en cours, terminé. Sessions sauvegardées."},
+];
+document.getElementById('grid').innerHTML = P.map(p => `
+  <a class="card" href="https://lredoban.github.io/${p.s}/">
+    <div class="shot"><img src="shots/${p.s}.jpg" alt="Screenshot ${p.b}" loading="lazy"></div>
+    <div class="body">
+      <div class="top"><h2>${p.b}</h2>
+        <span class="score" tabindex="0" data-tip="Score marché ${p.sc}/10 — Validation ${p.v} · Scope MVP ${p.sm} · Monétisation ${p.m} · Distribution ${p.d}" onclick="event.preventDefault()">${p.sc}</span>
+      </div>
+      <div class="idea">${p.i}</div>
+      <p class="desc">${p.de}</p>
+      <div class="meta">
+        <span class="badge ${p.c}">${p.cl}</span>
+        <span class="badge pot">💰 ${p.pot}</span>
+      </div>
+    </div>
+  </a>`).join('');
+</script>
 </body>
 </html>
