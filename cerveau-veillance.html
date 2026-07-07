@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veillance — cerveau métier (résumé)</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+<style>
+  :root{--bg:#f6f4ef;--card:#fff;--ink:#1d1c1a;--muted:#6b675f;--accent:#c2410c;--line:#e5e1d8;--radius:14px;
+    --warn:#b45309;--warn-bg:rgba(180,83,9,.10)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.6;padding:2rem 1rem 4rem}
+  .wrap{max-width:820px;margin:0 auto}
+  a{color:var(--accent)}
+  .back{display:inline-block;text-decoration:none;color:var(--muted);font-size:.9rem;margin-bottom:1.5rem}
+  h1{font-size:clamp(1.5rem,4vw,2.1rem);letter-spacing:-.02em;line-height:1.2}
+  .sub{color:var(--muted);margin:.4rem 0 1rem}
+  .mdlink{display:inline-flex;align-items:center;gap:.4rem;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:.4rem 1rem;text-decoration:none;font-size:.9rem;margin:.3rem 0 1.5rem}
+  h2{font-size:1.2rem;margin:2.2rem 0 .7rem;letter-spacing:-.01em}
+  p{margin:.6rem 0} ul,ol{margin:.6rem 0 .6rem 1.3rem} li{margin:.35rem 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem 1.3rem;margin:1rem 0}
+  .tldr{border-left:4px solid var(--warn)}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:.8rem 1rem}
+  .kpi b{display:block;font-size:1.15rem} .kpi span{font-size:.78rem;color:var(--muted)}
+  .no{border-left:4px solid #b91c1c}
+  .tag{font-size:.72rem;font-weight:700;padding:.15rem .55rem;border-radius:99px;color:var(--warn);background:var(--warn-bg)}
+  code{background:rgba(127,127,127,.12);padding:.1rem .35rem;border-radius:5px;font-size:.86em}
+  footer{max-width:820px;margin:3rem auto 0;color:var(--muted);font-size:.85rem}
+  @media (prefers-color-scheme:dark){:root{--bg:#171614;--card:#201f1c;--ink:#f0ede6;--muted:#a39e93;--line:#33312c;--accent:#fb923c;--warn:#f3b46a;--warn-bg:rgba(243,180,106,.10)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="./">← Retour au lab</a>
+<h1>🧠 Veillance — le cerveau métier <span class="tag">BACKUP comité</span></h1>
+<p class="sub">Monitoring d'accessibilité RGAA multi-sites pour agences web · résumé humain · 7 juillet 2026</p>
+<a class="mdlink" href="https://github.com/lredoban/hub/blob/main/docs/veillance-cerveau-metier.md">📄 Lire le document complet (.md) — domaine, spec, 52 tests, plan détaillé</a>
+
+<div class="card tldr">
+  <strong>TL;DR</strong> — Un SaaS qui scanne en continu les sites clients d'une agence, alerte sur les régressions d'accessibilité et produit des rapports à la marque de l'agence. On vend la <em>vidéo</em> (veille continue) là où les cabinets vendent la <em>photo</em> (audit one-shot à 1 800-5 600 €). Le levier commercial : la condamnation de Carrefour (juin 2026). La contrainte qui structure tout : <strong>seuls ~30 % des critères RGAA sont automatisables</strong> — le produit dit ce qu'il ne sait pas, par construction.
+</div>
+
+<div class="kpis">
+  <div class="kpi"><b>106</b><span>critères RGAA 4.1.2 (13 thématiques) — RGAA 5 attendu fin 2026 : le référentiel est versionné dans le produit</span></div>
+  <div class="kpi"><b>~30 %</b><span>des critères automatisables — LE plafond, affiché dans chaque rapport, jamais caché</span></div>
+  <div class="kpi"><b>20-50</b><span>sites par agence : 1 vente = tout le parc, prix par paliers</span></div>
+  <div class="kpi"><b>juin 2026</b><span>Carrefour condamné (TJ Caen) — l'argument de vente concret, sans agiter des amendes qui ne pleuvent pas encore</span></div>
+</div>
+
+<h2>Les 5 règles métier qui structurent tout</h2>
+<ol>
+  <li><strong>« Rien détecté » ≠ « conforme ».</strong> Trois états par critère : non-conformité prouvée (screenshot), vérifié automatiquement, <em>à vérifier par un humain</em> — ce dernier toujours listé, jamais silencieux.</li>
+  <li><strong>On ne calcule pas « le taux RGAA ».</strong> Le produit affiche un « score de risque automatisé » — vocabulaire distinct, verrouillé partout, car le taux réglementaire exige un audit manuel sur échantillon.</li>
+  <li><strong>La régression est le produit.</strong> Une mise en prod qui casse un contraste ou un focus → alerte en minutes, avec la date d'apparition. C'est ce qu'aucun audit annuel ne donne.</li>
+  <li><strong>Anti-overlay explicite.</strong> Pas de widget magique. La communauté a11y FR est petite et influente : soit elle t'adopte, soit elle t'enterre.</li>
+  <li><strong>Le disclaimer est insupprimable</strong>, même en white-label — il protège l'agence autant que nous.</li>
+</ol>
+
+<h2>Ce que le moteur fait</h2>
+<ul>
+  <li>Crawl Playwright (sitemap + BFS, SPA gérées, cookie walls audités eux-mêmes) → axe-core + 5 checks maison (focus visible, lang, contrastes sur rendu réel) → <strong>mapping axe→RGAA versionné</strong> (le cœur propriétaire) → diff scan N/N-1 → alertes + rapport white-label.</li>
+  <li>Findings avec critère RGAA, sévérité, page, sélecteur, screenshot et <em>fix concret</em> (« passer le fond de #7BA7E0 à #3D6DB5 atteint 4.6:1 en conservant votre teinte »).</li>
+  <li>Brouillon de déclaration d'accessibilité pré-rempli, bandeau « à compléter par audit manuel » non supprimable.</li>
+  <li>Sécurité prise au sérieux : refus SSRF, credentials de scan chiffrés, pages bloquées jamais comptées conformes.</li>
+</ul>
+
+<div class="card no">
+  <strong>À ne jamais promettre</strong> — « conformité garantie », « déclaration générée automatiquement », « protège des poursuites », un avis juridique « êtes-vous obligé ? », le mot « certifié ». Le client final reste responsable de sa déclaration.
+</div>
+
+<h2>MVP — ~3 semaines</h2>
+<p>V1 : crawler + axe + mapping RGAA (30 critères les plus fréquents d'abord) + diff/alertes + rapport white-label + <strong>scan gratuit d'une page</strong> en ligne (machine à leads). Simulé à la main : le premier rapport de chaque pilote (1 h/site — c'est aussi la formation), la checklist humaine vendue 149 €/site. Interdit en V1 : corrections automatiques (danger overlay), CI/CD, IA de fixes.</p>
+<p><strong>Ordre :</strong> J1-2 crawl stable · J3-5 détection + mapping · J6-7 diff · J8-9 rapports + déclaration · J10-12 dashboard + Stripe · J13 scan gratuit · J14-15 sécurité · J16-21 pilotes accompagnés à la main.</p>
+
+<h2>Moat solo-dev</h2>
+<ul>
+  <li><strong>Le mapping RGAA à 3 statuts avec fixes en français</strong>, nourri par chaque site scanné — long à reconstituer.</li>
+  <li><strong>L'Observatoire mensuel</strong> : publier le score automatisé des 100 plus gros e-commerçants FR (même mécanique que le « 32 % de Leclerc » cité partout) → PR, SEO, backlinks que personne ne peut copier sans l'outil.</li>
+  <li><strong>La modestie technique comme marque</strong> : la page « ce qu'on ne peut PAS tester » est le signal de sérieux dans ce milieu ; partenariats cabinets (on leur apporte le manuel, ils nous apportent la crédibilité).</li>
+</ul>
+
+<h2>Validation commerciale — 45 jours (cycle agence)</h2>
+<p>10 cibles : agences WordPress/e-commerce 10-30 pers. avec offre de maintenance (celles qui publient déjà du contenu RGAA), agences secteur public local, studios Shopify/PrestaShop, un cabinet d'audit challenger (partenariat), auditeurs freelances (prescripteurs), collectifs d'agences. Angle : <em>« Carrefour a été condamné en juin. Vos clients e-commerce vous poseront la question — vous répondez quoi ? »</em> — on vend à l'agence un produit qu'elle revend avec marge.</p>
+<p>Pilote : <strong>249 €/mois pour 15 sites pendant 3 mois</strong> (au lieu de 399) + 1 revue humaine offerte. Ensuite 99/249/499 €/mois (5/15/40 sites).</p>
+<p><strong>Validé si</strong> : ≥ 3 agences payantes ou 1 agence + 1 cabinet partenaire ; ≥ 5 calls confirmant des demandes clients entrantes ; scan gratuit ≥ 100 usages. <strong>Invalidé si</strong> : « on enverra chez un cabinet quand on nous le demandera » domine, ou 0 paiement après 15 démos → pivot outil B2B cabinets, ou retour FacturX/Facturia.</p>
+
+</div>
+<footer><a href="./">← Le lab</a> · <a href="rapport.html">Rapport du comité</a> · <a href="https://github.com/lredoban/hub/blob/main/docs/veillance-cerveau-metier.md">Document complet (.md)</a></footer>
+</body>
+</html>

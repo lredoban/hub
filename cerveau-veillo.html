@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veillo — cerveau métier (résumé)</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+<style>
+  :root{--bg:#f6f4ef;--card:#fff;--ink:#1d1c1a;--muted:#6b675f;--accent:#c2410c;--line:#e5e1d8;--radius:14px;
+    --sage:#4d7c5f;--sage-bg:rgba(77,124,95,.10)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.6;padding:2rem 1rem 4rem}
+  .wrap{max-width:820px;margin:0 auto}
+  a{color:var(--accent)}
+  .back{display:inline-block;text-decoration:none;color:var(--muted);font-size:.9rem;margin-bottom:1.5rem}
+  h1{font-size:clamp(1.5rem,4vw,2.1rem);letter-spacing:-.02em;line-height:1.2}
+  .sub{color:var(--muted);margin:.4rem 0 1rem}
+  .mdlink{display:inline-flex;align-items:center;gap:.4rem;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:.4rem 1rem;text-decoration:none;font-size:.9rem;margin:.3rem 0 1.5rem}
+  h2{font-size:1.2rem;margin:2.2rem 0 .7rem;letter-spacing:-.01em}
+  p{margin:.6rem 0} ul,ol{margin:.6rem 0 .6rem 1.3rem} li{margin:.35rem 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem 1.3rem;margin:1rem 0}
+  .tldr{border-left:4px solid var(--sage)}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:.8rem 1rem}
+  .kpi b{display:block;font-size:1.15rem} .kpi span{font-size:.78rem;color:var(--muted)}
+  .no{border-left:4px solid #b91c1c}
+  .tag{font-size:.72rem;font-weight:700;padding:.15rem .55rem;border-radius:99px;color:var(--sage);background:var(--sage-bg)}
+  footer{max-width:820px;margin:3rem auto 0;color:var(--muted);font-size:.85rem}
+  @media (prefers-color-scheme:dark){:root{--bg:#171614;--card:#201f1c;--ink:#f0ede6;--muted:#a39e93;--line:#33312c;--accent:#fb923c;--sage:#8fc2a3;--sage-bg:rgba(143,194,163,.10)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="./">← Retour au lab</a>
+<h1>🧠 Veillo — le cerveau métier <span class="tag">PROJET D'ÉTÉ</span></h1>
+<p class="sub">Fiches de garde interactives (chat, plantes, maison) partagées par lien, sans compte · résumé humain · 7 juillet 2026</p>
+<a class="mdlink" href="https://github.com/lredoban/hub/blob/main/docs/veillo-cerveau-metier.md">📄 Lire le document complet (.md) — domaine, spec, 50 tests, plan détaillé</a>
+
+<div class="card tldr">
+  <strong>TL;DR</strong> — Pas un SaaS : un produit à <strong>boucle virale + one-shot 9 €</strong>. Le propriétaire crée une fiche de garde en 3 min, le gardien ouvre un lien (zéro compte, zéro app), coche matin/soir et envoie des photos du chat. La valeur n'est pas le document, c'est le <em>mode garde exécutable</em> + la boucle émotionnelle (les photos). Cadré comme projet d'été à côté de FacturX Kit — le comité ne l'a pas retenu comme pari principal, et ce document ne change pas ça.
+</div>
+
+<div class="kpis">
+  <div class="kpi"><b>0 compte</b><span>pour le gardien, à jamais — toute friction tue le produit (il rend service)</span></div>
+  <div class="kpi"><b>+7 j</b><span>expiration des liens après la garde — un lien de garde n'est pas un accès permanent au domicile</span></div>
+  <div class="kpi"><b>9 €</b><span>one-shot (1re fiche gratuite à vie) — jamais d'abonnement en B2C ici</span></div>
+  <div class="kpi"><b>12 j</b><span>de build — la fenêtre, c'est l'été : livrer avant fin juillet ou remiser</span></div>
+</div>
+
+<h2>Les 6 règles produit qui structurent tout</h2>
+<ol>
+  <li><strong>Le gardien n'a jamais de compte.</strong> Lien + token, PIN optionnel, PWA installable.</li>
+  <li><strong>Criticité pilote tout</strong> : vital (nourrir le chat) / important / confort (le ficus). Seul un « vital manqué » déclenche des rappels, formulés sans culpabiliser un bénévole.</li>
+  <li><strong>Le journal est append-only</strong> : les coches sont des faits historiques (qui, quand), fusion offline sans perte, jamais d'état écrasé.</li>
+  <li><strong>Adresse + dates d'absence + code d'alarme = kit cambriolage</strong> : champs d'accès chiffrés, visibles seulement pendant la garde, jamais dans les emails, liens non indexables.</li>
+  <li><strong>Nourrir un animal n'est jamais derrière un paywall.</strong> Le payant = multi-fiches et confort, pas la sécurité du chat.</li>
+  <li><strong>Offline-first côté gardien</strong> : la fiche et les urgences restent lisibles sans réseau (cache PWA — le CRDT attendra).</li>
+</ol>
+
+<h2>Ce que le produit refuse de faire</h2>
+<div class="card no">
+  Pas de garde de <strong>personnes</strong> (« 2 comprimés pour mamie » → message doux vers les ressources aidants ; c'est le territoire d'Ancre, tué par le comité, et du HDS). Pas de conseil vétérinaire, jamais (« et si le chat vomit ? » → la carte Urgences du proprio, pas un chatbot). Pas de promesse « n'oubliez plus rien » — une aide, pas une garantie. Pas de marketplace de sitters (autre métier, piège absolu).
+</div>
+
+<h2>MVP — 12 jours, deadline fin juillet</h2>
+<p>V1 : 5 templates (chat, chien, plantes, maison, mixte) → lien invité + vue « Aujourd'hui » cochable → journal photos + timeline proprio → urgences offline → paywall 9 € + <strong>PDF imprimable</strong> (le cas « papa refuse les apps » ET l'aimant SEO). Simulé à la main : pas de push en V1, un digest email quotidien suffit. Stack : un seul déployable Nuxt full-stack + Postgres, photos S3 avec EXIF supprimé.</p>
+<p><strong>Le premier test réel est déjà planifié : ta propre garde de cet été</strong> (c'était l'idée d'origine dans Notion).</p>
+
+<h2>Moat (franchise : il est faible)</h2>
+<ul>
+  <li>Un clone se code en 2 semaines. Les vraies défenses : <strong>la boucle virale structurelle</strong> — chaque garde expose le produit à 1-3 gardiens au moment exact où ils voient que c'est mieux que le pavé WhatsApp. Le gardien de juillet est le proprio d'août. La page invitée compte plus que toute feature.</li>
+  <li><strong>Templates + SEO longue traîne</strong> (« fiche de garde chat PDF », poules, aquarium, gecko…) — trafic saisonnier, juillet c'est maintenant.</li>
+  <li><strong>La confiance comme marque</strong> : « le seul outil de garde qui chiffre vos codes d'accès et expire les liens » — WhatsApp et Google Docs ne peuvent pas le dire.</li>
+  <li>L'émotion comme rétention annuelle : « il y a un an, Miso pendant vos vacances 🧡 » = la seule campagne de réactivation nécessaire.</li>
+</ul>
+
+<h2>Validation — une saison complète (fin septembre)</h2>
+<p>Canaux : ta garde d'été, 2 groupes FB petsitting/gardiennage, groupes plantes (niche plus passionnée que les chats), 3 micro-créatrices IG, Nextdoor, 2 conciergeries Airbnb (test du seul segment abonnement plausible), 1 asso de protection animale (familles d'accueil = usage intense), 5 pages templates SEO dès J8.</p>
+<p><strong>Validé si</strong> : ≥ 300 fiches créées · <strong>viralité ≥ 10 %</strong> (gardiens devenus créateurs sous 60 j — LA métrique) · ≥ 50 packs payés · ≥ 30 % des gardes réellement cochées. <strong>Invalidé si</strong> : les gardiens ne cliquent pas, conversion &lt; 2 %, viralité &lt; 3 % → geler en vitrine gratuite (coût ~0) et ne pas s'acharner : FacturX Kit reste le pari principal.</p>
+
+</div>
+<footer><a href="./">← Le lab</a> · <a href="rapport.html">Rapport du comité</a> · <a href="https://github.com/lredoban/hub/blob/main/docs/veillo-cerveau-metier.md">Document complet (.md)</a></footer>
+</body>
+</html>

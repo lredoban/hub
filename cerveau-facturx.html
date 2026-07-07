@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FacturX Kit — cerveau métier (résumé)</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+<style>
+  :root{--bg:#f6f4ef;--card:#fff;--ink:#1d1c1a;--muted:#6b675f;--accent:#c2410c;--line:#e5e1d8;--radius:14px;
+    --go:#15803d;--go-bg:rgba(21,128,61,.09);--warn:#b45309;--warn-bg:rgba(180,83,9,.10)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.6;padding:2rem 1rem 4rem}
+  .wrap{max-width:820px;margin:0 auto}
+  a{color:var(--accent)}
+  .back{display:inline-block;text-decoration:none;color:var(--muted);font-size:.9rem;margin-bottom:1.5rem}
+  h1{font-size:clamp(1.5rem,4vw,2.1rem);letter-spacing:-.02em;line-height:1.2}
+  .sub{color:var(--muted);margin:.4rem 0 1rem}
+  .mdlink{display:inline-flex;align-items:center;gap:.4rem;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:.4rem 1rem;text-decoration:none;font-size:.9rem;margin:.3rem 0 1.5rem}
+  h2{font-size:1.2rem;margin:2.2rem 0 .7rem;letter-spacing:-.01em}
+  p{margin:.6rem 0} ul,ol{margin:.6rem 0 .6rem 1.3rem} li{margin:.35rem 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem 1.3rem;margin:1rem 0}
+  .tldr{border-left:4px solid var(--go)}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:.8rem 1rem}
+  .kpi b{display:block;font-size:1.15rem} .kpi span{font-size:.78rem;color:var(--muted)}
+  .no{border-left:4px solid #b91c1c}
+  .tag{font-size:.72rem;font-weight:700;padding:.15rem .55rem;border-radius:99px;color:var(--go);background:var(--go-bg)}
+  code{background:rgba(127,127,127,.12);padding:.1rem .35rem;border-radius:5px;font-size:.86em}
+  footer{max-width:820px;margin:3rem auto 0;color:var(--muted);font-size:.85rem}
+  @media (prefers-color-scheme:dark){:root{--bg:#171614;--card:#201f1c;--ink:#f0ede6;--muted:#a39e93;--line:#33312c;--accent:#fb923c;--go:#86d9a3;--go-bg:rgba(134,217,163,.10);--warn:#f3b46a;--warn-bg:rgba(243,180,106,.10)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="./">← Retour au lab</a>
+<h1>🧠 FacturX Kit — le cerveau métier <span class="tag">GO comité</span></h1>
+<p class="sub">Lib TypeScript + API Factur-X/EN 16931 pour éditeurs SaaS FR · résumé humain du document de travail · 7 juillet 2026</p>
+<a class="mdlink" href="https://github.com/lredoban/hub/blob/main/docs/facturx-kit-cerveau-metier.md">📄 Lire le document complet (.md) — domaine, spec, 55 tests, plan détaillé</a>
+
+<div class="card tldr">
+  <strong>TL;DR</strong> — On construit une lib open source (MIT) qui génère et valide des factures Factur-X, plus une API payante de validation. Le client est le dev d'un éditeur SaaS français, coincé par la deadline du <strong>1er septembre 2026</strong> et l'amende passée à <strong>50 €/facture</strong> (plafond 15 k€/an). La lib gratuite est le vendeur ; l'API et la veille normative encodée sont le revenu. 15 jours de build, npm publié à J8.
+</div>
+
+<div class="kpis">
+  <div class="kpi"><b>1.09</b><span>version Factur-X courante (juin 2026) — elle change tous les ~6 mois : c'est la source du revenu récurrent</span></div>
+  <div class="kpi"><b>~955</b><span>règles EN 16931 — on ne les réécrit pas, on exécute le Schematron officiel et on ajoute nos couches</span></div>
+  <div class="kpi"><b>50 €</b><span>amende par facture non conforme (LF 2026) — LE chiffre à mettre dans chaque message</span></div>
+  <div class="kpi"><b>55</b><span>scénarios de test à IDs stables — destinés à devenir la suite de conformité publique</span></div>
+</div>
+
+<h2>Les 5 pièges métier qui structurent tout le code</h2>
+<ol>
+  <li><strong>Un avoir n'est pas une facture négative.</strong> TypeCode 381 avec montants positifs — l'erreur n°1 des devs, encodée en test.</li>
+  <li><strong>L'arrondi TVA se fait par groupe de taux, jamais par ligne.</strong> Sinon des écarts d'un centime qui font rejeter la facture.</li>
+  <li><strong>MINIMUM/BASIC WL ne sont pas des factures fiscales complètes.</strong> Warning systématique — ne jamais laisser un client croire qu'il est en règle.</li>
+  <li><strong>Le modèle interne est sémantique (BT-x), pas syntaxique.</strong> CII et UBL ne sont que des sorties.</li>
+  <li><strong>Jamais de float.</strong> Montants en centimes entiers ou Decimal, de bout en bout.</li>
+</ol>
+
+<h2>Ce que le moteur décide (et refuse de décider)</h2>
+<ul>
+  <li>4 verdicts : <code>PASS</code>, <code>PASS_WITH_WARNINGS</code>, <code>FAIL</code>, et surtout <code>INDETERMINATE</code> — le moteur <em>refuse de conclure</em> (PDF chiffré, UBL non couvert en V1, extensions EXTENDED) plutôt que produire un faux verdict.</li>
+  <li><code>generate</code> recalcule toujours les totaux lui-même ; si l'appelant en fournit qui divergent, il refuse. Jamais de correction silencieuse.</li>
+  <li>Chaque erreur = message français actionnable (quoi, où, combien, comment corriger) — ce mapping règle→message est l'actif propriétaire.</li>
+  <li>API stateless : <strong>aucune facture stockée</strong> — argument RGPD/sécurité qu'un gros SaaS ne peut pas donner.</li>
+</ul>
+
+<div class="card no">
+  <strong>À ne jamais promettre</strong> — « conformité garantie », du conseil fiscal, l'archivage probant, la transmission DGFiP (on n'est pas une PDP), une validation PDF/A « certifiée ». Obligation de moyens dans les CGV.
+</div>
+
+<h2>MVP — 15 jours</h2>
+<p>V1 : lib core (profils BASIC + EN 16931) → embed PDF/A-3 → validation Schematron + 20 règles FR → CLI → API + Stripe → <strong>validateur web gratuit</strong> (la machine à leads). Simulé à la main au début : revue expert à 149 €, conversion UBL, veille par email. Interdit avant les premiers paiements : dashboard, e-reporting, connecteurs PDP, app Shopify (c'est Facturia, plus tard, <em>sur</em> cette lib).</p>
+<p><strong>Ordre :</strong> J1-2 calculs · J3-4 génération CII validée contre le validateur FNFE · J5 PDF · J6-7 validation + messages · <strong>J8 npm v0.1 publié quoi qu'il arrive</strong> · J9-10 API · J11 validateur web · J12-15 docs, CI croisée (FNFE + Mustang), landing branchée.</p>
+
+<h2>Moat solo-dev</h2>
+<ul>
+  <li><strong>MIT</strong> : core, PDF, CLI — devenir la lib TS par défaut = distribution gratuite permanente.</li>
+  <li><strong>Payant</strong> : API hébergée, règles FR, fraîcheur (à jour ≤ 2 semaines après chaque release normative — un abonnement à la veille encodée en tests).</li>
+  <li><strong>Source de vérité</strong> : publier la suite de conformité (les 55 tests) et inviter les autres libs à s'y mesurer. Celui qui écrit les tests écrit le standard de facto.</li>
+</ul>
+
+<h2>Validation commerciale — 30 jours</h2>
+<p>10 prospects nommés (Obat, Tolteck, Freebe, Abby, Henrri, Facture.net, modules PrestaShop, intégrateurs Odoo, SaaS verticaux, réseau Kompa). Script ≤ 90 mots dont l'arme : <em>« sinon, gardez la lib, elle est MIT »</em>. Pilote « Conforme avant le 1er septembre » : <strong>1 490 € + 12 mois d'API</strong>. API : 29/99/299 €/mois, −50 % early-bird.</p>
+<p><strong>Validé si</strong> : ≥ 3 pilotes payés ou ≥ 10 abonnements ; ≥ 4 prospects sur 10 confirment l'urgence en call ; validateur ≥ 200 fichiers analysés. <strong>Invalidé si</strong> ≥ 6/10 répondent « notre PDP gère le format » → pivot Facturia ou Veillance.</p>
+
+</div>
+<footer><a href="./">← Le lab</a> · <a href="rapport.html">Rapport du comité</a> · <a href="https://github.com/lredoban/hub/blob/main/docs/facturx-kit-cerveau-metier.md">Document complet (.md)</a></footer>
+</body>
+</html>
